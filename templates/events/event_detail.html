@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{{ object.title }}{% endblock %}
+
+{% block topbar_actions %}
+  {% if is_admin_user or is_coach_manager_user %}
+    <a href="{% url 'events:update' object.pk %}" class="btn btn-secondary btn-sm"><i data-feather="edit-2"></i>{% trans "Edit" %}</a>
+    <a href="{% url 'events:delete' object.pk %}" class="btn btn-danger btn-sm"><i data-feather="trash-2"></i>{% trans "Delete" %}</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}{% include 'events/_event_detail_body.html' %}{% endblock %}
+
+{% block guest_body %}
+  {% include 'partials/public_nav.html' %}
+  <main class="public-main">
+    <div class="public-container">
+      {% include 'events/_event_detail_body.html' %}
+    </div>
+  </main>
+  {% include 'partials/public_footer.html' %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% if object %}{% trans "Edit post" %}{% else %}{% trans "New post" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:840px; margin:0 auto;">
+  <h1 class="page-title mb-4">{% if object %}{% trans "Edit news post" %}{% else %}{% trans "Create news post" %}{% endif %}</h1>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="card mb-4">
+      <div class="card-header"><h3 class="card-title">🇬🇧 {% trans "English version" %}</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">{% trans "Title" %} *</label>
+          {{ form.title }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Excerpt" %}</label>
+          {{ form.excerpt }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Content" %} *</label>
+          {{ form.content }}
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header"><h3 class="card-title">🇪🇬 {% trans "Arabic version (optional)" %}</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">{% trans "Title (Arabic)" %}</label>
+          {{ form.title_ar }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Content (Arabic)" %}</label>
+          {{ form.content_ar }}
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">{% trans "Cover image" %}</label>
+          {{ form.image }}
+        </div>
+        <div style="display:flex; gap:24px;">
+          <label style="display:flex; gap:8px; align-items:center;">{{ form.is_published }} <span>{% trans "Published" %}</span></label>
+          <label style="display:flex; gap:8px; align-items:center;">{{ form.is_featured }} <span>{% trans "Featured" %}</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+      <button type="submit" class="btn btn-primary"><i data-feather="check"></i>{% trans "Save post" %}</button>
+      <a href="{% url 'news:list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

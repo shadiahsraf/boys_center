@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "News" %}{% endblock %}
+
+{% block topbar_actions %}
+  {% if is_admin_user %}
+    <a href="{% url 'news:create' %}" class="btn btn-primary"><i data-feather="plus"></i>{% trans "New post" %}</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}{% include 'news/_news_list_body.html' %}{% endblock %}
+
+{% block guest_body %}
+  {% include 'partials/public_nav.html' %}
+  <main class="public-main">
+    <div class="public-container">
+      <div class="page-header" style="margin-top:32px;">
+        <div>
+          <div class="section-eyebrow">{% trans "Stay updated" %}</div>
+          <h1 class="page-title">{% trans "News" %}</h1>
+          <p class="page-subtitle">{% trans "Announcements and stories from Boys Center." %}</p>
+        </div>
+      </div>
+      {% include 'news/_news_list_body.html' %}
+    </div>
+  </main>
+  {% include 'partials/public_footer.html' %}
+{% endblock %}

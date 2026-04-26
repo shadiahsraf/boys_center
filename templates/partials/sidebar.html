@@ -1,0 +1,83 @@
+{% load i18n %}
+<aside class="sidebar" :class="{ 'open': sidebar }">
+  <div class="sidebar-brand">
+    <div class="brand-mark">✝</div>
+    <div class="brand-text">
+      <div class="brand-title">{% trans "Boys Center" %}</div>
+      <div class="brand-subtitle">{% trans "Youth Club" %}</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">{% trans "Main" %}</div>
+    <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.view_name == 'dashboard' %}active{% endif %}">
+      <i data-feather="home"></i>
+      <span class="nav-label">{% trans "Dashboard" %}</span>
+    </a>
+    <a href="{% url 'news:list' %}" class="nav-link {% if 'news' in request.resolver_match.namespace %}active{% endif %}">
+      <i data-feather="bell"></i>
+      <span class="nav-label">{% trans "News" %}</span>
+    </a>
+    <a href="{% url 'events:list' %}" class="nav-link {% if 'events' in request.resolver_match.namespace %}active{% endif %}">
+      <i data-feather="calendar"></i>
+      <span class="nav-label">{% trans "Events" %}</span>
+    </a>
+
+    {% if is_admin_user or is_coach_manager_user or is_coach_user %}
+      <div class="nav-section-label">{% trans "Operations" %}</div>
+      <a href="{% url 'attendance:list' %}" class="nav-link {% if 'attendance' in request.resolver_match.namespace %}active{% endif %}">
+        <i data-feather="check-square"></i>
+        <span class="nav-label">{% trans "Attendance" %}</span>
+      </a>
+      <a href="{% url 'evaluations:list' %}" class="nav-link {% if 'evaluations' in request.resolver_match.namespace %}active{% endif %}">
+        <i data-feather="star"></i>
+        <span class="nav-label">{% trans "Evaluations" %}</span>
+      </a>
+    {% endif %}
+
+    <div class="nav-section-label">{% trans "Sports" %}</div>
+    <a href="{% url 'sports:team_list' %}" class="nav-link {% if request.resolver_match.url_name == 'team_list' or request.resolver_match.url_name == 'team_detail' %}active{% endif %}">
+      <i data-feather="users"></i>
+      <span class="nav-label">{% trans "Teams" %}</span>
+    </a>
+    <a href="{% url 'sports:match_list' %}" class="nav-link {% if request.resolver_match.url_name == 'match_list' %}active{% endif %}">
+      <i data-feather="zap"></i>
+      <span class="nav-label">{% trans "Matches" %}</span>
+    </a>
+    <a href="{% url 'sports:leaderboard' %}" class="nav-link {% if request.resolver_match.url_name == 'leaderboard' %}active{% endif %}">
+      <i data-feather="award"></i>
+      <span class="nav-label">{% trans "Leaderboard" %}</span>
+    </a>
+
+    {% if is_admin_user or is_coach_manager_user %}
+      <div class="nav-section-label">{% trans "Administration" %}</div>
+      <a href="{% url 'users:list' %}" class="nav-link {% if 'users' in request.resolver_match.namespace %}active{% endif %}">
+        <i data-feather="user"></i>
+        <span class="nav-label">{% trans "Members" %}</span>
+      </a>
+      <a href="{% url 'reports:dashboard' %}" class="nav-link {% if 'reports' in request.resolver_match.namespace %}active{% endif %}">
+        <i data-feather="bar-chart-2"></i>
+        <span class="nav-label">{% trans "Reports" %}</span>
+      </a>
+      <a href="{% url 'users:activity_log' %}" class="nav-link {% if request.resolver_match.url_name == 'activity_log' %}active{% endif %}">
+        <i data-feather="shield"></i>
+        <span class="nav-label">{% trans "Audit Log" %}</span>
+      </a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar avatar-sm avatar-{% if is_admin_user %}warning{% elif is_coach_user %}brand{% elif is_parent_user %}success{% else %}sky{% endif %}">
+        {% if user.photo %}<img src="{{ user.photo.url }}" alt="">{% else %}{{ user.initials }}{% endif %}
+      </div>
+      <div style="flex:1; min-width:0;">
+        <div style="color:white;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ user.get_full_name|default:user.username }}</div>
+        <div style="color:rgba(255,255,255,0.45);font-size:11px;">{{ user.role_display }}</div>
+      </div>
+      <a href="{% url 'logout' %}" title="{% trans 'Sign out' %}" style="color:rgba(255,255,255,0.5);">
+        <i data-feather="log-out" style="width:16px;height:16px;"></i>
+      </a>
+    </div>
+  </div>
+</aside>

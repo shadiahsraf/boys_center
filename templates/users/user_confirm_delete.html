@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Delete member" %}{% endblock %}
+
+{% block content %}
+<div style="max-width:520px; margin:48px auto;">
+  <div class="card" style="border-color: var(--color-danger-100);">
+    <div class="card-body" style="padding:32px;">
+      <div style="display:flex; gap:16px; align-items:flex-start;">
+        <div class="stat-icon danger" style="width:48px;height:48px;font-size:22px;flex-shrink:0;">
+          <i data-feather="alert-triangle"></i>
+        </div>
+        <div style="flex:1;">
+          <h1 style="font-size:20px; font-weight:800; color:var(--color-slate-900); margin-bottom:8px;">
+            {% trans "Delete this member?" %}
+          </h1>
+          <p style="color:var(--color-slate-600); font-size:14px; line-height:1.6; margin-bottom:18px;">
+            {% blocktrans with name=object.get_full_name|default:object.username %}You're about to permanently delete <strong>{{ name }}</strong>. All their attendance records, evaluations, and parent-child links will be removed. This action cannot be undone.{% endblocktrans %}
+          </p>
+
+          <div style="background:var(--color-slate-50); padding:14px 16px; border-radius:var(--radius); font-size:13px; margin-bottom:20px;">
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:6px;">
+              <div class="avatar avatar-sm">{{ object.initials }}</div>
+              <div>
+                <div style="font-weight:600;">{{ object.get_full_name|default:object.username }}</div>
+                <div class="cell-secondary"><code>{{ object.member_code }}</code> · {{ object.role_display }}</div>
+              </div>
+            </div>
+          </div>
+
+          <form method="post" style="display:flex; gap:8px;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+              <i data-feather="trash-2"></i>{% trans "Yes, delete permanently" %}
+            </button>
+            <a href="{% url 'users:detail' object.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Leaderboard" %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header-meta">
+      <i data-feather="award" style="width:14px;height:14px; color:var(--color-warning-500);"></i>
+      <span>{% trans "Standings" %}</span>
+    </div>
+    <h1 class="page-title">{% trans "Leaderboard" %}</h1>
+    <p class="page-subtitle">{% trans "Team rankings and top scorers across all sports." %}</p>
+  </div>
+</div>
+
+<!-- Sport filter -->
+<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px;">
+  <a href="{% url 'sports:leaderboard' %}" class="btn {% if not filter_sport %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "All sports" %}</a>
+  {% for v, l in sport_choices %}
+    <a href="?sport={{ v }}" class="btn {% if filter_sport == v %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{{ l }}</a>
+  {% endfor %}
+</div>
+
+<div class="grid-dashboard">
+  <!-- Team rankings -->
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">{% trans "Team standings" %}</h3></div>
+    <div class="card-body p-0">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:50px;">#</th>
+              <th>{% trans "Team" %}</th>
+              <th class="text-center">P</th>
+              <th class="text-center text-success">W</th>
+              <th class="text-center">D</th>
+              <th class="text-center text-danger">L</th>
+              <th class="text-center hide-sm">GF</th>
+              <th class="text-center hide-sm">GA</th>
+              <th class="text-center hide-sm">GD</th>
+              <th class="text-center"><strong>{% trans "Pts" %}</strong></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in teams_ranking %}
+              <tr>
+                <td>
+                  {% if forloop.counter == 1 %}<span style="font-size:18px;">🥇</span>
+                  {% elif forloop.counter == 2 %}<span style="font-size:18px;">🥈</span>
+                  {% elif forloop.counter == 3 %}<span style="font-size:18px;">🥉</span>
+                  {% else %}<span style="color:var(--color-slate-400); font-weight:600;">{{ forloop.counter }}</span>{% endif %}
+                </td>
+                <td>
+                  <a href="{% url 'sports:team_detail' row.team.pk %}" class="table-cell-flex" style="color:inherit; text-decoration:none;">
+                    <div class="avatar avatar-sm avatar-purple">{{ row.team.icon }}</div>
+                    <div>
+                      <div class="cell-primary">{{ row.team.name }}</div>
+                      <div class="cell-secondary">{{ row.team.get_sport_display }}</div>
+                    </div>
+                  </a>
+                </td>
+                <td class="text-center">{{ row.played }}</td>
+                <td class="text-center text-success font-bold">{{ row.wins }}</td>
+                <td class="text-center">{{ row.draws }}</td>
+                <td class="text-center text-danger">{{ row.losses }}</td>
+                <td class="text-center hide-sm">{{ row.gf }}</td>
+                <td class="text-center hide-sm">{{ row.ga }}</td>
+                <td class="text-center hide-sm">
+                  <span style="font-weight:600; color: {% if row.gd > 0 %}var(--color-success-600){% elif row.gd < 0 %}var(--color-danger-500){% else %}var(--color-slate-500){% endif %};">
+                    {% if row.gd > 0 %}+{% endif %}{{ row.gd }}
+                  </span>
+                </td>
+                <td class="text-center"><strong style="font-size:15px; color:var(--color-slate-900);">{{ row.points }}</strong></td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="10">
+                <div class="empty-state">
+                  <div class="empty-state-icon"><i data-feather="award"></i></div>
+                  <h3>{% trans "No standings yet" %}</h3>
+                  <p>{% trans "Standings will appear once teams complete matches." %}</p>
+                </div>
+              </td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top scorers -->
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">{% trans "Top scorers" %}</h3></div>
+    <div class="card-body" style="padding:0;">
+      {% for s in top_scorers %}
+        <div style="display:flex; align-items:center; gap:12px; padding:12px 22px; border-bottom:1px solid var(--color-slate-100);">
+          <div style="width:24px; text-align:center; font-weight:700; color:var(--color-slate-400);">
+            {% if forloop.counter <= 3 %}{% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% else %}🥉{% endif %}
+            {% else %}{{ forloop.counter }}{% endif %}
+          </div>
+          <div class="avatar avatar-sm avatar-warning">{{ s.player__first_name|first }}{{ s.player__last_name|first }}</div>
+          <div style="flex:1; min-width:0;">
+            <div class="cell-primary truncate">{{ s.player__first_name }} {{ s.player__last_name }}</div>
+            <div class="cell-secondary"><code style="font-size:10px;">{{ s.player__member_code }}</code></div>
+          </div>
+          <div style="text-align:end;">
+            <div style="font-size:18px; font-weight:800; color:var(--color-slate-900);">{{ s.total }}</div>
+            <div class="cell-secondary">{% trans "pts" %}</div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state">
+          <div class="empty-state-icon"><i data-feather="star"></i></div>
+          <p>{% trans "No goals recorded yet." %}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

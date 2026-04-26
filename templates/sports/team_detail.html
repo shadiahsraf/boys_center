@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{{ object.name }}{% endblock %}
+
+{% block topbar_actions %}
+  {% if is_admin_user or is_coach_manager_user %}
+    <a href="{% url 'sports:team_update' object.pk %}" class="btn btn-secondary btn-sm"><i data-feather="edit-2"></i>{% trans "Edit" %}</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div style="display:flex; gap:16px; align-items:center;">
+    <div class="avatar avatar-xl avatar-purple">
+      {% if object.logo %}<img src="{{ object.logo.url }}">{% else %}{{ object.icon }}{% endif %}
+    </div>
+    <div>
+      <div class="page-header-meta">
+        <span class="badge badge-slate">{{ object.get_sport_display }}</span>
+        {% if object.age_group %}<span class="badge badge-info">{{ object.age_group }}</span>{% endif %}
+      </div>
+      <h1 class="page-title">{{ object.name }}</h1>
+      {% if object.coach %}<p class="page-subtitle">{% trans "Coached by" %} <strong>{{ object.coach.get_full_name }}</strong></p>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="grid-stats">
+  <div class="stat-card"><div class="stat-meta"><div class="stat-label">{% trans "Players" %}</div><div class="stat-value">{{ object.members.count }}</div></div><div class="stat-icon brand"><i data-feather="users"></i></div></div>
+  <div class="stat-card"><div class="stat-meta"><div class="stat-label">{% trans "Wins" %}</div><div class="stat-value">{{ wins }}</div></div><div class="stat-icon success"><i data-feather="trending-up"></i></div></div>
+  <div class="stat-card"><div class="stat-meta"><div class="stat-label">{% trans "Draws" %}</div><div class="stat-value">{{ draws }}</div></div><div class="stat-icon warning"><i data-feather="minus"></i></div></div>
+  <div class="stat-card"><div class="stat-meta"><div class="stat-label">{% trans "Losses" %}</div><div class="stat-value">{{ losses }}</div></div><div class="stat-icon danger"><i data-feather="trending-down"></i></div></div>
+</div>
+
+<div class="grid-dashboard">
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">{% trans "Recent matches" %}</h3></div>
+    <div class="card-body p-0">
+      <div class="table-wrap">
+        <table class="table table-responsive">
+          <thead><tr><th>{% trans "Match" %}</th><th>{% trans "Date" %}</th><th>{% trans "Result" %}</th></tr></thead>
+          <tbody>
+            {% for m in recent_matches %}
+              <tr>
+                <td data-label="{% trans 'Match' %}">
+                  <div class="cell-primary">{{ m.home_team.name }} vs {{ m.away_team.name }}</div>
+                  <div class="cell-secondary">{{ m.location }}</div>
+                </td>
+                <td data-label="{% trans 'Date' %}"><span class="cell-secondary">{{ m.scheduled_at|date:"M d" }}</span></td>
+                <td data-label="{% trans 'Result' %}">
+                  {% if m.is_completed %}
+                    <strong>{{ m.home_score }} - {{ m.away_score }}</strong>
+                  {% else %}<span class="badge badge-slate">{% trans "Upcoming" %}</span>{% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="3"><div class="empty-state"><div class="empty-state-icon"><i data-feather="zap"></i></div><p>{% trans "No matches yet." %}</p></div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">{% trans "Players" %} <span class="badge badge-slate">{{ object.members.count }}</span></h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% for player in object.members.all %}
+        <a href="{% url 'users:detail' player.pk %}" style="display:flex; gap:10px; align-items:center; padding:10px 22px; border-bottom:1px solid var(--color-slate-100); color:inherit; text-decoration:none;">
+          <div class="avatar avatar-sm avatar-sky">{{ player.initials }}</div>
+          <div style="flex:1; min-width:0;">
+            <div class="cell-primary truncate">{{ player.get_full_name }}</div>
+            <div class="cell-secondary"><code style="font-size:11px;">{{ player.member_code }}</code></div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty-state"><div class="empty-state-icon"><i data-feather="user"></i></div><p>{% trans "No players assigned." %}</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

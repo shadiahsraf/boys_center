@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Reports" %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header-meta">
+      <i data-feather="bar-chart-2" style="width:14px;height:14px; color:var(--color-brand-500);"></i>
+      <span>{% trans "Reports & exports" %}</span>
+    </div>
+    <h1 class="page-title">{% trans "Reports" %}</h1>
+    <p class="page-subtitle">{% trans "View activity reports and export to PDF or Excel." %}</p>
+  </div>
+</div>
+
+<div class="grid-stats">
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Check-ins today" %}</div>
+      <div class="stat-value">{{ records_today }}</div>
+    </div>
+    <div class="stat-icon brand"><i data-feather="check-square"></i></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Check-ins (7d)" %}</div>
+      <div class="stat-value">{{ records_week }}</div>
+    </div>
+    <div class="stat-icon success"><i data-feather="trending-up"></i></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Evaluations (7d)" %}</div>
+      <div class="stat-value">{{ evals_week }}</div>
+    </div>
+    <div class="stat-icon warning"><i data-feather="star"></i></div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">{% trans "Attendance reports" %}</h3></div>
+    <div class="card-body">
+      <p class="cell-secondary mb-3">{% trans "View and export attendance data." %}</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a href="{% url 'reports:attendance' %}?period=week" class="btn btn-secondary"><i data-feather="calendar"></i>{% trans "This week" %}</a>
+        <a href="{% url 'reports:attendance' %}?period=month" class="btn btn-secondary"><i data-feather="calendar"></i>{% trans "This month" %}</a>
+        <a href="{% url 'reports:export_attendance_pdf' %}" class="btn btn-primary"><i data-feather="download"></i>{% trans "Export PDF" %}</a>
+        <a href="{% url 'reports:export_attendance_excel' %}" class="btn btn-primary"><i data-feather="download"></i>{% trans "Export Excel" %}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">{% trans "Evaluation reports" %}</h3></div>
+    <div class="card-body">
+      <p class="cell-secondary mb-3">{% trans "Player performance evaluations." %}</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a href="{% url 'evaluations:list' %}" class="btn btn-secondary"><i data-feather="star"></i>{% trans "Browse" %}</a>
+        <a href="{% url 'reports:export_evaluations_excel' %}" class="btn btn-primary"><i data-feather="download"></i>{% trans "Export Excel" %}</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

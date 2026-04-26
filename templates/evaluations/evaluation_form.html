@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "New Evaluation" %}{% endblock %}
+
+{% block content %}
+<div style="max-width:680px; margin:0 auto;">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{% trans "Evaluate a player" %}</h1>
+      <p class="page-subtitle">{% trans "Rate performance, behavior and commitment on a 1–5 scale." %}</p>
+    </div>
+  </div>
+
+  <form method="post" x-data="{
+    performance: {{ form.performance.value|default:0 }},
+    behavior: {{ form.behavior.value|default:0 }},
+    commitment: {{ form.commitment.value|default:0 }},
+    hover: { performance: 0, behavior: 0, commitment: 0 }
+  }">
+    {% csrf_token %}
+    {{ form.performance }}
+    {{ form.behavior }}
+    {{ form.commitment }}
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">{% trans "Player" %} *</label>
+            {{ form.player }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Sport" %}</label>
+            {{ form.sport }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% for category, label, icon in 'performance,Performance,zap;behavior,Behavior,thumbs-up;commitment,Commitment,target'|cut:''|stringformat:'s'|slice:":0" %}{% endfor %}
+
+    {# Star inputs #}
+    <div class="card mb-4">
+      <div class="card-header"><h3 class="card-title">{% trans "Ratings" %}</h3></div>
+      <div class="card-body">
+
+        <div class="form-group">
+          <label class="form-label">⚡ {% trans "Performance" %}</label>
+          <div class="star-rating-input" @mouseleave="hover.performance = 0">
+            <template x-for="n in 5">
+              <button type="button"
+                      @click="performance = n; document.getElementById('id_performance').value = n;"
+                      @mouseenter="hover.performance = n"
+                      :class="{ 'filled': n <= (hover.performance || performance) }"
+                      x-text="'★'"></button>
+            </template>
+            <span style="margin-inline-start: 12px; font-size: 14px; color: var(--color-slate-500);" x-text="performance ? performance + ' / 5' : '—'"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">👍 {% trans "Behavior" %}</label>
+          <div class="star-rating-input" @mouseleave="hover.behavior = 0">
+            <template x-for="n in 5">
+              <button type="button"
+                      @click="behavior = n; document.getElementById('id_behavior').value = n;"
+                      @mouseenter="hover.behavior = n"
+                      :class="{ 'filled': n <= (hover.behavior || behavior) }"
+                      x-text="'★'"></button>
+            </template>
+            <span style="margin-inline-start: 12px; font-size: 14px; color: var(--color-slate-500);" x-text="behavior ? behavior + ' / 5' : '—'"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">🎯 {% trans "Commitment" %}</label>
+          <div class="star-rating-input" @mouseleave="hover.commitment = 0">
+            <template x-for="n in 5">
+              <button type="button"
+                      @click="commitment = n; document.getElementById('id_commitment').value = n;"
+                      @mouseenter="hover.commitment = n"
+                      :class="{ 'filled': n <= (hover.commitment || commitment) }"
+                      x-text="'★'"></button>
+            </template>
+            <span style="margin-inline-start: 12px; font-size: 14px; color: var(--color-slate-500);" x-text="commitment ? commitment + ' / 5' : '—'"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">{% trans "Notes (optional)" %}</label>
+          {{ form.notes }}
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:8px;">
+      <button type="submit" class="btn btn-primary"
+              :disabled="!performance || !behavior || !commitment">
+        <i data-feather="check"></i>{% trans "Save evaluation" %}
+      </button>
+      <a href="{% url 'evaluations:list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

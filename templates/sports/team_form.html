@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% if object %}{% trans "Edit team" %}{% else %}{% trans "New team" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:760px; margin:0 auto;">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{% if object %}{% trans "Edit team" %}{% else %}{% trans "Create new team" %}{% endif %}</h1>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">{% trans "Team name" %} *</label>
+            {{ form.name }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Sport" %} *</label>
+            {{ form.sport }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Age group" %}</label>
+            {{ form.age_group }}
+            <div class="form-help">{% trans "e.g. U-12, U-15, U-18" %}</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Coach" %}</label>
+            {{ form.coach }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Team logo" %}</label>
+          {{ form.logo }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Players" %}</label>
+          {{ form.members }}
+          <div class="form-help">{% trans "Hold Ctrl/Cmd to select multiple players." %}</div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button type="submit" class="btn btn-primary"><i data-feather="check"></i>{% trans "Save team" %}</button>
+          <a href="{% url 'sports:team_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

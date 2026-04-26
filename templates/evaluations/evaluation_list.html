@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Evaluations" %}{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'evaluations:create' %}" class="btn btn-primary"><i data-feather="plus"></i>{% trans "New evaluation" %}</a>
+{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+  <div class="card-body" style="padding:14px 18px;">
+    <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <div style="flex:1; min-width:240px;">
+        <input type="text" name="q" value="{{ filter_q }}" class="tw-input" placeholder="{% trans 'Search by player or coach...' %}">
+      </div>
+      <button type="submit" class="btn btn-primary"><i data-feather="search"></i>{% trans "Search" %}</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-wrap">
+      <table class="table table-responsive">
+        <thead>
+          <tr>
+            <th>{% trans "Player" %}</th>
+            <th>{% trans "Coach" %}</th>
+            <th>{% trans "Performance" %}</th>
+            <th>{% trans "Behavior" %}</th>
+            <th>{% trans "Commitment" %}</th>
+            <th>{% trans "Avg" %}</th>
+            <th>{% trans "Date" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in evaluations %}
+            <tr>
+              <td data-label="{% trans 'Player' %}">
+                <a href="{% url 'evaluations:player' e.player.pk %}" style="text-decoration:none; color:inherit;">
+                  <div class="table-cell-flex">
+                    <div class="avatar avatar-xs">{{ e.player.initials }}</div>
+                    <span class="cell-primary">{{ e.player.get_full_name }}</span>
+                  </div>
+                </a>
+              </td>
+              <td data-label="{% trans 'Coach' %}"><span class="cell-secondary">{{ e.coach.get_full_name }}</span></td>
+              <td data-label="{% trans 'Performance' %}"><div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= e.performance %} filled{% endif %}">★</span>{% endfor %}</div></td>
+              <td data-label="{% trans 'Behavior' %}"><div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= e.behavior %} filled{% endif %}">★</span>{% endfor %}</div></td>
+              <td data-label="{% trans 'Commitment' %}"><div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= e.commitment %} filled{% endif %}">★</span>{% endfor %}</div></td>
+              <td data-label="{% trans 'Avg' %}"><strong>{{ e.average }}</strong></td>
+              <td data-label="{% trans 'Date' %}"><span class="cell-secondary">{{ e.created_at|date:"M d, Y" }}</span></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="7">
+              <div class="empty-state">
+                <div class="empty-state-icon"><i data-feather="star"></i></div>
+                <h3>{% trans "No evaluations yet" %}</h3>
+                <p>{% trans "Coaches can evaluate players after sessions." %}</p>
+                <a href="{% url 'evaluations:create' %}" class="btn btn-primary"><i data-feather="plus"></i>{% trans "Create one" %}</a>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% if is_paginated %}
+    <nav class="pagination">
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filter_q }}"><i data-feather="chevron-left" style="width:14px;height:14px;"></i></a>{% endif %}
+      <span class="active">{{ page_obj.number }}</span>
+      <span>/ {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filter_q }}"><i data-feather="chevron-right" style="width:14px;height:14px;"></i></a>{% endif %}
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

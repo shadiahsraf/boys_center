@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Members" %}{% endblock %}
+
+{% block topbar_actions %}
+  {% if is_admin_user %}
+    <a href="{% url 'users:create' %}" class="btn btn-primary"><i data-feather="user-plus"></i>{% trans "Add member" %}</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+  <div class="card-body" style="padding:14px 18px;">
+    <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <div style="flex:1; min-width:240px;">
+        <input type="text" name="q" value="{{ filter_q }}" class="tw-input" placeholder="{% trans 'Search by name, username, code or phone...' %}">
+      </div>
+      <select name="role" class="tw-input" style="max-width:200px;">
+        <option value="">{% trans "All roles" %}</option>
+        {% for v, l in roles %}<option value="{{ v }}" {% if filter_role == v %}selected{% endif %}>{{ l }}</option>{% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary"><i data-feather="search"></i>{% trans "Search" %}</button>
+      {% if filter_q or filter_role %}<a href="{% url 'users:list' %}" class="btn btn-ghost"><i data-feather="x"></i>{% trans "Clear" %}</a>{% endif %}
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">{% trans "All members" %}</h3>
+      <div class="card-subtitle">{{ paginator.count }} {% trans "results" %}</div>
+    </div>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-wrap">
+      <table class="table table-responsive">
+        <thead>
+          <tr>
+            <th>{% trans "Member" %}</th>
+            <th>{% trans "Code" %}</th>
+            <th>{% trans "Roles" %}</th>
+            <th>{% trans "Phone" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+            <tr>
+              <td data-label="{% trans 'Member' %}">
+                <div class="table-cell-flex">
+                  <div class="avatar avatar-sm avatar-{% if u.is_admin %}warning{% elif u.is_coach %}brand{% elif u.is_parent %}success{% else %}sky{% endif %}">
+                    {% if u.photo %}<img src="{{ u.photo.url }}">{% else %}{{ u.initials }}{% endif %}
+                  </div>
+                  <div>
+                    <div class="cell-primary">{{ u.get_full_name|default:u.username }}</div>
+                    <div class="cell-secondary">@{{ u.username }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="{% trans 'Code' %}"><code style="font-size:11px; padding:3px 7px; background:var(--color-slate-100); border-radius:4px;">{{ u.member_code }}</code></td>
+              <td data-label="{% trans 'Roles' %}">
+                <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                  {% for r in u.roles %}<span class="badge role-{{ r }}">{{ r|cut:"_"|title }}</span>{% endfor %}
+                </div>
+              </td>
+              <td data-label="{% trans 'Phone' %}"><span class="cell-secondary">{{ u.phone|default:"—" }}</span></td>
+              <td data-label="{% trans 'Status' %}">
+                {% if u.is_active %}<span class="badge status-active">{% trans "Active" %}</span>
+                {% else %}<span class="badge status-inactive">{% trans "Inactive" %}</span>{% endif %}
+              </td>
+              <td data-label="">
+                <div style="display:flex; gap:4px;">
+                  <a href="{% url 'users:detail' u.pk %}" class="btn btn-secondary btn-xs">{% trans "View" %}</a>
+                  {% if is_admin_user and u.pk != user.pk %}
+                    <a href="{% url 'users:update' u.pk %}" class="btn btn-ghost btn-xs" title="{% trans 'Edit' %}"><i data-feather="edit-2" style="width:13px;height:13px;"></i></a>
+                    <a href="{% url 'users:delete' u.pk %}" class="btn btn-ghost btn-xs" title="{% trans 'Delete' %}" style="color:var(--color-danger-500);"><i data-feather="trash-2" style="width:13px;height:13px;"></i></a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6">
+              <div class="empty-state">
+                <div class="empty-state-icon"><i data-feather="users"></i></div>
+                <h3>{% trans "No members found" %}</h3>
+                <p>{% trans "Try adjusting your search or filters." %}</p>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% if is_paginated %}
+    <nav class="pagination">
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filter_q }}&role={{ filter_role }}"><i data-feather="chevron-left" style="width:14px;height:14px;"></i></a>{% endif %}
+      <span class="active">{{ page_obj.number }}</span>
+      <span>/ {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filter_q }}&role={{ filter_role }}"><i data-feather="chevron-right" style="width:14px;height:14px;"></i></a>{% endif %}
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

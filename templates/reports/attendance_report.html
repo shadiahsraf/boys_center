@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Attendance Report" %}{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'reports:export_attendance_pdf' %}" class="btn btn-primary btn-sm"><i data-feather="download"></i>PDF</a>
+  <a href="{% url 'reports:export_attendance_excel' %}" class="btn btn-primary btn-sm"><i data-feather="download"></i>Excel</a>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{% trans "Attendance report" %}</h1>
+    <p class="page-subtitle">{% trans "From" %} <strong>{{ start|date:"M d, Y" }}</strong> {% trans "to today" %}</p>
+  </div>
+  <div style="display:flex; gap:6px;">
+    <a href="?period=week" class="btn {% if period == 'week' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "Week" %}</a>
+    <a href="?period=month" class="btn {% if period == 'month' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "Month" %}</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-wrap">
+      <table class="table table-responsive">
+        <thead>
+          <tr>
+            <th>{% trans "Session" %}</th>
+            <th>{% trans "Type" %}</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Coach" %}</th>
+            <th>{% trans "Attendance" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sessions %}
+            <tr>
+              <td data-label="{% trans 'Session' %}"><div class="cell-primary">{{ s.title }}</div></td>
+              <td data-label="{% trans 'Type' %}"><span class="badge badge-slate">{{ s.get_session_type_display }}</span></td>
+              <td data-label="{% trans 'Date' %}">{{ s.date|date:"M d, Y" }}</td>
+              <td data-label="{% trans 'Coach' %}">{{ s.coach.get_full_name|default:"—" }}</td>
+              <td data-label="{% trans 'Attendance' %}"><strong>{{ s.record_count }}</strong></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5">
+              <div class="empty-state">
+                <div class="empty-state-icon"><i data-feather="check-square"></i></div>
+                <p>{% trans "No sessions in this period." %}</p>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Events" %}{% endblock %}
+
+{% block topbar_actions %}
+  {% if is_admin_user or is_coach_manager_user %}
+    <a href="{% url 'events:create' %}" class="btn btn-primary"><i data-feather="plus"></i>{% trans "New event" %}</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}{% include 'events/_event_list_body.html' %}{% endblock %}
+
+{% block guest_body %}
+  {% include 'partials/public_nav.html' %}
+  <main class="public-main">
+    <div class="public-container">
+      <div class="page-header" style="margin-top:32px;">
+        <div>
+          <div class="section-eyebrow">{% trans "On the calendar" %}</div>
+          <h1 class="page-title">{% trans "Events" %}</h1>
+          <p class="page-subtitle">{% trans "Training, matches, prayer meetings and gatherings." %}</p>
+        </div>
+      </div>
+      {% include 'events/_event_list_body.html' %}
+    </div>
+  </main>
+  {% include 'partials/public_footer.html' %}
+{% endblock %}

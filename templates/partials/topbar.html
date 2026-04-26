@@ -1,0 +1,59 @@
+{% load i18n %}
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="menu-btn" @click="sidebar = !sidebar" aria-label="{% trans 'Menu' %}">
+      <i data-feather="menu" style="width:18px;height:18px;"></i>
+    </button>
+    <div>
+      <div class="topbar-title">{% block page_title %}{% trans "Dashboard" %}{% endblock %}</div>
+      {% block page_subtitle %}{% endblock %}
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    {% block topbar_actions %}{% endblock %}
+
+    <!-- Theme (light/dark) toggle -->
+    <button type="button"
+            @click="theme = (theme === 'dark' ? 'light' : 'dark'); document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('bc_theme', theme); $nextTick(() => feather.replace());"
+            class="btn btn-secondary btn-sm"
+            :title="theme === 'dark' ? '{% trans "Switch to light mode" %}' : '{% trans "Switch to dark mode" %}'"
+            aria-label="{% trans 'Toggle theme' %}">
+      <template x-if="theme === 'dark'">
+        <i data-feather="sun" style="width:14px;height:14px;"></i>
+      </template>
+      <template x-if="theme !== 'dark'">
+        <i data-feather="moon" style="width:14px;height:14px;"></i>
+      </template>
+    </button>
+
+    <!-- Language switcher -->
+    <div class="dropdown" x-data="{ open: false }">
+      <button class="btn btn-secondary btn-sm" @click="open = !open" type="button" :aria-expanded="open">
+        <i data-feather="globe" style="width:14px;height:14px;"></i>
+        <span class="hide-sm">{% if CURRENT_LANGUAGE == 'ar' %}العربية{% else %}English{% endif %}</span>
+      </button>
+      <div class="dropdown-menu" :class="{ 'show': open }" @click.outside="open = false">
+        <form action="{% url 'set_language' %}" method="post" style="margin:0;">
+          {% csrf_token %}
+          {# Build a "next" path that swaps the locale prefix #}
+          {% if request.path|slice:":3" == '/en' %}
+            <input type="hidden" name="next" value="/ar{{ request.path|slice:'3:' }}">
+          {% elif request.path|slice:":3" == '/ar' %}
+            <input type="hidden" name="next" value="/en{{ request.path|slice:'3:' }}">
+          {% else %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+          {% endif %}
+          <button type="submit" name="language" value="en" class="dropdown-item" style="border:none;background:none;width:100%;text-align:start;cursor:pointer;">
+            <span style="margin-inline-end:8px;">🇬🇧</span>English
+            {% if CURRENT_LANGUAGE == 'en' %}<i data-feather="check" style="width:14px;height:14px;margin-inline-start:auto;"></i>{% endif %}
+          </button>
+          <button type="submit" name="language" value="ar" class="dropdown-item" style="border:none;background:none;width:100%;text-align:start;cursor:pointer;">
+            <span style="margin-inline-end:8px;">🇪🇬</span>العربية
+            {% if CURRENT_LANGUAGE == 'ar' %}<i data-feather="check" style="width:14px;height:14px;margin-inline-start:auto;"></i>{% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</header>

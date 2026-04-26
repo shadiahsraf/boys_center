@@ -1,0 +1,76 @@
+{% load i18n %}
+<nav class="public-nav" x-data="{ open: false }">
+  <div class="public-container public-nav-inner">
+    <a href="{% url 'landing' %}" class="public-brand">
+      <span class="public-brand-mark">✝</span>
+      <span class="public-brand-text">
+        <span class="public-brand-title">{% trans "Boys Center" %}</span>
+        <span class="public-brand-sub">{% trans "Sports & Faith" %}</span>
+      </span>
+    </a>
+
+    <div class="public-nav-links" :class="{ 'open': open }">
+      <a href="{% url 'landing' %}" class="public-nav-link">{% trans "Home" %}</a>
+      <a href="{% url 'news:list' %}" class="public-nav-link">{% trans "News" %}</a>
+      <a href="{% url 'events:list' %}" class="public-nav-link">{% trans "Events" %}</a>
+
+      {# Theme toggle: inline SVG, never touched by feather.replace() #}
+      <button type="button"
+              class="public-nav-icon-btn theme-toggle"
+              @click="toggleTheme()"
+              :aria-label="theme === 'dark' ? '{% trans "Switch to light mode" %}' : '{% trans "Switch to dark mode" %}'"
+              :title="theme === 'dark' ? '{% trans "Switch to light mode" %}' : '{% trans "Switch to dark mode" %}'">
+        <svg x-show="theme === 'dark'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg x-show="theme !== 'dark'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+      {# Language switcher (POST to /i18n/setlang/ — preserves the page) #}
+      <form action="{% url 'set_language' %}" method="post" style="display:inline-flex; gap:0; margin:0;">
+        {% csrf_token %}
+        {% if request.path|slice:":3" == '/en' %}
+          <input type="hidden" name="next" value="/ar{{ request.path|slice:'3:' }}">
+          <button type="submit" name="language" value="ar" class="public-nav-icon-btn" title="العربية">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span class="hide-sm" style="font-size:12px; margin-inline-start:6px;">عربي</span>
+          </button>
+        {% else %}
+          <input type="hidden" name="next" value="/en{{ request.path|slice:'3:' }}">
+          <button type="submit" name="language" value="en" class="public-nav-icon-btn" title="English">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span class="hide-sm" style="font-size:12px; margin-inline-start:6px;">EN</span>
+          </button>
+        {% endif %}
+      </form>
+
+      <a href="{% url 'login' %}" class="btn btn-primary btn-sm">{% trans "Sign in" %}</a>
+    </div>
+
+    <button class="public-nav-toggle" @click="open = !open" aria-label="{% trans 'Menu' %}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+</nav>

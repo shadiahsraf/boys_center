@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Parent Dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header-meta">
+      <i data-feather="heart" style="width:14px;height:14px;color:var(--color-success-500);"></i>
+      <span>{% trans "Parent Portal" %}</span>
+    </div>
+    <h1 class="page-title">{% trans "Welcome" %}, {{ user.first_name|default:user.username }}</h1>
+    <p class="page-subtitle">{% trans "Track your children's activities and performance." %}</p>
+  </div>
+</div>
+
+{% if my_children %}
+  <!-- Children cards -->
+  <div class="grid-cards mb-6">
+    {% for child in my_children %}
+      <a href="{% url 'users:detail' child.pk %}" class="card" style="display:block; text-decoration:none; color:inherit;">
+        <div class="card-body" style="display:flex; gap:14px; align-items:center;">
+          <div class="avatar avatar-lg avatar-sky">
+            {% if child.photo %}<img src="{{ child.photo.url }}">{% else %}{{ child.initials }}{% endif %}
+          </div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:700; color:var(--color-slate-900); font-size:15px;">{{ child.get_full_name }}</div>
+            <div class="cell-secondary">{% trans "Member" %} #{{ child.member_code }}</div>
+            <span class="badge role-youth mt-2">{% trans "Youth" %}</span>
+          </div>
+          <i data-feather="chevron-right" style="color:var(--color-slate-400);"></i>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="grid-dashboard">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">{% trans "Recent Attendance" %}</h3>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>{% trans "Child" %}</th>
+              <th>{% trans "Session" %}</th>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Status" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in child_attendance %}
+              <tr>
+                <td><div class="cell-primary">{{ r.user.first_name }}</div></td>
+                <td>{{ r.session.title|truncatechars:30 }}</td>
+                <td><div class="cell-secondary">{{ r.check_in_time|date:"M d" }}</div></td>
+                <td>
+                  {% if r.status == 'present' %}<span class="badge badge-success">{% trans "Present" %}</span>
+                  {% elif r.status == 'late' %}<span class="badge badge-warning">{% trans "Late" %}</span>
+                  {% else %}<span class="badge badge-slate">{{ r.status }}</span>{% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4">
+                <div class="empty-state">
+                  <div class="empty-state-icon"><i data-feather="check-square"></i></div>
+                  <p>{% trans "No attendance records yet." %}</p>
+                </div>
+              </td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">{% trans "Latest Evaluations" %}</h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% for ev in child_evaluations %}
+        <div style="padding:14px 22px; border-bottom:1px solid var(--color-slate-100);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div class="cell-primary">{{ ev.player.first_name }}</div>
+            <div class="cell-secondary">{{ ev.created_at|date:"M d" }}</div>
+          </div>
+          <div style="display:flex; justify-content:space-between; gap:8px; font-size:11.5px;">
+            <div><span class="cell-secondary">{% trans "Performance" %}</span><br>
+              <span class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.performance %} filled{% endif %}">★</span>{% endfor %}</span>
+            </div>
+            <div><span class="cell-secondary">{% trans "Behavior" %}</span><br>
+              <span class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.behavior %} filled{% endif %}">★</span>{% endfor %}</span>
+            </div>
+            <div><span class="cell-secondary">{% trans "Commitment" %}</span><br>
+              <span class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.commitment %} filled{% endif %}">★</span>{% endfor %}</span>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state">
+          <div class="empty-state-icon"><i data-feather="star"></i></div>
+          <p>{% trans "No evaluations yet." %}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Latest news -->
+<div class="card mt-6">
+  <div class="card-header">
+    <h3 class="card-title">{% trans "Latest News" %}</h3>
+    <a href="{% url 'news:list' %}" class="btn btn-ghost btn-sm">{% trans "All news" %}</a>
+  </div>
+  <div class="card-body" style="padding:16px;">
+    <div class="grid-cards">
+      {% for post in latest_news|slice:":3" %}
+        <a href="{% url 'news:detail' post.pk %}" class="news-card">
+          {% if post.image %}<img src="{{ post.image.url }}" class="news-card-image" alt="">
+          {% else %}<div class="news-card-image-placeholder"><i data-feather="image"></i></div>{% endif %}
+          <div class="news-card-body">
+            <div class="news-card-title">{{ post.title|truncatechars:50 }}</div>
+            <div class="news-card-excerpt">{{ post.excerpt|default:post.content|truncatechars:80 }}</div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-state-icon"><i data-feather="bell"></i></div>
+          <p>{% trans "No news yet." %}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

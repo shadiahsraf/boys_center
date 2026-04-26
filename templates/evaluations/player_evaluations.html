@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{{ player.get_full_name }} — {% trans "Evaluations" %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="{% url 'users:detail' player.pk %}" class="btn btn-ghost btn-sm" style="margin-bottom:8px;">
+      <i data-feather="arrow-left"></i>{% trans "Back to profile" %}
+    </a>
+    <h1 class="page-title">{{ player.get_full_name }}</h1>
+    <p class="page-subtitle">{{ eval_count }} {% trans "evaluations recorded" %}</p>
+  </div>
+</div>
+
+<div class="grid-stats">
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Performance" %}</div>
+      <div class="stat-value">{{ avg_performance|default:"—" }}<span style="font-size:14px;color:var(--color-slate-400);">/5</span></div>
+    </div>
+    <div class="stat-icon warning"><i data-feather="zap"></i></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Behavior" %}</div>
+      <div class="stat-value">{{ avg_behavior|default:"—" }}<span style="font-size:14px;color:var(--color-slate-400);">/5</span></div>
+    </div>
+    <div class="stat-icon success"><i data-feather="thumbs-up"></i></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Commitment" %}</div>
+      <div class="stat-value">{{ avg_commitment|default:"—" }}<span style="font-size:14px;color:var(--color-slate-400);">/5</span></div>
+    </div>
+    <div class="stat-icon brand"><i data-feather="target"></i></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h3 class="card-title">{% trans "Evaluation history" %}</h3></div>
+  <div class="card-body" style="padding:0;">
+    {% for ev in evaluations %}
+      <div style="padding:18px 22px; border-bottom:1px solid var(--color-slate-100);">
+        <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div class="avatar avatar-sm">{{ ev.coach.initials }}</div>
+            <div>
+              <div style="font-weight:600;">{{ ev.coach.get_full_name }}</div>
+              <div class="cell-secondary">{{ ev.created_at|date:"M d, Y" }}{% if ev.sport %} · {{ ev.get_sport_display }}{% endif %}</div>
+            </div>
+          </div>
+          <div style="text-align:end;">
+            <div style="font-size:22px; font-weight:800; color:var(--color-slate-900);">{{ ev.average }}</div>
+            <div class="cell-secondary">{% trans "average" %}</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+          <div>
+            <div class="cell-secondary mb-1">⚡ {% trans "Performance" %}</div>
+            <div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.performance %} filled{% endif %}">★</span>{% endfor %}</div>
+          </div>
+          <div>
+            <div class="cell-secondary mb-1">👍 {% trans "Behavior" %}</div>
+            <div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.behavior %} filled{% endif %}">★</span>{% endfor %}</div>
+          </div>
+          <div>
+            <div class="cell-secondary mb-1">🎯 {% trans "Commitment" %}</div>
+            <div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.commitment %} filled{% endif %}">★</span>{% endfor %}</div>
+          </div>
+        </div>
+        {% if ev.notes %}
+          <div style="margin-top:12px; padding:10px 12px; background:var(--color-slate-50); border-inline-start:3px solid var(--color-warning-500); border-radius:var(--radius); font-size:13px; color:var(--color-slate-600);">
+            {{ ev.notes }}
+          </div>
+        {% endif %}
+      </div>
+    {% empty %}
+      <div class="empty-state">
+        <div class="empty-state-icon"><i data-feather="star"></i></div>
+        <h3>{% trans "No evaluations yet" %}</h3>
+        <p>{% trans "This player hasn't been evaluated by any coach." %}</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

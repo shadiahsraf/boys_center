@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{{ object.title }}{% endblock %}
+
+{% block topbar_actions %}
+  <form method="post" action="{% url 'attendance:toggle' object.pk %}" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-secondary btn-sm">
+      {% if object.is_open %}<i data-feather="lock"></i>{% trans "Close session" %}
+      {% else %}<i data-feather="unlock"></i>{% trans "Reopen session" %}{% endif %}
+    </button>
+  </form>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header-meta">
+      <span class="badge badge-{% if object.session_type == 'training' %}brand{% elif object.session_type == 'prayer' %}warning{% elif object.session_type == 'match' %}danger{% else %}slate{% endif %}">{{ object.get_session_type_display }}</span>
+      {% if object.is_active %}
+        <span class="badge status-active"><span class="badge-dot"></span>{% trans "Live" %}</span>
+      {% else %}
+        <span class="badge status-inactive">{% trans "Closed" %}</span>
+      {% endif %}
+    </div>
+    <h1 class="page-title">{{ object.title }}</h1>
+    <p class="page-subtitle">
+      <i data-feather="calendar" style="width:13px;height:13px;display:inline;"></i> {{ object.date|date:"l, M d, Y" }} ·
+      <i data-feather="clock" style="width:13px;height:13px;display:inline;"></i> {{ object.start_time|time:"H:i" }}{% if object.end_time %}-{{ object.end_time|time:"H:i" }}{% endif %} ·
+      <i data-feather="map-pin" style="width:13px;height:13px;display:inline;"></i> {{ object.location }}
+    </p>
+  </div>
+</div>
+
+<div class="grid-dashboard">
+  <!-- Live records -->
+  <div class="card" x-data="liveRecords({{ object.attendance_count }}, '{% url 'attendance_api:session_records' object.pk %}')" x-init="startPolling()">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">{% trans "Check-ins" %} <span class="badge badge-brand" x-text="count"></span></h3>
+        <div class="card-subtitle" x-show="object.is_active">{% trans "Updates automatically every few seconds." %}</div>
+      </div>
+      {% if object.is_active %}
+        <div style="display:flex; align-items:center; gap:6px; color:var(--color-success-600); font-size:12px; font-weight:600;">
+          <span class="badge-dot" style="background:var(--color-success-500); animation:pulse 1.5s infinite;"></span>
+          {% trans "Live" %}
+        </div>
+      {% endif %}
+    </div>
+    <div class="card-body p-0">
+      <div class="table-wrap">
+        <table class="table table-responsive">
+          <thead>
+            <tr>
+              <th>{% trans "Member" %}</th>
+              <th>{% trans "Code" %}</th>
+              <th>{% trans "Status" %}</th>
+              <th>{% trans "Time" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="r in records" :key="r.id">
+              <tr>
+                <td data-label="{% trans 'Member' %}">
+                  <div class="table-cell-flex">
+                    <div class="avatar avatar-sm avatar-sky" x-text="r.initials"></div>
+                    <div class="cell-primary" x-text="r.user_name"></div>
+                  </div>
+                </td>
+                <td data-label="{% trans 'Code' %}"><code style="font-size:11px;" x-text="r.member_code"></code></td>
+                <td data-label="{% trans 'Status' %}">
+                  <span :class="r.status === 'present' ? 'badge badge-success' : (r.status === 'late' ? 'badge badge-warning' : 'badge badge-slate')" x-text="r.status"></span>
+                </td>
+                <td data-label="{% trans 'Time' %}"><span class="cell-secondary" x-text="r.check_in_time"></span></td>
+              </tr>
+            </template>
+            <tr x-show="records.length === 0">
+              <td colspan="4">
+                <div class="empty-state">
+                  <div class="empty-state-icon"><i data-feather="users"></i></div>
+                  <h3>{% trans "Waiting for check-ins" %}</h3>
+                  <p>{% trans "Players will appear here as they scan the QR code and enter their member code." %}</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code + Manual entry -->
+  <div>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3 class="card-title">{% trans "Session QR Code" %}</h3>
+      </div>
+      <div class="card-body text-center">
+        {% if object.qr_code %}
+          <div class="qr-display">
+            <img src="{{ object.qr_code.url }}" alt="Session QR">
+          </div>
+          <p class="cell-secondary mt-3">{% trans "Players scan this code to check in." %}</p>
+          <div style="background:var(--color-slate-50); padding:8px 10px; border-radius:var(--radius); margin-top:12px; font-family:'SF Mono',monospace; font-size:11px; color:var(--color-slate-600); word-break:break-all;">
+            {{ request.scheme }}://{{ request.get_host }}/{{ CURRENT_LANGUAGE }}/attendance/check-in/{{ object.token }}/
+          </div>
+          <a href="{{ object.qr_code.url }}" download class="btn btn-secondary btn-sm mt-3"><i data-feather="download" style="width:13px;height:13px;"></i>{% trans "Download QR" %}</a>
+        {% else %}
+          <div class="cell-secondary">{% trans "QR code generation pending..." %}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{% trans "Manual check-in" %}</h3>
+        <div class="card-subtitle">{% trans "If a player can't scan the QR" %}</div>
+      </div>
+      <div class="card-body" x-data="{ code: '', error: '', loading: false }">
+        <form @submit.prevent="
+          loading = true; error = '';
+          fetch('{% url 'attendance:manual_checkin' object.pk %}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'member_code=' + encodeURIComponent(code)
+          }).then(r => r.json()).then(data => {
+            loading = false;
+            if (data.success) { code = ''; error = ''; setTimeout(() => $dispatch('refresh-records'), 200); }
+            else error = data.error;
+          });
+        ">
+          <div class="form-group">
+            <input x-model="code" type="text" class="tw-input" placeholder="{% trans 'Member code' %}" style="text-transform:uppercase; font-family:'SF Mono',monospace;" autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" :disabled="loading || !code">
+            <i data-feather="user-plus" style="width:14px;height:14px;"></i>
+            <span x-show="!loading">{% trans "Add check-in" %}</span>
+            <span x-show="loading"><span class="spinner"></span></span>
+          </button>
+          <div x-show="error" x-text="error" class="form-error mt-2"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function liveRecords(initialCount, url) {
+  return {
+    count: initialCount,
+    records: [],
+    interval: null,
+    fetchRecords() {
+      fetch(url).then(r => r.json()).then(data => {
+        this.count = data.count;
+        this.records = data.records;
+        this.$nextTick(() => feather.replace());
+      });
+    },
+    startPolling() {
+      this.fetchRecords();
+      this.interval = setInterval(() => this.fetchRecords(), 5000);
+      window.addEventListener('refresh-records', () => this.fetchRecords());
+    }
+  };
+}
+</script>
+<style>@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }</style>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% if object %}{% trans "Edit event" %}{% else %}{% trans "New event" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:680px; margin:0 auto;">
+  <h1 class="page-title mb-4">{% if object %}{% trans "Edit event" %}{% else %}{% trans "Create event" %}{% endif %}</h1>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label">{% trans "Title" %} *</label>
+          {{ form.title }}
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">{% trans "Type" %} *</label>
+            {{ form.event_type }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Location" %} *</label>
+            {{ form.location }}
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">{% trans "Start" %} *</label>
+            {{ form.start_datetime }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "End" %}</label>
+            {{ form.end_datetime }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Description" %}</label>
+          {{ form.description }}
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="submit" class="btn btn-primary"><i data-feather="check"></i>{% trans "Save event" %}</button>
+          <a href="{% url 'events:list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

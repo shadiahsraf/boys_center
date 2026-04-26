@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Audit Log" %}{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+  <div class="card-body" style="padding:14px 18px;">
+    <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <div style="flex:1; min-width:240px;">
+        <input type="text" name="q" value="{{ filter_q }}" class="tw-input" placeholder="{% trans 'Search by user or action...' %}">
+      </div>
+      <button type="submit" class="btn btn-primary"><i data-feather="search"></i>{% trans "Search" %}</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">{% trans "Activity log" %}</h3>
+      <div class="card-subtitle">{{ paginator.count }} {% trans "events recorded" %}</div>
+    </div>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-wrap">
+      <table class="table table-responsive">
+        <thead>
+          <tr>
+            <th>{% trans "User" %}</th>
+            <th>{% trans "Action" %}</th>
+            <th>{% trans "IP" %}</th>
+            <th>{% trans "When" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td data-label="{% trans 'User' %}">
+                <div class="table-cell-flex">
+                  <div class="avatar avatar-xs">{{ log.user.initials }}</div>
+                  <div>
+                    <div class="cell-primary">{{ log.user.get_full_name|default:log.user.username }}</div>
+                    <div class="cell-secondary">{{ log.user.role_display }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="{% trans 'Action' %}">
+                <span class="badge badge-{% if 'created' in log.action %}success{% elif 'login' in log.action %}brand{% elif 'checkin' in log.action %}brand{% else %}slate{% endif %}">{{ log.action|cut:"_"|title }}</span>
+              </td>
+              <td data-label="{% trans 'IP' %}"><code style="font-size:11px;">{{ log.ip_address|default:"—" }}</code></td>
+              <td data-label="{% trans 'When' %}"><span class="cell-secondary">{{ log.timestamp|date:"M d, H:i" }}</span></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4">
+              <div class="empty-state">
+                <div class="empty-state-icon"><i data-feather="shield"></i></div>
+                <h3>{% trans "No activity logged" %}</h3>
+                <p>{% trans "User actions will appear here as they occur." %}</p>
+              </div>
+            </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% if is_paginated %}
+    <nav class="pagination">
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filter_q }}"><i data-feather="chevron-left" style="width:14px;height:14px;"></i></a>{% endif %}
+      <span class="active">{{ page_obj.number }}</span>
+      <span>/ {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filter_q }}"><i data-feather="chevron-right" style="width:14px;height:14px;"></i></a>{% endif %}
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

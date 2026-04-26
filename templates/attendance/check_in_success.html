@@ -1,0 +1,52 @@
+{% load i18n static %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if IS_RTL %}rtl{% else %}ltr{% endif %}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% trans "Checked in" %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=2">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" defer></script>
+</head>
+<body>
+<div class="checkin-page">
+  <div class="checkin-card text-center">
+    {% if duplicate %}
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--color-warning-100);color:var(--color-warning-700);display:grid;place-items:center;margin:0 auto 18px;">
+        <i data-feather="info" style="width:36px;height:36px;"></i>
+      </div>
+      <h1 style="font-size:20px; font-weight:800; color:var(--color-slate-900);">{% trans "Already checked in!" %}</h1>
+      <p class="cell-secondary mt-2">{% trans "You have already been recorded for this session." %}</p>
+    {% elif status == 'late' %}
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--color-warning-100);color:var(--color-warning-700);display:grid;place-items:center;margin:0 auto 18px;">
+        <i data-feather="clock" style="width:36px;height:36px;"></i>
+      </div>
+      <h1 style="font-size:20px; font-weight:800; color:var(--color-slate-900);">{% trans "Checked in (late)" %}</h1>
+      <p class="cell-secondary mt-2">{% trans "Your attendance has been recorded as late." %}</p>
+    {% else %}
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--color-success-100);color:var(--color-success-700);display:grid;place-items:center;margin:0 auto 18px;">
+        <i data-feather="check-circle" style="width:36px;height:36px;"></i>
+      </div>
+      <h1 style="font-size:20px; font-weight:800; color:var(--color-slate-900);">{% trans "Successfully checked in!" %}</h1>
+      <p class="cell-secondary mt-2">{% trans "Welcome" %}, {{ user.get_full_name|default:user.username }}.</p>
+    {% endif %}
+
+    <div style="margin-top:24px; padding:16px; background:var(--color-slate-50); border-radius:var(--radius-lg); text-align:start;">
+      <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+        <div class="avatar avatar-md avatar-sky">{{ user.initials }}</div>
+        <div>
+          <div style="font-weight:700;color:var(--color-slate-900);">{{ user.get_full_name|default:user.username }}</div>
+          <div class="cell-secondary"><code>{{ user.member_code }}</code></div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--color-slate-200); padding-top:10px; margin-top:10px; font-size:13px; color:var(--color-slate-600);">
+        <div><strong>{{ session.title }}</strong></div>
+        <div class="cell-secondary mt-1">{{ session.date|date:"M d, Y" }} · {{ session.start_time|time:"H:i" }} · {{ session.location }}</div>
+      </div>
+    </div>
+
+    <p class="cell-secondary mt-4">{% trans "You may close this page now." %}</p>
+  </div>
+</div>
+<script>document.addEventListener('DOMContentLoaded', () => feather.replace());</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% load i18n %}
+<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; align-items:center;">
+  <div style="display:flex; gap:6px;">
+    <a href="?when=upcoming{% if filter_type %}&type={{ filter_type }}{% endif %}" class="btn {% if filter_when == 'upcoming' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "Upcoming" %}</a>
+    <a href="?when=past{% if filter_type %}&type={{ filter_type }}{% endif %}" class="btn {% if filter_when == 'past' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "Past" %}</a>
+    <a href="?when=all{% if filter_type %}&type={{ filter_type }}{% endif %}" class="btn {% if filter_when == 'all' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "All" %}</a>
+  </div>
+  <span style="border-inline-start:1px solid var(--color-slate-300); align-self:stretch;"></span>
+  <a href="?when={{ filter_when }}" class="btn {% if not filter_type %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "All types" %}</a>
+  {% for v, l in event_types %}
+    <a href="?type={{ v }}&when={{ filter_when }}" class="btn {% if filter_type == v %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{{ l }}</a>
+  {% endfor %}
+</div>
+
+<div class="grid-2">
+  {% for ev in events %}
+    <a href="{% url 'events:detail' ev.pk %}" class="event-tile event-color-{{ ev.color }}">
+      <div class="event-date-block">
+        <div class="day">{{ ev.start_datetime|date:"d" }}</div>
+        <div class="month">{{ ev.start_datetime|date:"M" }}</div>
+      </div>
+      <div class="event-tile-meta">
+        <span class="badge badge-slate" style="font-size:10px;">{{ ev.get_event_type_display }}</span>
+        <div class="event-tile-title">{{ ev.title }}</div>
+        <div class="event-tile-info">
+          <i data-feather="clock" style="width:11px;height:11px;"></i> {{ ev.start_datetime|date:"H:i" }}
+          <span style="margin: 0 6px;">·</span>
+          <i data-feather="map-pin" style="width:11px;height:11px;"></i> {{ ev.location|truncatechars:40 }}
+        </div>
+      </div>
+    </a>
+  {% empty %}
+    <div class="empty-state" style="grid-column:1/-1;">
+      <div class="empty-state-icon"><i data-feather="calendar"></i></div>
+      <h3>{% trans "No events found" %}</h3>
+      <p>{% trans "Try changing the filters above." %}</p>
+    </div>
+  {% endfor %}
+</div>

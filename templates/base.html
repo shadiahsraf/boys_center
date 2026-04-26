@@ -1,0 +1,162 @@
+{% load i18n static %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if IS_RTL %}rtl{% else %}ltr{% endif %}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <title>{% block title %}{% trans "Boys Center" %}{% endblock %} · Boys Center</title>
+
+  {# Apply theme BEFORE the body renders to avoid FOUC. #}
+  <script>
+    (function() {
+      try {
+        var stored = localStorage.getItem('bc_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.classList.add('no-theme-transition');
+        window.addEventListener('load', function() {
+          setTimeout(function() {
+            document.documentElement.classList.remove('no-theme-transition');
+          }, 50);
+        });
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=6">
+  <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+</head>
+<body x-data="{
+        sidebar: false,
+        theme: document.documentElement.getAttribute('data-theme') || 'light',
+        toggleTheme() {
+          this.theme = this.theme === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', this.theme);
+          localStorage.setItem('bc_theme', this.theme);
+        }
+      }">
+{% block body %}
+  {% if user.is_authenticated %}
+    {# ── AUTHENTICATED LAYOUT ── #}
+    <div class="app-shell">
+      {% include 'partials/sidebar.html' %}
+      <div class="sidebar-overlay" :class="{ 'show': sidebar }" @click="sidebar = false"></div>
+
+      <div class="main-area">
+        <header class="topbar">
+          <div class="topbar-left">
+            <button class="menu-btn" @click="sidebar = !sidebar" aria-label="{% trans 'Menu' %}">
+              <i data-feather="menu" style="width:18px;height:18px;"></i>
+            </button>
+            <div>
+              <div class="topbar-title">{% block page_title %}{% trans "Dashboard" %}{% endblock %}</div>
+              {% block page_subtitle %}{% endblock %}
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            {% block topbar_actions %}{% endblock %}
+
+            {# ── THEME TOGGLE (inline SVG so feather.replace() never touches it) ── #}
+            <button type="button"
+                    @click="toggleTheme()"
+                    class="btn btn-secondary btn-sm theme-toggle"
+                    :title="theme === 'dark' ? '{% trans "Switch to light mode" %}' : '{% trans "Switch to dark mode" %}'"
+                    :aria-label="theme === 'dark' ? '{% trans "Switch to light mode" %}' : '{% trans "Switch to dark mode" %}'">
+              {# Sun icon, shown when in dark mode #}
+              <svg x-show="theme === 'dark'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+              {# Moon icon, shown when in light mode #}
+              <svg x-show="theme !== 'dark'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </button>
+
+            {# ── LANGUAGE TOGGLE (one-click switch, like the public navbar) ── #}
+            <form action="{% url 'set_language' %}" method="post" style="margin:0;">
+              {% csrf_token %}
+              {% if request.path|slice:":3" == '/en' %}
+                <input type="hidden" name="next" value="/ar{{ request.path|slice:'3:' }}">
+                <input type="hidden" name="language" value="ar">
+                <button type="submit" class="btn btn-secondary btn-sm" title="التبديل للعربية">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                  </svg>
+                  <span class="hide-sm">عربي</span>
+                </button>
+              {% else %}
+                <input type="hidden" name="next" value="/en{{ request.path|slice:'3:' }}">
+                <input type="hidden" name="language" value="en">
+                <button type="submit" class="btn btn-secondary btn-sm" title="Switch to English">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                  </svg>
+                  <span class="hide-sm">English</span>
+                </button>
+              {% endif %}
+            </form>
+          </div>
+        </header>
+
+        <main class="page-content">
+          {% if messages %}
+            <div class="mb-4">
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}" x-data="{ show: true }" x-show="show">
+                  <i data-feather="{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}alert-circle{% elif message.tags == 'warning' %}alert-triangle{% else %}info{% endif %}" style="width:18px;height:18px;flex-shrink:0;"></i>
+                  <span style="flex:1;">{{ message }}</span>
+                  <button @click="show = false" style="padding:0;background:none;border:none;color:inherit;cursor:pointer;"><i data-feather="x" style="width:16px;height:16px;"></i></button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+  {% else %}
+    {# ── PUBLIC / GUEST LAYOUT ── #}
+    {% block guest_body %}
+      {% include 'partials/public_nav.html' %}
+      <main class="public-main">
+        {% if messages %}
+          <div class="public-container">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags|default:'info' }}">
+                <span>{{ message }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% block public_content %}{% endblock %}
+      </main>
+      {% include 'partials/public_footer.html' %}
+    {% endblock %}
+  {% endif %}
+{% endblock %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => feather.replace());
+    document.addEventListener('alpine:init', () => feather.replace());
+    document.addEventListener('alpine:initialized', () => feather.replace());
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

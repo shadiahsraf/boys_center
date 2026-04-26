@@ -1,0 +1,42 @@
+{% load i18n %}
+<div style="max-width:760px; margin:0 auto;">
+  <a href="{% url 'events:list' %}" class="btn btn-ghost btn-sm" style="margin-bottom:14px;">
+    <i data-feather="arrow-left"></i>{% trans "Back to events" %}
+  </a>
+
+  <div class="card">
+    <div class="card-body" style="padding:32px;">
+      <span class="badge badge-{% if object.color == 'green' %}success{% elif object.color == 'red' %}danger{% elif object.color == 'amber' %}warning{% elif object.color == 'sky' %}info{% elif object.color == 'purple' %}purple{% else %}slate{% endif %} mb-3">{{ object.get_event_type_display }}</span>
+      <h1 style="font-size:24px; font-weight:800; color:var(--color-slate-900); margin-bottom:18px;">{{ object.title }}</h1>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px; margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="stat-icon brand" style="width:36px; height:36px; font-size:14px;"><i data-feather="calendar"></i></div>
+          <div>
+            <div class="cell-secondary">{% trans "Date" %}</div>
+            <div style="font-weight:600;">{{ object.start_datetime|date:"l, M d, Y" }}</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="stat-icon warning" style="width:36px; height:36px; font-size:14px;"><i data-feather="clock"></i></div>
+          <div>
+            <div class="cell-secondary">{% trans "Time" %}</div>
+            <div style="font-weight:600;">{{ object.start_datetime|date:"H:i" }}{% if object.end_datetime %} – {{ object.end_datetime|date:"H:i" }}{% endif %}</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="stat-icon success" style="width:36px; height:36px; font-size:14px;"><i data-feather="map-pin"></i></div>
+          <div>
+            <div class="cell-secondary">{% trans "Location" %}</div>
+            <div style="font-weight:600;">{{ object.location }}</div>
+          </div>
+        </div>
+      </div>
+
+      {% if object.description %}
+        <h3 style="font-size:14px; font-weight:700; color:var(--color-slate-700); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">{% trans "Description" %}</h3>
+        <div style="font-size:14px; line-height:1.7; color:var(--color-slate-600); white-space:pre-wrap;">{{ object.description }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{{ profile_user.get_full_name|default:profile_user.username }}{% endblock %}
+
+{% block topbar_actions %}
+  {% if is_admin_user %}
+    <a href="{% url 'users:update' profile_user.pk %}" class="btn btn-secondary btn-sm"><i data-feather="edit-2"></i>{% trans "Edit" %}</a>
+    {% if profile_user.pk != user.pk %}
+      <a href="{% url 'users:delete' profile_user.pk %}" class="btn btn-danger btn-sm"><i data-feather="trash-2"></i>{% trans "Delete" %}</a>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div style="display:grid; grid-template-columns: 320px 1fr; gap:24px;" class="grid-dashboard">
+  <!-- Left: profile card + QR + meta -->
+  <div>
+    <div class="card mb-4">
+      <div class="card-body text-center">
+        <div class="avatar avatar-xl avatar-{% if profile_user.is_admin %}warning{% elif profile_user.is_coach %}brand{% elif profile_user.is_parent %}success{% else %}sky{% endif %} mx-auto" style="margin-bottom:14px;">
+          {% if profile_user.photo %}<img src="{{ profile_user.photo.url }}" alt="">{% else %}{{ profile_user.initials }}{% endif %}
+        </div>
+        <h2 style="font-size:18px; font-weight:800; color:var(--color-slate-900);">{{ profile_user.get_full_name|default:profile_user.username }}</h2>
+        <div class="cell-secondary mt-1">@{{ profile_user.username }}</div>
+        <div style="display:flex; gap:4px; justify-content:center; margin-top:10px; flex-wrap:wrap;">
+          {% for r in profile_user.roles %}<span class="badge role-{{ r }}">{{ r|cut:"_"|title }}</span>{% endfor %}
+        </div>
+        <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--color-slate-100); text-align:start;">
+          <div style="display:grid; grid-template-columns: auto 1fr; gap:8px 12px; font-size:13px;">
+            <span class="cell-secondary">{% trans "Code" %}</span>
+            <code style="font-size:11px;">{{ profile_user.member_code }}</code>
+            {% if profile_user.email %}
+              <span class="cell-secondary">{% trans "Email" %}</span>
+              <span style="word-break:break-all;">{{ profile_user.email }}</span>
+            {% endif %}
+            {% if profile_user.phone %}
+              <span class="cell-secondary">{% trans "Phone" %}</span>
+              <span>{{ profile_user.phone }}</span>
+            {% endif %}
+            {% if profile_user.date_of_birth %}
+              <span class="cell-secondary">{% trans "Born" %}</span>
+              <span>{{ profile_user.date_of_birth|date:"M d, Y" }}</span>
+            {% endif %}
+            <span class="cell-secondary">{% trans "Joined" %}</span>
+            <span>{{ profile_user.date_joined|date:"M d, Y" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if profile_user.is_youth and profile_user.qr_code %}
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">{% trans "Member QR" %}</h3></div>
+        <div class="card-body text-center">
+          <div class="qr-display"><img src="{{ profile_user.qr_code.url }}" alt="QR Code"></div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Right: stats + evaluations + attendance -->
+  <div>
+    {% if profile_user.is_youth %}
+      <!-- Performance summary -->
+      <div class="grid-stats">
+        <div class="stat-card">
+          <div class="stat-meta">
+            <div class="stat-label">{% trans "Performance" %}</div>
+            <div class="stat-value">{{ avg_performance|default:"—" }}<span style="font-size:14px;color:var(--color-slate-400);">/5</span></div>
+          </div>
+          <div class="stat-icon warning"><i data-feather="zap"></i></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-meta">
+            <div class="stat-label">{% trans "Behavior" %}</div>
+            <div class="stat-value">{{ avg_behavior|default:"—" }}<span style="font-size:14px;color:var(--color-slate-400);">/5</span></div>
+          </div>
+          <div class="stat-icon success"><i data-feather="thumbs-up"></i></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-meta">
+            <div class="stat-label">{% trans "Commitment" %}</div>
+            <div class="stat-value">{{ avg_commitment|default:"—" }}<span style="font-size:14px;color:var(--color-slate-400);">/5</span></div>
+          </div>
+          <div class="stat-icon brand"><i data-feather="target"></i></div>
+        </div>
+      </div>
+
+      <!-- Recent evaluations -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h3 class="card-title">{% trans "Recent evaluations" %}</h3>
+          <a href="{% url 'evaluations:player' profile_user.pk %}" class="btn btn-ghost btn-sm">{% trans "View all" %} →</a>
+        </div>
+        <div class="card-body" style="padding:0;">
+          {% for ev in evaluations %}
+            <div style="padding:14px 22px; border-bottom:1px solid var(--color-slate-100);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <div>
+                  <div style="font-weight:600;">{{ ev.coach.get_full_name }}</div>
+                  <div class="cell-secondary">{{ ev.created_at|date:"M d, Y" }}</div>
+                </div>
+                <div style="text-align:end;">
+                  <div style="font-size:18px; font-weight:800; color:var(--color-slate-900);">{{ ev.average }}</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:14px; font-size:11px;">
+                <span><span class="cell-secondary">{% trans "P" %}</span> <span class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.performance %} filled{% endif %}">★</span>{% endfor %}</span></span>
+                <span><span class="cell-secondary">{% trans "B" %}</span> <span class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.behavior %} filled{% endif %}">★</span>{% endfor %}</span></span>
+                <span><span class="cell-secondary">{% trans "C" %}</span> <span class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.commitment %} filled{% endif %}">★</span>{% endfor %}</span></span>
+              </div>
+            </div>
+          {% empty %}
+            <div class="empty-state"><div class="empty-state-icon"><i data-feather="star"></i></div><p>{% trans "No evaluations yet." %}</p></div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Recent attendance -->
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">{% trans "Recent attendance" %}</h3></div>
+      <div class="card-body p-0">
+        <div class="table-wrap">
+          <table class="table table-responsive">
+            <thead>
+              <tr>
+                <th>{% trans "Session" %}</th>
+                <th>{% trans "Type" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Status" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in recent_attendance %}
+                <tr>
+                  <td data-label="{% trans 'Session' %}"><div class="cell-primary">{{ r.session.title }}</div></td>
+                  <td data-label="{% trans 'Type' %}"><span class="badge badge-slate">{{ r.session.get_session_type_display }}</span></td>
+                  <td data-label="{% trans 'Date' %}"><span class="cell-secondary">{{ r.check_in_time|date:"M d, H:i" }}</span></td>
+                  <td data-label="{% trans 'Status' %}">
+                    {% if r.status == 'present' %}<span class="badge badge-success">{% trans "Present" %}</span>
+                    {% elif r.status == 'late' %}<span class="badge badge-warning">{% trans "Late" %}</span>
+                    {% else %}<span class="badge badge-slate">{{ r.status }}</span>{% endif %}
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="4">
+                  <div class="empty-state"><div class="empty-state-icon"><i data-feather="check-square"></i></div><p>{% trans "No attendance records." %}</p></div>
+                </td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

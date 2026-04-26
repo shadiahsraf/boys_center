@@ -1,0 +1,59 @@
+{% load i18n static %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if IS_RTL %}rtl{% else %}ltr{% endif %}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% trans "Check in" %} · {{ session.title }}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=2">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" defer></script>
+</head>
+<body>
+<div class="checkin-page">
+  <div class="checkin-card">
+    <div style="text-align:center; margin-bottom:24px;">
+      <div class="login-brand-mark" style="width:54px;height:54px;font-size:26px;">✝</div>
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--color-slate-500); margin-top:14px;">{% trans "Boys Center · Check-in" %}</div>
+      <h1 style="font-size:18px; font-weight:800; color:var(--color-slate-900); margin-top:6px;">{{ session.title }}</h1>
+      <div style="display:flex; justify-content:center; gap:12px; margin-top:10px; font-size:12.5px; color:var(--color-slate-500);">
+        <span><i data-feather="calendar" style="width:13px;height:13px;display:inline-block;"></i> {{ session.date|date:"M d, Y" }}</span>
+        <span><i data-feather="clock" style="width:13px;height:13px;display:inline-block;"></i> {{ session.start_time|time:"H:i" }}</span>
+      </div>
+      <div class="cell-secondary mt-1"><i data-feather="map-pin" style="width:13px;height:13px;display:inline-block;"></i> {{ session.location }}</div>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          <i data-feather="alert-circle" style="width:16px;height:16px;"></i>
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label" for="member_code">{% trans "Your member code" %}</label>
+        <input type="text" id="member_code" name="member_code" class="tw-input" required
+               placeholder="{% trans 'e.g. JOH1001' %}"
+               value="{{ submitted_code|default:'' }}"
+               style="text-transform:uppercase; font-family:'SF Mono',monospace; letter-spacing:1px; font-size:16px; padding:12px;"
+               autofocus autocomplete="off">
+        <div class="form-help">{% trans "You'll find this code on your profile or member card." %}</div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">
+        <i data-feather="check-circle" style="width:16px;height:16px;"></i>
+        {% trans "Check in now" %}
+      </button>
+    </form>
+
+    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--color-slate-100); text-align:center;">
+      <div class="cell-secondary">{% trans "Session expires" %}: {{ session.expires_at|date:"M d, H:i" }}</div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => feather.replace());
+</script>
+</body>
+</html>

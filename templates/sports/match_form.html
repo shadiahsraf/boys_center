@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% if object %}{% trans "Edit match" %}{% else %}{% trans "Schedule match" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:760px; margin:0 auto;">
+  <div class="page-header">
+    <h1 class="page-title">{% if object %}{% trans "Edit match" %}{% else %}{% trans "Schedule a match" %}{% endif %}</h1>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">{% trans "Sport" %} *</label>{{ form.sport }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Home team" %} *</label>{{ form.home_team }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Away team" %} *</label>{{ form.away_team }}
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">{% trans "Date & time" %} *</label>{{ form.scheduled_at }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Location" %} *</label>{{ form.location }}
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--color-slate-100); padding-top:16px; margin-top:8px;">
+          <h4 style="font-size:13px; font-weight:700; color:var(--color-slate-700); margin-bottom:12px;">{% trans "Score (only if completed)" %}</h4>
+          <div class="grid-3">
+            <div class="form-group">
+              <label class="form-label">{% trans "Home score" %}</label>{{ form.home_score }}
+            </div>
+            <div class="form-group">
+              <label class="form-label">{% trans "Away score" %}</label>{{ form.away_score }}
+            </div>
+            <div class="form-group" style="display:flex; align-items:center;">
+              <label style="display:flex; align-items:center; gap:8px; padding-top:24px;">
+                {{ form.is_completed }}
+                <span style="font-weight:500;">{% trans "Match completed" %}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Notes" %}</label>{{ form.notes }}
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="submit" class="btn btn-primary"><i data-feather="check"></i>{% trans "Save match" %}</button>
+          <a href="{% url 'sports:match_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

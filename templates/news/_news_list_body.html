@@ -1,0 +1,32 @@
+{% load i18n %}
+<div class="grid-cards">
+  {% for post in posts %}
+    <a href="{% url 'news:detail' post.pk %}" class="news-card">
+      {% if post.image %}<img src="{{ post.image.url }}" class="news-card-image" alt="">
+      {% else %}<div class="news-card-image-placeholder"><i data-feather="image"></i></div>{% endif %}
+      <div class="news-card-body">
+        {% if post.is_featured %}<span class="badge badge-warning mb-2" style="align-self:flex-start;">{% trans "Featured" %}</span>{% endif %}
+        <div class="news-card-title">{{ post.title|truncatechars:60 }}</div>
+        <div class="news-card-excerpt">{{ post.excerpt|default:post.content|truncatechars:100 }}</div>
+        <div class="news-card-meta">
+          {% if post.author %}<span><i data-feather="user" style="width:11px;height:11px;display:inline;"></i> {{ post.author.first_name|default:"Admin" }}</span>{% endif %}
+          <span>{{ post.created_at|timesince }} {% trans "ago" %}</span>
+        </div>
+      </div>
+    </a>
+  {% empty %}
+    <div class="empty-state" style="grid-column:1/-1;">
+      <div class="empty-state-icon"><i data-feather="bell"></i></div>
+      <h3>{% trans "No news yet" %}</h3>
+      <p>{% trans "News and announcements will appear here." %}</p>
+    </div>
+  {% endfor %}
+</div>
+{% if is_paginated %}
+<nav class="pagination mt-6">
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}"><i data-feather="chevron-left" style="width:14px;height:14px;"></i></a>{% endif %}
+  <span class="active">{{ page_obj.number }}</span>
+  <span>/ {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}"><i data-feather="chevron-right" style="width:14px;height:14px;"></i></a>{% endif %}
+</nav>
+{% endif %}

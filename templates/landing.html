@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Boys Center — Sports & Faith for Youth" %}{% endblock %}
+
+{% block guest_body %}
+<!-- Public navbar -->
+{% include 'partials/public_nav.html' %}
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="hero-cross">✝</span>
+        <span>{% trans "A Christian sports community" %}</span>
+      </div>
+      <h1 class="hero-title">
+        {% trans "Boys Center" %}
+        <span class="hero-title-accent">{% trans "Building character through sport and faith." %}</span>
+      </h1>
+      <p class="hero-sub">
+        {% trans "Football, basketball, volleyball and more — paired with prayer, friendship and growth. We help young men become disciplined athletes and faithful disciples." %}
+      </p>
+      <div class="hero-cta">
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg">
+          <i data-feather="log-in"></i>{% trans "Sign in to your account" %}
+        </a>
+        <a href="#news" class="btn btn-secondary btn-lg">
+          {% trans "Latest news" %} <i data-feather="arrow-down"></i>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>{{ stats.youth }}+</strong><span>{% trans "youth members" %}</span></div>
+        <div><strong>{{ stats.coaches }}</strong><span>{% trans "coaches" %}</span></div>
+        <div><strong>{{ stats.teams }}</strong><span>{% trans "teams across 5 sports" %}</span></div>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-card hero-card-1">
+        <div class="hero-card-icon">⚽</div>
+        <div class="hero-card-body">
+          <div class="hero-card-label">{% trans "Football" %}</div>
+          <div class="hero-card-meta">{% trans "Mon · Wed · Fri" %}</div>
+        </div>
+      </div>
+      <div class="hero-card hero-card-2">
+        <div class="hero-card-icon">🏀</div>
+        <div class="hero-card-body">
+          <div class="hero-card-label">{% trans "Basketball" %}</div>
+          <div class="hero-card-meta">{% trans "Tue · Thu" %}</div>
+        </div>
+      </div>
+      <div class="hero-card hero-card-3">
+        <div class="hero-card-icon">🙏</div>
+        <div class="hero-card-body">
+          <div class="hero-card-label">{% trans "Prayer Meeting" %}</div>
+          <div class="hero-card-meta">{% trans "Friday evenings" %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VALUES ── -->
+<section class="values-section">
+  <div class="public-container">
+    <div class="section-eyebrow">{% trans "What we offer" %}</div>
+    <h2 class="section-title">{% trans "More than a sports club" %}</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-icon" style="background: rgba(34, 197, 94, 0.12); color: var(--color-success-700);"><i data-feather="award"></i></div>
+        <h3>{% trans "Five sports, every level" %}</h3>
+        <p>{% trans "Football, basketball, volleyball, handball and table tennis — for U-12 through U-18." %}</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon" style="background: rgba(59, 130, 246, 0.12); color: var(--color-brand-700);"><i data-feather="users"></i></div>
+        <h3>{% trans "Mentorship that lasts" %}</h3>
+        <p>{% trans "Coaches who care about more than the scoreboard. Discipline, teamwork and respect on and off the field." %}</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon" style="background: rgba(245, 158, 11, 0.12); color: var(--color-warning-700);"><i data-feather="heart"></i></div>
+        <h3>{% trans "Faith at the center" %}</h3>
+        <p>{% trans "Prayer meetings, retreats and parent activities woven through the season — Christ-centered from start to finish." %}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── NEWS ── -->
+<section class="public-section" id="news">
+  <div class="public-container">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">{% trans "Stay updated" %}</div>
+        <h2 class="section-title">{% trans "Latest news" %}</h2>
+      </div>
+      <a href="{% url 'news:list' %}" class="btn btn-ghost btn-sm">
+        {% trans "All news" %} <i data-feather="arrow-right" style="width:14px;height:14px;"></i>
+      </a>
+    </div>
+    <div class="grid-cards">
+      {% for post in latest_news %}
+        <a href="{% url 'news:detail' post.pk %}" class="news-card">
+          {% if post.image %}
+            <img src="{{ post.image.url }}" class="news-card-image" alt="">
+          {% else %}
+            <div class="news-card-image-placeholder"><i data-feather="image"></i></div>
+          {% endif %}
+          <div class="news-card-body">
+            {% if post.is_featured %}<span class="badge badge-warning mb-2" style="align-self:flex-start;">{% trans "Featured" %}</span>{% endif %}
+            <div class="news-card-title">{{ post.title|truncatechars:60 }}</div>
+            <div class="news-card-excerpt">{{ post.excerpt|default:post.content|truncatechars:100 }}</div>
+            <div class="news-card-meta">
+              {% if post.author %}<span><i data-feather="user" style="width:11px;height:11px;display:inline;"></i> {{ post.author.first_name|default:"Admin" }}</span>{% endif %}
+              <span>{{ post.created_at|timesince }} {% trans "ago" %}</span>
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-state-icon"><i data-feather="bell"></i></div>
+          <h3>{% trans "No news yet" %}</h3>
+          <p>{% trans "Check back soon — announcements appear here." %}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ── EVENTS ── -->
+<section class="public-section public-section-alt">
+  <div class="public-container">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">{% trans "On the calendar" %}</div>
+        <h2 class="section-title">{% trans "Upcoming events" %}</h2>
+      </div>
+      <a href="{% url 'events:list' %}" class="btn btn-ghost btn-sm">
+        {% trans "All events" %} <i data-feather="arrow-right" style="width:14px;height:14px;"></i>
+      </a>
+    </div>
+    <div class="grid-2">
+      {% for ev in upcoming_events %}
+        <a href="{% url 'events:detail' ev.pk %}" class="event-tile event-color-{{ ev.color }}">
+          <div class="event-date-block">
+            <div class="day">{{ ev.start_datetime|date:"d" }}</div>
+            <div class="month">{{ ev.start_datetime|date:"M" }}</div>
+          </div>
+          <div class="event-tile-meta">
+            <span class="badge badge-slate" style="font-size:10px;">{{ ev.get_event_type_display }}</span>
+            <div class="event-tile-title">{{ ev.title }}</div>
+            <div class="event-tile-info">
+              <i data-feather="clock" style="width:11px;height:11px;"></i> {{ ev.start_datetime|date:"H:i" }}
+              <span style="margin: 0 6px;">·</span>
+              <i data-feather="map-pin" style="width:11px;height:11px;"></i> {{ ev.location|truncatechars:40 }}
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-state-icon"><i data-feather="calendar"></i></div>
+          <h3>{% trans "No upcoming events" %}</h3>
+          <p>{% trans "New events will be announced soon." %}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="public-container">
+    <div class="cta-card">
+      <div>
+        <h2>{% trans "Already a member?" %}</h2>
+        <p>{% trans "Sign in to track attendance, view evaluations, and stay connected with the team." %}</p>
+      </div>
+      <a href="{% url 'login' %}" class="btn btn-primary btn-lg">
+        <i data-feather="log-in"></i>{% trans "Sign in" %}
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+{% include 'partials/public_footer.html' %}
+{% endblock %}

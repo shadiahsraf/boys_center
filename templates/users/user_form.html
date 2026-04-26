@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% if object %}{% trans "Edit member" %}{% else %}{% trans "New member" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:840px; margin:0 auto;"
+     x-data="{
+       roles: {{ form.roles.value|default:'[]'|safe }},
+       isParent() { return this.roles.includes('parent'); },
+       isCoach() { return this.roles.includes('coach'); },
+       updateRoles(e) {
+         const v = e.target.value;
+         if (e.target.checked) { if (!this.roles.includes(v)) this.roles.push(v); }
+         else { this.roles = this.roles.filter(r => r !== v); }
+       }
+     }">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{% if object %}{% trans "Edit member" %}{% else %}{% trans "Add new member" %}{% endif %}</h1>
+      <p class="page-subtitle">{% trans "Member code and QR will be generated automatically." %}</p>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Account section -->
+    <div class="card mb-4">
+      <div class="card-header"><h3 class="card-title">{% trans "Account" %}</h3></div>
+      <div class="card-body">
+        <div class="grid-3">
+          {% if not object %}
+            <div class="form-group">
+              <label class="form-label">{% trans "Username" %} *</label>
+              {{ form.username }}
+              {% if form.username.errors %}<div class="form-error">{{ form.username.errors.0 }}</div>{% endif %}
+            </div>
+          {% endif %}
+          <div class="form-group">
+            <label class="form-label">{% trans "First name" %}</label>
+            {{ form.first_name }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Last name" %}</label>
+            {{ form.last_name }}
+          </div>
+        </div>
+        {% if not object %}
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">{% trans "Password" %} *</label>
+              {{ form.password1 }}
+              {% if form.password1.errors %}<div class="form-error">{{ form.password1.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="form-group">
+              <label class="form-label">{% trans "Confirm password" %} *</label>
+              {{ form.password2 }}
+              {% if form.password2.errors %}<div class="form-error">{{ form.password2.errors.0 }}</div>{% endif %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="card mb-4">
+      <div class="card-header"><h3 class="card-title">{% trans "Contact information" %}</h3></div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">{% trans "Email" %}</label>
+            {{ form.email }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Phone" %}</label>
+            {{ form.phone }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Date of birth" %}</label>
+            {{ form.date_of_birth }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Photo" %}</label>
+            {{ form.photo }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Address" %}</label>
+          {{ form.address }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Roles -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3 class="card-title">{% trans "Roles" %} *</h3>
+        <div class="card-subtitle">{% trans "A user can have multiple roles." %}</div>
+      </div>
+      <div class="card-body">
+        <div class="role-checkbox-group">
+          {% for choice in form.roles %}
+            <label>
+              <input type="checkbox" name="roles" value="{{ choice.data.value }}"
+                     {% if choice.data.selected %}checked{% endif %}
+                     @change="updateRoles($event)">
+              <span>{{ choice.choice_label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+        {% if form.roles.errors %}<div class="form-error mt-2">{{ form.roles.errors.0 }}</div>{% endif %}
+      </div>
+    </div>
+
+    <!-- Coach section (visible only if 'coach' selected) -->
+    <div class="card mb-4" x-show="isCoach()" x-transition>
+      <div class="card-header">
+        <h3 class="card-title">⚽ {% trans "Coach details" %}</h3>
+        <div class="card-subtitle">{% trans "These appear on the coach's profile." %}</div>
+      </div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">{% trans "Primary sport" %}</label>
+            {{ form.primary_sport }}
+            <div class="form-help">{% trans "Which sport this coach mainly trains." %}</div>
+          </div>
+          <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+            <label style="display:flex; gap:8px; align-items:center; padding-top:24px;">
+              {{ form.is_servant }}
+              <span style="font-weight:500;">{% trans "Is also a servant (خادم)" %}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Servant-only-no-coach section -->
+    <div class="card mb-4" x-show="!isCoach() && (roles.includes('parent') || roles.includes('youth'))" x-transition>
+      <div class="card-body">
+        <label style="display:flex; gap:8px; align-items:center;">
+          {{ form.is_servant }}
+          <span style="font-weight:500;">{% trans "Is also a servant (خادم)" %}</span>
+        </label>
+        <div class="form-help">{% trans "Mark if this person also serves at the church." %}</div>
+      </div>
+    </div>
+
+    <!-- Parent section: link children -->
+    <div class="card mb-4" x-show="isParent()" x-transition>
+      <div class="card-header">
+        <h3 class="card-title">👨‍👩‍👧 {% trans "Children" %}</h3>
+        <div class="card-subtitle">{% trans "Link this parent to one or more youth members." %}</div>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">{% trans "Select children" %}</label>
+          {{ form.children }}
+          <div class="form-help">{{ form.children.help_text }}</div>
+        </div>
+      </div>
+    </div>
+
+    {% if object %}
+      <div class="card mb-4">
+        <div class="card-body">
+          <label style="display:flex; align-items:center; gap:8px;">
+            {{ form.is_active }}
+            <span style="font-weight:500;">{% trans "Account is active" %}</span>
+          </label>
+        </div>
+      </div>
+    {% endif %}
+
+    <div style="display:flex; gap:8px;">
+      <button type="submit" class="btn btn-primary">
+        <i data-feather="check"></i>
+        {% if object %}{% trans "Save changes" %}{% else %}{% trans "Create member" %}{% endif %}
+      </button>
+      <a href="{% if object %}{% url 'users:detail' object.pk %}{% else %}{% url 'users:list' %}{% endif %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Re-init feather icons after Alpine renders the conditional sections
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => feather.replace(), 100);
+  });
+</script>
+{% endblock %}

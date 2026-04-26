@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Dashboard" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Overview of all club activity" %}</div>{% endblock %}
+
+{% block content %}
+<!-- Welcome -->
+<div class="page-header">
+  <div>
+    <div class="page-header-meta">
+      <i data-feather="zap" style="width:14px;height:14px;color:var(--color-warning-500);"></i>
+      <span>{% trans "Admin Console" %}</span>
+    </div>
+    <h1 class="page-title">{% trans "Welcome back" %}, {{ user.first_name|default:user.username }}</h1>
+    <p class="page-subtitle">{% trans "Here's what's happening at Boys Center today." %}</p>
+  </div>
+  <div class="page-actions">
+    <a href="{% url 'users:create' %}" class="btn btn-primary"><i data-feather="user-plus"></i>{% trans "Add member" %}</a>
+    <a href="{% url 'attendance:create' %}" class="btn btn-brand"><i data-feather="check-square"></i>{% trans "New session" %}</a>
+  </div>
+</div>
+
+<!-- Stats grid -->
+<div class="grid-stats">
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Total Members" %}</div>
+      <div class="stat-value">{{ total_members }}</div>
+      <div class="stat-trend up"><i data-feather="users" style="width:12px;height:12px;"></i> {{ total_youth }} {% trans "youth" %}</div>
+    </div>
+    <div class="stat-icon brand"><i data-feather="users"></i></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Coaches" %}</div>
+      <div class="stat-value">{{ total_coaches }}</div>
+      <div class="stat-trend flat"><i data-feather="user-check" style="width:12px;height:12px;"></i> {% trans "Active" %}</div>
+    </div>
+    <div class="stat-icon purple"><i data-feather="user-check"></i></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Teams" %}</div>
+      <div class="stat-value">{{ total_teams }}</div>
+      <div class="stat-trend flat"><i data-feather="award" style="width:12px;height:12px;"></i> {% trans "Across all sports" %}</div>
+    </div>
+    <div class="stat-icon success"><i data-feather="award"></i></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Sessions / Week" %}</div>
+      <div class="stat-value">{{ recent_sessions }}</div>
+      <div class="stat-trend up"><i data-feather="check-square" style="width:12px;height:12px;"></i> {{ recent_evaluations }} {% trans "evaluations" %}</div>
+    </div>
+    <div class="stat-icon warning"><i data-feather="check-square"></i></div>
+  </div>
+</div>
+
+<!-- Main content grid -->
+<div class="grid-dashboard">
+  <!-- Attendance trend chart -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">{% trans "Attendance Trend" %}</h3>
+        <div class="card-subtitle">{% trans "Last 14 days" %}</div>
+      </div>
+      <a href="{% url 'reports:dashboard' %}" class="btn btn-ghost btn-sm">{% trans "View reports" %} <i data-feather="arrow-right" style="width:12px;height:12px;"></i></a>
+    </div>
+    <div class="card-body">
+      <canvas id="attendanceChart" height="80"></canvas>
+    </div>
+  </div>
+
+  <!-- Upcoming events -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">{% trans "Upcoming Events" %}</h3>
+      <a href="{% url 'events:list' %}" class="btn btn-ghost btn-sm">{% trans "All" %}</a>
+    </div>
+    <div class="card-body" style="padding: 12px;">
+      {% for ev in upcoming_events %}
+        <a href="{% url 'events:detail' ev.pk %}" class="event-tile event-color-{{ ev.color }}" style="margin-bottom:8px;">
+          <div class="event-date-block">
+            <div class="day">{{ ev.start_datetime|date:"d" }}</div>
+            <div class="month">{{ ev.start_datetime|date:"M" }}</div>
+          </div>
+          <div class="event-tile-meta">
+            <span class="badge badge-slate" style="font-size:10px;">{{ ev.get_event_type_display }}</span>
+            <div class="event-tile-title">{{ ev.title|truncatechars:40 }}</div>
+            <div class="event-tile-info">
+              <i data-feather="map-pin" style="width:11px;height:11px;"></i> {{ ev.location|truncatechars:30 }}
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty-state">
+          <div class="empty-state-icon"><i data-feather="calendar"></i></div>
+          <p>{% trans "No upcoming events." %}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Latest news -->
+<div class="card mt-6">
+  <div class="card-header">
+    <h3 class="card-title">{% trans "Latest News" %}</h3>
+    <a href="{% url 'news:list' %}" class="btn btn-ghost btn-sm">{% trans "All news" %} <i data-feather="arrow-right" style="width:12px;height:12px;"></i></a>
+  </div>
+  <div class="card-body" style="padding:16px;">
+    <div class="grid-cards">
+      {% for post in latest_news %}
+        <a href="{% url 'news:detail' post.pk %}" class="news-card">
+          {% if post.image %}
+            <img src="{{ post.image.url }}" class="news-card-image" alt="">
+          {% else %}
+            <div class="news-card-image-placeholder"><i data-feather="image"></i></div>
+          {% endif %}
+          <div class="news-card-body">
+            {% if post.is_featured %}<span class="badge badge-warning mb-2" style="align-self:flex-start;">{% trans "Featured" %}</span>{% endif %}
+            <div class="news-card-title">{{ post.title|truncatechars:60 }}</div>
+            <div class="news-card-excerpt">{{ post.excerpt|default:post.content|truncatechars:90 }}</div>
+            <div class="news-card-meta">
+              <span><i data-feather="user" style="width:11px;height:11px;display:inline;"></i> {{ post.author.first_name|default:"Admin" }}</span>
+              <span>{{ post.created_at|timesince }} {% trans "ago" %}</span>
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-state-icon"><i data-feather="bell"></i></div>
+          <h3>{% trans "No news yet" %}</h3>
+          <p>{% trans "Posts will appear here once published." %}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ attendance_trend|json_script:"attendance-trend-data" }}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('attendanceChart');
+    if (!ctx) return;
+    const dataEl = document.getElementById('attendance-trend-data');
+    const data = dataEl ? JSON.parse(dataEl.textContent) : [];
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.date),
+        datasets: [{
+          label: '{% trans "Check-ins" %}',
+          data: data.map(d => d.count),
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.08)',
+          fill: true,
+          tension: 0.35,
+          pointBackgroundColor: '#3b82f6',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } },
+          y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 11 }, stepSize: 1 } }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

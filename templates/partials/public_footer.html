@@ -2,32 +2,31 @@
 <footer class="public-footer">
   <div class="public-container public-footer-inner">
     <div class="public-footer-brand">
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
         <span class="public-brand-mark">✝</span>
-        <strong style="color: var(--color-slate-900); font-size:16px;">{% trans "Boys Center" %}</strong>
+        <strong style="color:#ffffff;font-size:16px;font-weight:800;">{% trans "Boys Center" %}</strong>
       </div>
-      <p style="font-size:13px; color: var(--color-slate-500); max-width:340px; line-height:1.6;">
-        {% trans "A Christian sports community building character, faith and friendship through team sport." %}
-      </p>
+      <p>{% trans "A Christian sports community building character, faith and friendship through team sport." %}</p>
     </div>
     <div class="public-footer-links">
       <h5>{% trans "Explore" %}</h5>
       <a href="{% url 'news:list' %}">{% trans "News" %}</a>
       <a href="{% url 'events:list' %}">{% trans "Events" %}</a>
+      <a href="{% url 'sports:leaderboard' %}">{% trans "Leaderboard" %}</a>
       <a href="{% url 'login' %}">{% trans "Sign in" %}</a>
     </div>
     <div class="public-footer-links">
       <h5>{% trans "Sports" %}</h5>
-      <a href="#">⚽ {% trans "Football" %}</a>
-      <a href="#">🏀 {% trans "Basketball" %}</a>
-      <a href="#">🏐 {% trans "Volleyball" %}</a>
-      <a href="#">🤾 {% trans "Handball" %}</a>
-      <a href="#">🏓 {% trans "Table Tennis" %}</a>
+      <a href="{% url 'sports:team_list' %}">⚽ {% trans "Football" %}</a>
+      <a href="{% url 'sports:team_list' %}">🏀 {% trans "Basketball" %}</a>
+      <a href="{% url 'sports:team_list' %}">🏐 {% trans "Volleyball" %}</a>
+      <a href="{% url 'sports:team_list' %}">🤾 {% trans "Handball" %}</a>
+      <a href="{% url 'sports:team_list' %}">🏓 {% trans "Table Tennis" %}</a>
     </div>
   </div>
   <div class="public-footer-bottom">
     <div class="public-container">
-      © {% now "Y" %} {% trans "Boys Center" %}. {% trans "Made with care for our youth." %}
+      © {% now "Y" %} {% trans "Boys Center" %} · {% trans "Made with care for our youth." %}
     </div>
   </div>
 </footer>

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete challenge" %}{% endblock %}
+{% block page_title %}{% trans "Delete challenge" %}{% endblock %}
+
+{% block content %}
+<div style="max-width:520px;margin:0 auto;">
+  <div class="card">
+    <div class="card-body" style="text-align:center;padding:36px 28px;">
+      <div style="width:64px;height:64px;border-radius:16px;background:rgba(239,68,68,0.1);color:var(--danger-500);display:grid;place-items:center;margin:0 auto 18px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <h2 style="font-size:20px;font-weight:800;color:var(--text-primary);margin-bottom:8px;">
+        {% trans "Delete this challenge?" %}
+      </h2>
+      <p style="color:var(--text-tertiary);font-size:14px;margin-bottom:20px;">
+        {% blocktrans with d=content.date r=content.bible_reference %}
+        The challenge for <strong>{{ d }}</strong> ({{ r }}) will be permanently deleted,
+        along with its questions and any answers youth have submitted. This cannot be undone.
+        {% endblocktrans %}
+      </p>
+      <form method="post" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        {% csrf_token %}
+        <a href="{% url 'dailychallenge:manage_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        <button type="submit" class="btn btn-danger">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 0-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
+          {% trans "Yes, delete" %}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

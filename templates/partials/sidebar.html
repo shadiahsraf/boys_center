@@ -15,13 +15,23 @@
       <span class="nav-label">{% trans "Dashboard" %}</span>
     </a>
     <a href="{% url 'news:list' %}" class="nav-link {% if 'news' in request.resolver_match.namespace %}active{% endif %}">
-      <i data-feather="bell"></i>
+      <i data-feather="file-text"></i>
       <span class="nav-label">{% trans "News" %}</span>
     </a>
     <a href="{% url 'events:list' %}" class="nav-link {% if 'events' in request.resolver_match.namespace %}active{% endif %}">
       <i data-feather="calendar"></i>
       <span class="nav-label">{% trans "Events" %}</span>
     </a>
+    {# Daily Challenge — youth (solvers) only. Admins manage content via the Administration link. #}
+    {% if is_youth_user %}
+      <a href="{% url 'dailychallenge:today' %}" class="nav-link {% if 'dailychallenge' in request.resolver_match.namespace %}active{% endif %}">
+        <i data-feather="award"></i>
+        <span class="nav-label">{% trans "Daily Challenge" %}</span>
+        {% if dc_has_today and not dc_done_today %}
+          <span class="nav-badge">🔥</span>
+        {% endif %}
+      </a>
+    {% endif %}
 
     {% if is_admin_user or is_coach_manager_user or is_coach_user %}
       <div class="nav-section-label">{% trans "Operations" %}</div>
@@ -36,14 +46,20 @@
     {% endif %}
 
     <div class="nav-section-label">{% trans "Sports" %}</div>
-    <a href="{% url 'sports:team_list' %}" class="nav-link {% if request.resolver_match.url_name == 'team_list' or request.resolver_match.url_name == 'team_detail' %}active{% endif %}">
-      <i data-feather="users"></i>
+    <a href="{% url 'sports:team_list' %}" class="nav-link {% if request.resolver_match.url_name == 'team_list' or request.resolver_match.url_name == 'team_detail' or request.resolver_match.url_name == 'team_create' %}active{% endif %}">
+      <i data-feather="shield"></i>
       <span class="nav-label">{% trans "Teams" %}</span>
     </a>
-    <a href="{% url 'sports:match_list' %}" class="nav-link {% if request.resolver_match.url_name == 'match_list' %}active{% endif %}">
+    <a href="{% url 'sports:match_list' %}" class="nav-link {% if request.resolver_match.url_name == 'match_list' or request.resolver_match.url_name == 'match_create' or request.resolver_match.url_name == 'match_finish' %}active{% endif %}">
       <i data-feather="zap"></i>
       <span class="nav-label">{% trans "Matches" %}</span>
     </a>
+    {% if is_admin_user or is_coach_manager_user %}
+    <a href="{% url 'sports:competition_list' %}" class="nav-link {% if 'competition' in request.resolver_match.url_name %}active{% endif %}">
+      <i data-feather="flag"></i>
+      <span class="nav-label">{% trans "Competitions" %}</span>
+    </a>
+    {% endif %}
     <a href="{% url 'sports:leaderboard' %}" class="nav-link {% if request.resolver_match.url_name == 'leaderboard' %}active{% endif %}">
       <i data-feather="award"></i>
       <span class="nav-label">{% trans "Leaderboard" %}</span>
@@ -51,16 +67,24 @@
 
     {% if is_admin_user or is_coach_manager_user %}
       <div class="nav-section-label">{% trans "Administration" %}</div>
-      <a href="{% url 'users:list' %}" class="nav-link {% if 'users' in request.resolver_match.namespace %}active{% endif %}">
-        <i data-feather="user"></i>
+      <a href="{% url 'users:list' %}" class="nav-link {% if 'users' in request.resolver_match.namespace and request.resolver_match.url_name != 'activity_log' %}active{% endif %}">
+        <i data-feather="users"></i>
         <span class="nav-label">{% trans "Members" %}</span>
+      </a>
+      <a href="{% url 'dailychallenge:manage_list' %}" class="nav-link {% if request.resolver_match.url_name|slice:':7' == 'manage_' and 'dailychallenge' in request.resolver_match.namespace %}active{% endif %}">
+        <i data-feather="book"></i>
+        <span class="nav-label">{% trans "Daily Challenges" %}</span>
+      </a>
+      <a href="{% url 'ratings:manage_list' %}" class="nav-link {% if 'ratings' in request.resolver_match.namespace %}active{% endif %}">
+        <i data-feather="star"></i>
+        <span class="nav-label">{% trans "Ratings" %}</span>
       </a>
       <a href="{% url 'reports:dashboard' %}" class="nav-link {% if 'reports' in request.resolver_match.namespace %}active{% endif %}">
         <i data-feather="bar-chart-2"></i>
         <span class="nav-label">{% trans "Reports" %}</span>
       </a>
       <a href="{% url 'users:activity_log' %}" class="nav-link {% if request.resolver_match.url_name == 'activity_log' %}active{% endif %}">
-        <i data-feather="shield"></i>
+        <i data-feather="activity"></i>
         <span class="nav-label">{% trans "Audit Log" %}</span>
       </a>
     {% endif %}
@@ -68,16 +92,26 @@
 
   <div class="sidebar-footer">
     <div class="user-card">
-      <div class="avatar avatar-sm avatar-{% if is_admin_user %}warning{% elif is_coach_user %}brand{% elif is_parent_user %}success{% else %}sky{% endif %}">
-        {% if user.photo %}<img src="{{ user.photo.url }}" alt="">{% else %}{{ user.initials }}{% endif %}
-      </div>
-      <div style="flex:1; min-width:0;">
-        <div style="color:white;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ user.get_full_name|default:user.username }}</div>
-        <div style="color:rgba(255,255,255,0.45);font-size:11px;">{{ user.role_display }}</div>
-      </div>
-      <a href="{% url 'logout' %}" title="{% trans 'Sign out' %}" style="color:rgba(255,255,255,0.5);">
-        <i data-feather="log-out" style="width:16px;height:16px;"></i>
+      <a href="{% url 'users:photo_update' %}" class="user-card-avatar" title="{% trans 'Change photo' %}">
+        <div class="avatar avatar-sm avatar-{% if is_admin_user %}warning{% elif is_coach_user %}brand{% elif is_parent_user %}success{% else %}sky{% endif %}">
+          {% if user.photo %}<img src="{{ user.photo.url }}" alt="">{% else %}{{ user.initials }}{% endif %}
+        </div>
+        <span class="user-card-avatar-edit" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </span>
       </a>
+      <div style="flex:1; min-width:0;">
+        <div style="color:#ffffff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ user.get_full_name|default:user.username }}</div>
+        <div style="color:rgba(255,255,255,0.4);font-size:11px;">{{ user.role_display }}</div>
+      </div>
+      <form action="{% url 'logout' %}" method="post" style="margin:0;display:inline-flex;">
+        {% csrf_token %}
+        <button type="submit" title="{% trans 'Sign out' %}" aria-label="{% trans 'Sign out' %}"
+                style="background:none;border:none;padding:0;cursor:pointer;color:rgba(255,255,255,0.45);transition:color 150ms;"
+                onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">
+          <i data-feather="log-out" style="width:16px;height:16px;"></i>
+        </button>
+      </form>
     </div>
   </div>
 </aside>

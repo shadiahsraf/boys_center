@@ -1,25 +1,28 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{% trans "Attendance Report" %}{% endblock %}
 {% block page_title %}{% trans "Attendance Report" %}{% endblock %}
-
-{% block topbar_actions %}
-  <a href="{% url 'reports:export_attendance_pdf' %}" class="btn btn-primary btn-sm"><i data-feather="download"></i>PDF</a>
-  <a href="{% url 'reports:export_attendance_excel' %}" class="btn btn-primary btn-sm"><i data-feather="download"></i>Excel</a>
+{% block page_subtitle %}
+  <div class="topbar-subtitle">{% trans "From" %} {{ start|date:"M d, Y" }} {% trans "to today" %}</div>
 {% endblock %}
 
-{% block content %}
-<div class="page-header">
-  <div>
-    <h1 class="page-title">{% trans "Attendance report" %}</h1>
-    <p class="page-subtitle">{% trans "From" %} <strong>{{ start|date:"M d, Y" }}</strong> {% trans "to today" %}</p>
-  </div>
-  <div style="display:flex; gap:6px;">
+{% block topbar_actions %}
+  <div style="display:flex;gap:6px;">
     <a href="?period=week" class="btn {% if period == 'week' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "Week" %}</a>
     <a href="?period=month" class="btn {% if period == 'month' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "Month" %}</a>
   </div>
-</div>
+  <a href="{% url 'reports:export_attendance_pdf' %}" class="btn btn-secondary btn-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    PDF
+  </a>
+  <a href="{% url 'reports:export_attendance_excel' %}" class="btn btn-primary btn-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Excel
+  </a>
+{% endblock %}
 
+{% block content %}
 <div class="card">
   <div class="card-body p-0">
     <div class="table-wrap">
@@ -38,14 +41,16 @@
             <tr>
               <td data-label="{% trans 'Session' %}"><div class="cell-primary">{{ s.title }}</div></td>
               <td data-label="{% trans 'Type' %}"><span class="badge badge-slate">{{ s.get_session_type_display }}</span></td>
-              <td data-label="{% trans 'Date' %}">{{ s.date|date:"M d, Y" }}</td>
-              <td data-label="{% trans 'Coach' %}">{{ s.coach.get_full_name|default:"—" }}</td>
-              <td data-label="{% trans 'Attendance' %}"><strong>{{ s.record_count }}</strong></td>
+              <td data-label="{% trans 'Date' %}"><span class="cell-secondary">{{ s.date|date:"M d, Y" }}</span></td>
+              <td data-label="{% trans 'Coach' %}"><span class="cell-secondary">{{ s.coach.get_full_name|default:"—" }}</span></td>
+              <td data-label="{% trans 'Attendance' %}"><strong style="color:var(--text-primary);">{{ s.record_count }}</strong></td>
             </tr>
           {% empty %}
             <tr><td colspan="5">
               <div class="empty-state">
-                <div class="empty-state-icon"><i data-feather="check-square"></i></div>
+                <div class="empty-state-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </div>
                 <p>{% trans "No sessions in this period." %}</p>
               </div>
             </td></tr>

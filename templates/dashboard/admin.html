@@ -1,75 +1,118 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{% trans "Dashboard" %}{% endblock %}
 {% block page_title %}{% trans "Dashboard" %}{% endblock %}
-{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Overview of all club activity" %}</div>{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Admin Console" %}</div>{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'users:create' %}" class="btn btn-secondary btn-sm hide-md">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+    {% trans "Add member" %}
+  </a>
+  <a href="{% url 'attendance:create' %}" class="btn btn-primary btn-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    {% trans "New session" %}
+  </a>
+{% endblock %}
 
 {% block content %}
-<!-- Welcome -->
-<div class="page-header">
-  <div>
-    <div class="page-header-meta">
-      <i data-feather="zap" style="width:14px;height:14px;color:var(--color-warning-500);"></i>
-      <span>{% trans "Admin Console" %}</span>
+<!-- Welcome banner -->
+<div class="welcome-banner">
+  <div class="welcome-banner-inner">
+    <div>
+      <div class="welcome-banner-meta">
+        <span class="welcome-banner-meta-dot"></span>
+        {% trans "Admin Console" %}
+      </div>
+      <h1>{% trans "Welcome back" %}, {{ user.first_name|default:user.username }} 👋</h1>
+      <p>{% trans "Here's what's happening at Boys Center today." %}</p>
     </div>
-    <h1 class="page-title">{% trans "Welcome back" %}, {{ user.first_name|default:user.username }}</h1>
-    <p class="page-subtitle">{% trans "Here's what's happening at Boys Center today." %}</p>
-  </div>
-  <div class="page-actions">
-    <a href="{% url 'users:create' %}" class="btn btn-primary"><i data-feather="user-plus"></i>{% trans "Add member" %}</a>
-    <a href="{% url 'attendance:create' %}" class="btn btn-brand"><i data-feather="check-square"></i>{% trans "New session" %}</a>
+    <div class="welcome-banner-actions">
+      <a href="{% url 'reports:dashboard' %}" class="btn welcome-banner-ghost btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        {% trans "Reports" %}
+      </a>
+      <a href="{% url 'attendance:create' %}" class="btn welcome-banner-cta btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        {% trans "New session" %}
+      </a>
+    </div>
   </div>
 </div>
 
-<!-- Stats grid -->
+<!-- Stats -->
 <div class="grid-stats">
   <div class="stat-card">
     <div class="stat-meta">
       <div class="stat-label">{% trans "Total Members" %}</div>
       <div class="stat-value">{{ total_members }}</div>
-      <div class="stat-trend up"><i data-feather="users" style="width:12px;height:12px;"></i> {{ total_youth }} {% trans "youth" %}</div>
+      <div class="stat-trend up">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {{ total_youth }} {% trans "youth" %}
+      </div>
     </div>
-    <div class="stat-icon brand"><i data-feather="users"></i></div>
+    <div class="stat-icon brand">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    </div>
   </div>
   <div class="stat-card">
     <div class="stat-meta">
       <div class="stat-label">{% trans "Coaches" %}</div>
       <div class="stat-value">{{ total_coaches }}</div>
-      <div class="stat-trend flat"><i data-feather="user-check" style="width:12px;height:12px;"></i> {% trans "Active" %}</div>
+      <div class="stat-trend flat">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        {% trans "Active" %}
+      </div>
     </div>
-    <div class="stat-icon purple"><i data-feather="user-check"></i></div>
+    <div class="stat-icon purple">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
   </div>
   <div class="stat-card">
     <div class="stat-meta">
       <div class="stat-label">{% trans "Teams" %}</div>
       <div class="stat-value">{{ total_teams }}</div>
-      <div class="stat-trend flat"><i data-feather="award" style="width:12px;height:12px;"></i> {% trans "Across all sports" %}</div>
+      <div class="stat-trend flat">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+        {% trans "Across all sports" %}
+      </div>
     </div>
-    <div class="stat-icon success"><i data-feather="award"></i></div>
+    <div class="stat-icon success">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+    </div>
   </div>
   <div class="stat-card">
     <div class="stat-meta">
-      <div class="stat-label">{% trans "Sessions / Week" %}</div>
+      <div class="stat-label">{% trans "Sessions this week" %}</div>
       <div class="stat-value">{{ recent_sessions }}</div>
-      <div class="stat-trend up"><i data-feather="check-square" style="width:12px;height:12px;"></i> {{ recent_evaluations }} {% trans "evaluations" %}</div>
+      <div class="stat-trend up">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        {{ recent_evaluations }} {% trans "evaluations" %}
+      </div>
     </div>
-    <div class="stat-icon warning"><i data-feather="check-square"></i></div>
+    <div class="stat-icon warning">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    </div>
   </div>
 </div>
 
-<!-- Main content grid -->
+<!-- Main grid -->
 <div class="grid-dashboard">
-  <!-- Attendance trend chart -->
+  <!-- Attendance trend -->
   <div class="card">
     <div class="card-header">
       <div>
         <h3 class="card-title">{% trans "Attendance Trend" %}</h3>
         <div class="card-subtitle">{% trans "Last 14 days" %}</div>
       </div>
-      <a href="{% url 'reports:dashboard' %}" class="btn btn-ghost btn-sm">{% trans "View reports" %} <i data-feather="arrow-right" style="width:12px;height:12px;"></i></a>
+      <a href="{% url 'reports:dashboard' %}" class="btn btn-ghost btn-sm">
+        {% trans "View reports" %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
     </div>
     <div class="card-body">
-      <canvas id="attendanceChart" height="80"></canvas>
+      <canvas id="attendanceChart" style="max-height:200px;"></canvas>
     </div>
   </div>
 
@@ -79,9 +122,9 @@
       <h3 class="card-title">{% trans "Upcoming Events" %}</h3>
       <a href="{% url 'events:list' %}" class="btn btn-ghost btn-sm">{% trans "All" %}</a>
     </div>
-    <div class="card-body" style="padding: 12px;">
+    <div class="card-body p-0">
       {% for ev in upcoming_events %}
-        <a href="{% url 'events:detail' ev.pk %}" class="event-tile event-color-{{ ev.color }}" style="margin-bottom:8px;">
+        <a href="{% url 'events:detail' ev.pk %}" class="event-tile event-color-{{ ev.color }}" style="border-radius:0;border:none;border-bottom:1px solid var(--border-secondary);margin:0;">
           <div class="event-date-block">
             <div class="day">{{ ev.start_datetime|date:"d" }}</div>
             <div class="month">{{ ev.start_datetime|date:"M" }}</div>
@@ -90,13 +133,16 @@
             <span class="badge badge-slate" style="font-size:10px;">{{ ev.get_event_type_display }}</span>
             <div class="event-tile-title">{{ ev.title|truncatechars:40 }}</div>
             <div class="event-tile-info">
-              <i data-feather="map-pin" style="width:11px;height:11px;"></i> {{ ev.location|truncatechars:30 }}
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              {{ ev.location|truncatechars:30 }}
             </div>
           </div>
         </a>
       {% empty %}
         <div class="empty-state">
-          <div class="empty-state-icon"><i data-feather="calendar"></i></div>
+          <div class="empty-state-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
           <p>{% trans "No upcoming events." %}</p>
         </div>
       {% endfor %}
@@ -108,30 +154,37 @@
 <div class="card mt-6">
   <div class="card-header">
     <h3 class="card-title">{% trans "Latest News" %}</h3>
-    <a href="{% url 'news:list' %}" class="btn btn-ghost btn-sm">{% trans "All news" %} <i data-feather="arrow-right" style="width:12px;height:12px;"></i></a>
+    <a href="{% url 'news:list' %}" class="btn btn-ghost btn-sm">
+      {% trans "All news" %}
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
   </div>
-  <div class="card-body" style="padding:16px;">
+  <div class="card-body">
     <div class="grid-cards">
       {% for post in latest_news %}
         <a href="{% url 'news:detail' post.pk %}" class="news-card">
           {% if post.image %}
             <img src="{{ post.image.url }}" class="news-card-image" alt="">
           {% else %}
-            <div class="news-card-image-placeholder"><i data-feather="image"></i></div>
+            <div class="news-card-image-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
           {% endif %}
           <div class="news-card-body">
             {% if post.is_featured %}<span class="badge badge-warning mb-2" style="align-self:flex-start;">{% trans "Featured" %}</span>{% endif %}
             <div class="news-card-title">{{ post.title|truncatechars:60 }}</div>
             <div class="news-card-excerpt">{{ post.excerpt|default:post.content|truncatechars:90 }}</div>
             <div class="news-card-meta">
-              <span><i data-feather="user" style="width:11px;height:11px;display:inline;"></i> {{ post.author.first_name|default:"Admin" }}</span>
+              <span>{{ post.author.first_name|default:"Admin" }}</span>
               <span>{{ post.created_at|timesince }} {% trans "ago" %}</span>
             </div>
           </div>
         </a>
       {% empty %}
         <div class="empty-state" style="grid-column:1/-1;">
-          <div class="empty-state-icon"><i data-feather="bell"></i></div>
+          <div class="empty-state-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
           <h3>{% trans "No news yet" %}</h3>
           <p>{% trans "Posts will appear here once published." %}</p>
         </div>
@@ -144,39 +197,41 @@
 {% block scripts %}
 {{ attendance_trend|json_script:"attendance-trend-data" }}
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const ctx = document.getElementById('attendanceChart');
-    if (!ctx) return;
-    const dataEl = document.getElementById('attendance-trend-data');
-    const data = dataEl ? JSON.parse(dataEl.textContent) : [];
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: data.map(d => d.date),
-        datasets: [{
-          label: '{% trans "Check-ins" %}',
-          data: data.map(d => d.count),
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.08)',
-          fill: true,
-          tension: 0.35,
-          pointBackgroundColor: '#3b82f6',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } },
-          y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 11 }, stepSize: 1 } }
-        }
+document.addEventListener('DOMContentLoaded', function() {
+  const ctx = document.getElementById('attendanceChart');
+  if (!ctx) return;
+  const data = JSON.parse(document.getElementById('attendance-trend-data').textContent || '[]');
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.06)';
+  const tickColor = isDark ? '#9ca3af' : '#94a3b8';
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.map(d => d.date),
+      datasets: [{
+        label: '{% trans "Check-ins" %}',
+        data: data.map(d => d.count),
+        borderColor: '#5A0F0F',
+        backgroundColor: 'rgba(90,15,15,0.07)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#5A0F0F',
+        pointBorderColor: isDark ? '#2A1515' : '#ffffff',
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: tickColor, font: { size: 11 } } },
+        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 11 }, stepSize: 1 } }
       }
-    });
+    }
   });
+});
 </script>
 {% endblock %}

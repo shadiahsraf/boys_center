@@ -1,0 +1,130 @@
+{% load i18n %}
+{# Floating Arabic FAQ assistant. Pure Alpine.js — no backend, no AI. #}
+<div class="chatbot"
+     x-data="chatbotApp()"
+     @keydown.escape.window="open = false"
+     dir="rtl">
+
+  <!-- Bubble button -->
+  <button type="button"
+          class="chatbot-bubble"
+          :class="{ 'is-open': open }"
+          @click="open = !open"
+          :aria-expanded="open"
+          aria-label="فتح المساعد"
+          title="مساعد الأسئلة الشائعة">
+    <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <svg x-show="open" x-cloak xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <span x-show="!open && unreadIntro" class="chatbot-bubble-dot" aria-hidden="true"></span>
+  </button>
+
+  <!-- Chat panel -->
+  <div class="chatbot-panel"
+       x-show="open"
+       x-cloak
+       x-transition.origin.bottom>
+
+    <!-- Header -->
+    <div class="chatbot-header">
+      <div class="chatbot-header-avatar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v1H7a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4v-6a4 4 0 0 0-4-4h-2V5a3 3 0 0 0-3-3z"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/></svg>
+      </div>
+      <div class="chatbot-header-meta">
+        <div class="chatbot-header-title">مساعد سنتر الأولاد</div>
+        <div class="chatbot-header-sub">
+          <span class="chatbot-header-dot"></span>
+          متاح الآن
+        </div>
+      </div>
+      <button type="button" class="chatbot-header-close" @click="open = false" aria-label="إغلاق">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Messages area -->
+    <div class="chatbot-messages" x-ref="messages">
+      <template x-for="(msg, i) in messages" :key="i">
+        <div class="chatbot-msg" :class="msg.from === 'user' ? 'chatbot-msg-user' : 'chatbot-msg-bot'">
+          <div class="chatbot-msg-bubble" x-html="msg.text"></div>
+        </div>
+      </template>
+    </div>
+
+    <!-- Quick-reply chips -->
+    <div class="chatbot-chips">
+      <template x-for="q in questions" :key="q.id">
+        <button type="button" class="chatbot-chip" @click="ask(q.id)" x-text="q.label"></button>
+      </template>
+    </div>
+
+    <div class="chatbot-footer">
+      <span>اختر سؤالاً بالأعلى</span>
+      <span class="chatbot-footer-mark">سنتر الأولاد ✝</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function chatbotApp() {
+  return {
+    open: false,
+    unreadIntro: true,
+    questions: [
+      { id: 'fees',         label: 'كام سعر الاشتراك؟',
+        answer: 'أسعار الاشتراك الشهري:<br>' +
+                '• الفئات تحت 12 سنة: <strong>150 جنيه</strong> شهرياً<br>' +
+                '• الفئات تحت 15 و تحت 18: <strong>200 جنيه</strong> شهرياً<br>' +
+                '• خصم 25% للأخ التاني من نفس العيلة' },
+      { id: 'training',     label: 'مواعيد التمرين امتى؟',
+        answer: 'مواعيد التدريب الأساسية:<br>' +
+                '• <strong>كرة قدم</strong>: إثنين/أربعاء/جمعة — 5 إلى 7 مساءً<br>' +
+                '• <strong>كرة سلة</strong>: ثلاثاء/خميس — 5 إلى 7 مساءً<br>' +
+                '• <strong>كرة طائرة</strong>: جمعة مساءً<br>' +
+                'تقدر تشوف الجدول الكامل من صفحة «الأحداث».' },
+      { id: 'register',     label: 'ازاي اسجل؟',
+        answer: 'خطوات التسجيل بسيطة:<br>' +
+                '1. روح لـ السنتر مع <strong>ولي الأمر</strong> وصورة شخصية للاعب.<br>' +
+                '2. هنفتحلك حساب وهنبعتلك <strong>رمز العضوية</strong> ورمز QR.<br>' +
+                '3. تسجّل دخولك من الموقع وتشوف لوحتك الشخصية.<br>' +
+                '4. تيجي أول تمرين وتقابل المدرب 👋' },
+      { id: 'attendance',   label: 'ازاي اسجّل حضوري في التمرين؟',
+        answer: 'في كل تمرين، المدرب بيعرض رمز QR الخاص بالجلسة.<br>' +
+                'افتح الموبايل وامسح الكود ↔ هتدخل صفحة بسيطة تكتب فيها رمز العضوية بتاعك وتسجّل حضورك.<br>' +
+                'تقدر كمان تعرض رمز QR من صفحة «رمز QR» في لوحتك للمدرب لتسجيل أسرع.' },
+      { id: 'evaluations',  label: 'ازاي اشوف تقييماتي؟',
+        answer: 'افتح لوحتك → تبويب <strong>«التقييمات»</strong>.<br>' +
+                'كل تقييم يحتوي على درجاتك في الأداء والسلوك والالتزام، بالإضافة لملاحظات المدرب.' },
+      { id: 'contact',      label: 'ازاي اتواصل مع الإدارة؟',
+        answer: 'تقدر تتواصل مع الإدارة بأي من الطرق دي:<br>' +
+                '• <strong>هاتف</strong>: +20 100 000 0000<br>' +
+                '• <strong>البريد الإلكتروني</strong>: info@boyscenter.eg<br>' +
+                '• أو زورنا في السنتر بشكل مباشر' },
+    ],
+    messages: [
+      { from: 'bot',
+        text: 'أهلاً بيك في <strong>سنتر الأولاد</strong> 👋<br>أنا هنا عشان أساعدك. اختار سؤالك من اللي تحت 👇' }
+    ],
+    ask(id) {
+      const q = this.questions.find(x => x.id === id);
+      if (!q) return;
+      this.messages.push({ from: 'user', text: q.label });
+      // tiny "typing" delay for feel
+      setTimeout(() => {
+        this.messages.push({ from: 'bot', text: q.answer });
+        this.$nextTick(() => {
+          const el = this.$refs.messages;
+          if (el) el.scrollTop = el.scrollHeight;
+        });
+      }, 350);
+      this.$nextTick(() => {
+        const el = this.$refs.messages;
+        if (el) el.scrollTop = el.scrollHeight;
+      });
+    },
+    init() {
+      // Clear unread-dot once panel opens
+      this.$watch('open', v => { if (v) this.unreadIntro = false; });
+    }
+  };
+}
+</script>

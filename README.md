@@ -22,13 +22,75 @@ A production-grade Django web application for a multi-sport Christian youth club
 
 ```bash
 pip install -r requirements.txt
+cp .env.example .env                # then edit .env with your DB creds
 python manage.py migrate
 python manage.py compilemessages    # builds Arabic .mo from .po
-python seed_data.py                 # populates the database
+python seed_demo.py                 # lightweight demo data (or: python seed_data.py for the full set)
 python manage.py runserver
 ```
 
 Open http://127.0.0.1:8000 — you'll see the **public landing page** if not signed in, or your **dashboard** if you are.
+
+## Database — PostgreSQL
+
+The project uses **PostgreSQL** as the canonical database (SQLite is supported only as a fallback for quick offline dev when no env vars are set).
+
+### One-time setup
+
+1. **Install PostgreSQL** if you don't already have it.
+   - **Windows / macOS**: download from <https://www.postgresql.org/download/>
+   - **Linux**: `sudo apt install postgresql postgresql-contrib` (or your distro's equivalent)
+
+2. **Create the database + user**:
+   ```bash
+   # As postgres superuser:
+   createdb boys_center
+   createuser boys_user --pwprompt          # enter a password when prompted
+   psql -c "GRANT ALL PRIVILEGES ON DATABASE boys_center TO boys_user;"
+   # PG 15+ also needs schema-level grants:
+   psql -d boys_center -c "GRANT ALL ON SCHEMA public TO boys_user;"
+   ```
+
+3. **Configure `.env`**: copy `.env.example` to `.env` and fill in the PG credentials.
+   The settings module reads either `DATABASE_URL` (single connection string) **or** the
+   discrete `DB_NAME`/`DB_USER`/`DB_PASSWORD`/`DB_HOST`/`DB_PORT` variables.
+
+4. **Apply migrations**:
+   ```bash
+   python manage.py migrate
+   ```
+
+5. **Seed data** (optional):
+   ```bash
+   python seed_demo.py
+   ```
+
+### Upgrading an existing SQLite install
+
+If you've been running on SQLite and want to keep your data:
+
+```bash
+# After PG is set up and .env is configured:
+python migrate_to_pg.py
+```
+
+The helper script:
+1. Dumps your SQLite data to `backup_sqlite.json` (excluding `contenttypes`, `auth.permission`, `admin.logentry`, `sessions.session` — they get re-created).
+2. Runs `migrate` against the empty PG database.
+3. Loads the fixture into PG.
+4. Leaves your `db.sqlite3` untouched so you can verify before deleting it.
+
+If you'd rather start fresh on PG (no data migration), just skip the helper:
+```bash
+python manage.py migrate
+python seed_demo.py
+```
+
+### Why PostgreSQL?
+
+- Native `UUIDField` and `JSONField` (used for `User.id` and `User.roles`) — no JSON-as-text workarounds.
+- Proper concurrency for the QR check-in flow (SQLite locks the whole file on writes).
+- Production-ready migrations, full-text search, row-level locking, `CONCURRENTLY` indexes.
 
 ## Login credentials
 
@@ -132,10 +194,18 @@ boys_center/
 
 ## Production notes
 
-Before deploying:
-1. Set `DEBUG = False` in `config/settings.py`
-2. Generate a fresh `SECRET_KEY`
-3. Configure `ALLOWED_HOSTS`
-4. Switch `DATABASES` to Postgres (no model changes needed — `with_role()` queryset works on both)
-5. Run `python manage.py collectstatic` and `python manage.py compilemessages`
-6. Serve via Gunicorn + Nginx; serve `/static/` and `/media/` through Nginx directly
+Before deploying, set the following in `.env` (or your platform's env-var system):
+
+```bash
+DJANGO_SECRET_KEY=<long random string>
+DJANGO_DEBUG=false
+DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+DATABASE_URL=postgres://user:pass@db-host:5432/boys_center
+```
+
+Then:
+1. `pip install -r requirements.txt`
+2. `python manage.py migrate`
+3. `python manage.py collectstatic --noinput`
+4. `python manage.py compilemessages`
+5. Serve via Gunicorn + Nginx; let Nginx serve `/static/` and `/media/` directly.

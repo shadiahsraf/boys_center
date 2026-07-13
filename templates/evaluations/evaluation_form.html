@@ -1,17 +1,12 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{% trans "New Evaluation" %}{% endblock %}
 {% block page_title %}{% trans "New Evaluation" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Rate performance, behavior and commitment 1–5" %}</div>{% endblock %}
 
 {% block content %}
-<div style="max-width:680px; margin:0 auto;">
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">{% trans "Evaluate a player" %}</h1>
-      <p class="page-subtitle">{% trans "Rate performance, behavior and commitment on a 1–5 scale." %}</p>
-    </div>
-  </div>
-
+<div style="max-width:680px;margin:0 auto;">
   <form method="post" x-data="{
     performance: {{ form.performance.value|default:0 }},
     behavior: {{ form.behavior.value|default:0 }},
@@ -24,11 +19,13 @@
     {{ form.commitment }}
 
     <div class="card mb-4">
+      <div class="card-header"><h3 class="card-title">{% trans "Player" %}</h3></div>
       <div class="card-body">
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">{% trans "Player" %} *</label>
+            <label class="form-label">{% trans "Player" %} <span style="color:var(--danger-500);">*</span></label>
             {{ form.player }}
+            {% if form.player.errors %}<div class="form-error">{{ form.player.errors.0 }}</div>{% endif %}
           </div>
           <div class="form-group">
             <label class="form-label">{% trans "Sport" %}</label>
@@ -38,15 +35,15 @@
       </div>
     </div>
 
-    {% for category, label, icon in 'performance,Performance,zap;behavior,Behavior,thumbs-up;commitment,Commitment,target'|cut:''|stringformat:'s'|slice:":0" %}{% endfor %}
-
-    {# Star inputs #}
     <div class="card mb-4">
       <div class="card-header"><h3 class="card-title">{% trans "Ratings" %}</h3></div>
       <div class="card-body">
-
+        <!-- Performance -->
         <div class="form-group">
-          <label class="form-label">⚡ {% trans "Performance" %}</label>
+          <label class="form-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:4px;color:var(--warning-500);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            {% trans "Performance" %}
+          </label>
           <div class="star-rating-input" @mouseleave="hover.performance = 0">
             <template x-for="n in 5">
               <button type="button"
@@ -55,12 +52,16 @@
                       :class="{ 'filled': n <= (hover.performance || performance) }"
                       x-text="'★'"></button>
             </template>
-            <span style="margin-inline-start: 12px; font-size: 14px; color: var(--color-slate-500);" x-text="performance ? performance + ' / 5' : '—'"></span>
+            <span style="margin-inline-start:12px;font-size:14px;color:var(--text-muted);" x-text="performance ? performance + ' / 5' : '—'"></span>
           </div>
         </div>
 
+        <!-- Behavior -->
         <div class="form-group">
-          <label class="form-label">👍 {% trans "Behavior" %}</label>
+          <label class="form-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:4px;color:var(--success-500);"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+            {% trans "Behavior" %}
+          </label>
           <div class="star-rating-input" @mouseleave="hover.behavior = 0">
             <template x-for="n in 5">
               <button type="button"
@@ -69,12 +70,16 @@
                       :class="{ 'filled': n <= (hover.behavior || behavior) }"
                       x-text="'★'"></button>
             </template>
-            <span style="margin-inline-start: 12px; font-size: 14px; color: var(--color-slate-500);" x-text="behavior ? behavior + ' / 5' : '—'"></span>
+            <span style="margin-inline-start:12px;font-size:14px;color:var(--text-muted);" x-text="behavior ? behavior + ' / 5' : '—'"></span>
           </div>
         </div>
 
+        <!-- Commitment -->
         <div class="form-group">
-          <label class="form-label">🎯 {% trans "Commitment" %}</label>
+          <label class="form-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:4px;color:var(--brand-500);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {% trans "Commitment" %}
+          </label>
           <div class="star-rating-input" @mouseleave="hover.commitment = 0">
             <template x-for="n in 5">
               <button type="button"
@@ -83,7 +88,7 @@
                       :class="{ 'filled': n <= (hover.commitment || commitment) }"
                       x-text="'★'"></button>
             </template>
-            <span style="margin-inline-start: 12px; font-size: 14px; color: var(--color-slate-500);" x-text="commitment ? commitment + ' / 5' : '—'"></span>
+            <span style="margin-inline-start:12px;font-size:14px;color:var(--text-muted);" x-text="commitment ? commitment + ' / 5' : '—'"></span>
           </div>
         </div>
 
@@ -94,10 +99,10 @@
       </div>
     </div>
 
-    <div style="display:flex; gap:8px;">
-      <button type="submit" class="btn btn-primary"
-              :disabled="!performance || !behavior || !commitment">
-        <i data-feather="check"></i>{% trans "Save evaluation" %}
+    <div style="display:flex;gap:8px;">
+      <button type="submit" class="btn btn-primary" :disabled="!performance || !behavior || !commitment">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {% trans "Save evaluation" %}
       </button>
       <a href="{% url 'evaluations:list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
     </div>

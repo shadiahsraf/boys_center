@@ -1,36 +1,62 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{{ object.name }}{% endblock %}
 {% block page_title %}{{ object.name }}{% endblock %}
+{% block page_subtitle %}
+  <div class="topbar-subtitle" style="display:flex;gap:4px;">
+    <span class="badge badge-slate" style="font-size:10px;">{{ object.get_sport_display }}</span>
+    {% if object.age_group %}<span class="badge badge-brand" style="font-size:10px;">{{ object.age_group }}</span>{% endif %}
+  </div>
+{% endblock %}
 
 {% block topbar_actions %}
   {% if is_admin_user or is_coach_manager_user %}
-    <a href="{% url 'sports:team_update' object.pk %}" class="btn btn-secondary btn-sm"><i data-feather="edit-2"></i>{% trans "Edit" %}</a>
+    <a href="{% url 'sports:team_update' object.pk %}" class="btn btn-secondary btn-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      {% trans "Edit" %}
+    </a>
   {% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-  <div style="display:flex; gap:16px; align-items:center;">
-    <div class="avatar avatar-xl avatar-purple">
-      {% if object.logo %}<img src="{{ object.logo.url }}">{% else %}{{ object.icon }}{% endif %}
+<div class="grid-stats" style="margin-bottom:24px;">
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Players" %}</div>
+      <div class="stat-value">{{ object.members.count }}</div>
     </div>
-    <div>
-      <div class="page-header-meta">
-        <span class="badge badge-slate">{{ object.get_sport_display }}</span>
-        {% if object.age_group %}<span class="badge badge-info">{{ object.age_group }}</span>{% endif %}
-      </div>
-      <h1 class="page-title">{{ object.name }}</h1>
-      {% if object.coach %}<p class="page-subtitle">{% trans "Coached by" %} <strong>{{ object.coach.get_full_name }}</strong></p>{% endif %}
+    <div class="stat-icon brand">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     </div>
   </div>
-</div>
-
-<div class="grid-stats">
-  <div class="stat-card"><div class="stat-meta"><div class="stat-label">{% trans "Players" %}</div><div class="stat-value">{{ object.members.count }}</div></div><div class="stat-icon brand"><i data-feather="users"></i></div></div>
-  <div class="stat-card"><div class="stat-meta"><div class="stat-label">{% trans "Wins" %}</div><div class="stat-value">{{ wins }}</div></div><div class="stat-icon success"><i data-feather="trending-up"></i></div></div>
-  <div class="stat-card"><div class="stat-meta"><div class="stat-label">{% trans "Draws" %}</div><div class="stat-value">{{ draws }}</div></div><div class="stat-icon warning"><i data-feather="minus"></i></div></div>
-  <div class="stat-card"><div class="stat-meta"><div class="stat-label">{% trans "Losses" %}</div><div class="stat-value">{{ losses }}</div></div><div class="stat-icon danger"><i data-feather="trending-down"></i></div></div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Wins" %}</div>
+      <div class="stat-value">{{ wins }}</div>
+    </div>
+    <div class="stat-icon success">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Draws" %}</div>
+      <div class="stat-value">{{ draws }}</div>
+    </div>
+    <div class="stat-icon warning">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-meta">
+      <div class="stat-label">{% trans "Losses" %}</div>
+      <div class="stat-value">{{ losses }}</div>
+    </div>
+    <div class="stat-icon danger">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+    </div>
+  </div>
 </div>
 
 <div class="grid-dashboard">
@@ -39,7 +65,13 @@
     <div class="card-body p-0">
       <div class="table-wrap">
         <table class="table table-responsive">
-          <thead><tr><th>{% trans "Match" %}</th><th>{% trans "Date" %}</th><th>{% trans "Result" %}</th></tr></thead>
+          <thead>
+            <tr>
+              <th>{% trans "Match" %}</th>
+              <th>{% trans "Date" %}</th>
+              <th>{% trans "Result" %}</th>
+            </tr>
+          </thead>
           <tbody>
             {% for m in recent_matches %}
               <tr>
@@ -50,12 +82,21 @@
                 <td data-label="{% trans 'Date' %}"><span class="cell-secondary">{{ m.scheduled_at|date:"M d" }}</span></td>
                 <td data-label="{% trans 'Result' %}">
                   {% if m.is_completed %}
-                    <strong>{{ m.home_score }} - {{ m.away_score }}</strong>
-                  {% else %}<span class="badge badge-slate">{% trans "Upcoming" %}</span>{% endif %}
+                    <strong style="color:var(--text-primary);">{{ m.home_score }} – {{ m.away_score }}</strong>
+                  {% else %}
+                    <span class="badge badge-slate">{% trans "Upcoming" %}</span>
+                  {% endif %}
                 </td>
               </tr>
             {% empty %}
-              <tr><td colspan="3"><div class="empty-state"><div class="empty-state-icon"><i data-feather="zap"></i></div><p>{% trans "No matches yet." %}</p></div></td></tr>
+              <tr><td colspan="3">
+                <div class="empty-state">
+                  <div class="empty-state-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  </div>
+                  <p>{% trans "No matches yet." %}</p>
+                </div>
+              </td></tr>
             {% endfor %}
           </tbody>
         </table>
@@ -67,17 +108,23 @@
     <div class="card-header">
       <h3 class="card-title">{% trans "Players" %} <span class="badge badge-slate">{{ object.members.count }}</span></h3>
     </div>
-    <div class="card-body" style="padding:0;">
+    <div class="card-body p-0">
       {% for player in object.members.all %}
-        <a href="{% url 'users:detail' player.pk %}" style="display:flex; gap:10px; align-items:center; padding:10px 22px; border-bottom:1px solid var(--color-slate-100); color:inherit; text-decoration:none;">
+        <a href="{% url 'users:detail' player.pk %}" style="display:flex;gap:10px;align-items:center;padding:10px 22px;border-bottom:1px solid var(--border-secondary);color:inherit;text-decoration:none;">
           <div class="avatar avatar-sm avatar-sky">{{ player.initials }}</div>
-          <div style="flex:1; min-width:0;">
+          <div style="flex:1;min-width:0;">
             <div class="cell-primary truncate">{{ player.get_full_name }}</div>
             <div class="cell-secondary"><code style="font-size:11px;">{{ player.member_code }}</code></div>
           </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
       {% empty %}
-        <div class="empty-state"><div class="empty-state-icon"><i data-feather="user"></i></div><p>{% trans "No players assigned." %}</p></div>
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <p>{% trans "No players assigned." %}</p>
+        </div>
       {% endfor %}
     </div>
   </div>

@@ -1,38 +1,42 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{% trans "Delete member" %}{% endblock %}
 {% block page_title %}{% trans "Delete member" %}{% endblock %}
 
 {% block content %}
-<div style="max-width:520px; margin:48px auto;">
-  <div class="card" style="border-color: var(--color-danger-100);">
+<div style="max-width:520px;margin:48px auto;">
+  <div class="card" style="border-color:var(--danger-200);">
     <div class="card-body" style="padding:32px;">
-      <div style="display:flex; gap:16px; align-items:flex-start;">
-        <div class="stat-icon danger" style="width:48px;height:48px;font-size:22px;flex-shrink:0;">
-          <i data-feather="alert-triangle"></i>
+      <div style="display:flex;gap:16px;align-items:flex-start;">
+        <div class="stat-icon danger" style="width:48px;height:48px;flex-shrink:0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
         <div style="flex:1;">
-          <h1 style="font-size:20px; font-weight:800; color:var(--color-slate-900); margin-bottom:8px;">
+          <h1 style="font-size:20px;font-weight:800;color:var(--text-primary);margin-bottom:8px;">
             {% trans "Delete this member?" %}
           </h1>
-          <p style="color:var(--color-slate-600); font-size:14px; line-height:1.6; margin-bottom:18px;">
+          <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;margin-bottom:18px;">
             {% blocktrans with name=object.get_full_name|default:object.username %}You're about to permanently delete <strong>{{ name }}</strong>. All their attendance records, evaluations, and parent-child links will be removed. This action cannot be undone.{% endblocktrans %}
           </p>
 
-          <div style="background:var(--color-slate-50); padding:14px 16px; border-radius:var(--radius); font-size:13px; margin-bottom:20px;">
-            <div style="display:flex; gap:10px; align-items:center; margin-bottom:6px;">
-              <div class="avatar avatar-sm">{{ object.initials }}</div>
+          <div style="background:var(--surface-sunken);padding:14px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:20px;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="avatar avatar-sm avatar-{% if object.is_admin %}warning{% elif object.is_coach %}brand{% elif object.is_parent %}success{% else %}sky{% endif %}">
+                {% if object.photo %}<img src="{{ object.photo.url }}" alt="">{% else %}{{ object.initials }}{% endif %}
+              </div>
               <div>
-                <div style="font-weight:600;">{{ object.get_full_name|default:object.username }}</div>
-                <div class="cell-secondary"><code>{{ object.member_code }}</code> · {{ object.role_display }}</div>
+                <div style="font-weight:600;color:var(--text-primary);">{{ object.get_full_name|default:object.username }}</div>
+                <div class="cell-secondary"><code style="font-size:11px;">{{ object.member_code }}</code> · {{ object.role_display }}</div>
               </div>
             </div>
           </div>
 
-          <form method="post" style="display:flex; gap:8px;">
+          <form method="post" style="display:flex;gap:8px;flex-wrap:wrap;">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">
-              <i data-feather="trash-2"></i>{% trans "Yes, delete permanently" %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              {% trans "Yes, delete permanently" %}
             </button>
             <a href="{% url 'users:detail' object.pk %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
           </form>

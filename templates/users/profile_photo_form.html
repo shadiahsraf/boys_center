@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Profile photo" %}{% endblock %}
+{% block page_title %}{% trans "Profile photo" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Change your profile picture" %}</div>{% endblock %}
+
+{% block content %}
+<div style="max-width:540px;margin:0 auto;">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">{% trans "Profile photo" %}</h3>
+        <div class="card-subtitle">{% trans "JPG, PNG or GIF. Max 5 MB." %}</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <!-- Current photo preview -->
+        <div style="display:flex;align-items:center;gap:18px;margin-bottom:20px;padding:18px;background:var(--surface-sunken);border-radius:var(--radius-lg);">
+          <div style="position:relative;">
+            <div class="avatar avatar-xl avatar-brand" id="photoPreview" style="border-radius:20px;">
+              {% if user.photo %}
+                <img src="{{ user.photo.url }}" alt="">
+              {% else %}
+                {{ user.initials }}
+              {% endif %}
+            </div>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:15px;font-weight:700;color:var(--text-primary);">{{ user.get_full_name|default:user.username }}</div>
+            <div class="cell-secondary">{{ user.role_display }}</div>
+            {% if user.member_code %}
+              <div style="font-family:'SF Mono',monospace;font-size:12px;color:var(--accent-600);font-weight:700;letter-spacing:1.5px;margin-top:4px;">{{ user.member_code }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_photo">{% trans "Choose a new photo" %}</label>
+          {{ form.photo }}
+          {% if form.photo.errors %}
+            <div class="form-error">{{ form.photo.errors|join:", " }}</div>
+          {% endif %}
+          <div class="form-help">{% trans "Square images work best. Your initials are shown if no photo is set." %}</div>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:20px;">
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+          {% if user.photo %}
+            <button type="submit" formaction="{% url 'users:photo_remove' %}" formmethod="post" class="btn btn-secondary"
+                    onclick="return confirm('{% trans "Remove your profile photo?" %}');">
+              {% trans "Remove photo" %}
+            </button>
+          {% endif %}
+          <button type="submit" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            {% trans "Save photo" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Live preview when user picks a file
+  document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('id_photo');
+    const preview = document.getElementById('photoPreview');
+    if (!input || !preview) return;
+    input.addEventListener('change', function(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        preview.innerHTML = '<img src="' + ev.target.result + '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">';
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+</script>
+{% endblock %}

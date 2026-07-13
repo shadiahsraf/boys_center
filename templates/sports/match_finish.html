@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Finish match" %}{% endblock %}
+{% block page_title %}{% trans "Finish match" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Record the final score & scorers" %}</div>{% endblock %}
+
+{% block content %}
+<div style="max-width:820px;margin:0 auto;"
+     x-data="finishMatch({
+       homeTeamId: '{{ match.home_team.pk }}',
+       awayTeamId: '{{ match.away_team.pk }}',
+       homePlayers: [{% for p in home_players %}{ id: '{{ p.pk }}', name: '{{ p.get_full_name|default:p.username|escapejs }}' }{% if not forloop.last %},{% endif %}{% endfor %}],
+       awayPlayers: [{% for p in away_players %}{ id: '{{ p.pk }}', name: '{{ p.get_full_name|default:p.username|escapejs }}' }{% if not forloop.last %},{% endif %}{% endfor %}],
+       sport: '{{ match.sport }}',
+       initialHomeScore: {{ match.home_score|default:0 }},
+       initialAwayScore: {{ match.away_score|default:0 }},
+       initialScorers: [{% for g in existing_goals %}{ playerId: '{{ g.player.pk }}', team: '{% if g.team_id == match.home_team_id %}home{% else %}away{% endif %}', minute: '{{ g.minute|default_if_none:'' }}', points: {{ g.points|default:1 }} }{% if not forloop.last %},{% endif %}{% endfor %}],
+     })">
+
+  <!-- Match summary card -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+        <span class="badge badge-slate">{{ match.icon }} {{ match.get_sport_display }}</span>
+        {% if match.competition %}
+          <span class="badge badge-brand">{{ match.competition.icon }} {{ match.competition.name }}</span>
+        {% endif %}
+        <span style="font-size:12.5px;color:var(--text-tertiary);">
+          {{ match.scheduled_at|date:"M d, Y · H:i" }} · {{ match.location }}
+        </span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;padding:18px 0;">
+        <div style="text-align:center;">
+          <div style="font-size:18px;font-weight:800;color:var(--text-primary);">{{ match.home_team.name }}</div>
+          <div class="cell-secondary" style="font-size:11px;margin-top:2px;">{% trans "Home" %}</div>
+        </div>
+        <div style="font-size:18px;font-weight:800;color:var(--text-muted);">VS</div>
+        <div style="text-align:center;">
+          <div style="font-size:18px;font-weight:800;color:var(--text-primary);">{{ match.away_team.name }}</div>
+          <div class="cell-secondary" style="font-size:11px;margin-top:2px;">{% trans "Away" %}</div>
+        </div>
+      </div>
+
+      <!-- Live winner indicator -->
+      <div class="finish-winner-bar" :class="winnerClass">
+        <template x-if="winnerLabel === 'home'">
+          <div>🏆 <strong>{{ match.home_team.name }}</strong> {% trans "is winning" %}</div>
+        </template>
+        <template x-if="winnerLabel === 'away'">
+          <div>🏆 <strong>{{ match.away_team.name }}</strong> {% trans "is winning" %}</div>
+        </template>
+        <template x-if="winnerLabel === 'draw'">
+          <div>🤝 {% trans "It's a draw" %}</div>
+        </template>
+        <template x-if="winnerLabel === 'none'">
+          <div style="color:var(--text-tertiary);">{% trans "Enter scores below to set the winner" %}</div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <form method="post" @submit="onSubmit($event)">
+    {% csrf_token %}
+
+    <!-- Score entry -->
+    <div class="card mb-4">
+      <div class="card-header"><h3 class="card-title">{% trans "Final score" %}</h3></div>
+      <div class="card-body">
+        <div class="finish-scoreboard">
+          <div class="finish-score-side">
+            <label class="form-label">{{ match.home_team.name }}</label>
+            <input type="number" min="0" name="home_score" x-model.number="homeScore"
+                   class="tw-input finish-score-input" required>
+          </div>
+          <div class="finish-score-dash">–</div>
+          <div class="finish-score-side">
+            <label class="form-label">{{ match.away_team.name }}</label>
+            <input type="number" min="0" name="away_score" x-model.number="awayScore"
+                   class="tw-input finish-score-input" required>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-secondary btn-sm" @click="autoSyncFromScorers()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            {% trans "Sync scores from scorers" %}
+          </button>
+        </div>
+
+        <!-- Validation hint when sums don't match -->
+        <div x-show="scorerSumMismatch" x-cloak class="alert alert-warning mt-3" style="font-size:13px;">
+          <span x-text="scorerMismatchMessage"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scorers -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">{% trans "Goal scorers" %}</h3>
+          <div class="card-subtitle">{% trans "Add who scored. Minute is optional." %}</div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" @click="addScorer()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          {% trans "Add scorer" %}
+        </button>
+      </div>
+      <div class="card-body p-0">
+        <template x-if="scorers.length === 0">
+          <div class="empty-state" style="padding:28px 18px;">
+            <div class="empty-state-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <p>{% trans "No scorers yet — click 'Add scorer' to record who scored." %}</p>
+          </div>
+        </template>
+        <template x-for="(s, idx) in scorers" :key="idx">
+          <div class="finish-scorer-row">
+            <!-- Team side -->
+            <div class="finish-scorer-team">
+              <button type="button" class="finish-team-pill"
+                      :class="{ 'active': s.team === 'home' }"
+                      @click="s.team = 'home'; s.playerId = ''">
+                {% trans "Home" %}
+              </button>
+              <button type="button" class="finish-team-pill"
+                      :class="{ 'active': s.team === 'away' }"
+                      @click="s.team = 'away'; s.playerId = ''">
+                {% trans "Away" %}
+              </button>
+              <input type="hidden" name="scorer_team[]" :value="s.team">
+            </div>
+
+            <!-- Player picker -->
+            <select class="tw-input finish-scorer-player" name="scorer_player[]" x-model="s.playerId" required>
+              <option value="">{% trans "— pick player —" %}</option>
+              <template x-for="p in (s.team === 'home' ? homePlayers : awayPlayers)" :key="p.id">
+                <option :value="p.id" x-text="p.name"></option>
+              </template>
+            </select>
+
+            <!-- Minute -->
+            <input type="number" min="0" max="200" placeholder="{% trans 'Min' %}"
+                   name="scorer_minute[]" x-model="s.minute" class="tw-input finish-scorer-min">
+
+            <!-- Points (for basketball, default 1) -->
+            <input type="number" min="1" max="10" name="scorer_points[]"
+                   x-model.number="s.points" class="tw-input finish-scorer-pts"
+                   :title="'{% trans 'Points' %}'">
+
+            <!-- Remove -->
+            <button type="button" class="btn btn-ghost btn-sm finish-scorer-remove" @click="removeScorer(idx)" :title="'{% trans 'Remove' %}'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">{% trans "Notes (optional)" %}</label>
+          <textarea name="notes" rows="2" class="tw-input"
+                    placeholder="{% trans 'Any observations from the match...' %}">{{ match.notes }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;">
+      <a href="{% url 'sports:match_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+      <button type="submit" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {% trans "Finish match" %}
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+function finishMatch(init) {
+  return {
+    homeScore: init.initialHomeScore,
+    awayScore: init.initialAwayScore,
+    homePlayers: init.homePlayers,
+    awayPlayers: init.awayPlayers,
+    sport: init.sport,
+    scorers: init.initialScorers.length
+      ? init.initialScorers.map(s => ({ ...s, playerId: s.playerId, team: s.team || 'home', minute: s.minute || '', points: s.points || 1 }))
+      : [],
+
+    addScorer() {
+      this.scorers.push({ team: 'home', playerId: '', minute: '', points: 1 });
+    },
+    removeScorer(i) { this.scorers.splice(i, 1); },
+
+    homePoints() {
+      return this.scorers
+        .filter(s => s.team === 'home' && s.playerId)
+        .reduce((sum, s) => sum + (parseInt(s.points) || 1), 0);
+    },
+    awayPoints() {
+      return this.scorers
+        .filter(s => s.team === 'away' && s.playerId)
+        .reduce((sum, s) => sum + (parseInt(s.points) || 1), 0);
+    },
+    autoSyncFromScorers() {
+      this.homeScore = this.homePoints();
+      this.awayScore = this.awayPoints();
+    },
+
+    get winnerLabel() {
+      const h = parseInt(this.homeScore), a = parseInt(this.awayScore);
+      if (isNaN(h) || isNaN(a) || (h === 0 && a === 0 && this.scorers.length === 0)) return 'none';
+      if (h > a) return 'home';
+      if (a > h) return 'away';
+      return 'draw';
+    },
+    get winnerClass() {
+      return {
+        'finish-winner-home': this.winnerLabel === 'home',
+        'finish-winner-away': this.winnerLabel === 'away',
+        'finish-winner-draw': this.winnerLabel === 'draw',
+        'finish-winner-none': this.winnerLabel === 'none',
+      };
+    },
+
+    get scorerSumMismatch() {
+      // Warn (not block) when typed scores don't match sum of scorer points.
+      if (this.scorers.length === 0) return false;
+      const h = parseInt(this.homeScore) || 0;
+      const a = parseInt(this.awayScore) || 0;
+      return this.homePoints() !== h || this.awayPoints() !== a;
+    },
+    get scorerMismatchMessage() {
+      return `{% trans "Scorers sum:" %} ${this.homePoints()}–${this.awayPoints()}, {% trans "but score is" %} ${this.homeScore}–${this.awayScore}. {% trans "You can sync or override." %}`;
+    },
+
+    onSubmit(e) {
+      if (this.scorers.some(s => !s.playerId)) {
+        if (!confirm("{% trans 'Some scorer rows have no player selected. They will be ignored. Continue?' %}")) {
+          e.preventDefault();
+          return;
+        }
+      }
+    }
+  };
+}
+</script>
+{% endblock %}

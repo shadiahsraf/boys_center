@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#1A0F0F">
   <title>{% block title %}{% trans "Boys Center" %}{% endblock %} · Boys Center</title>
 
-  {# Apply theme BEFORE the body renders to avoid FOUC. #}
   <script>
     (function() {
       try {
@@ -20,24 +19,50 @@
             document.documentElement.classList.remove('no-theme-transition');
           }, 50);
         });
-      } catch (e) { /* ignore */ }
+      } catch (e) {}
     })();
   </script>
 
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=6">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=43">
+
+  {# ─── PWA — installable, offline-capable, mobile-friendly ─── #}
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/bc-icon.svg' %}">
+  <link rel="icon" type="image/png" sizes="192x192" href="{% static 'img/bc-icon-192.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/bc-icon-apple-180.png' %}">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Boys Center">
+  <meta name="mobile-web-app-capable" content="yes">
+
   <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+  {% block head_extra %}{% endblock %}
 </head>
 <body x-data="{
         sidebar: false,
         theme: document.documentElement.getAttribute('data-theme') || 'light',
+        deferredInstall: null,
+        canInstall: false,
         toggleTheme() {
           this.theme = this.theme === 'dark' ? 'light' : 'dark';
           document.documentElement.setAttribute('data-theme', this.theme);
           localStorage.setItem('bc_theme', this.theme);
+        },
+        async installApp() {
+          if (!this.deferredInstall) return;
+          this.deferredInstall.prompt();
+          const choice = await this.deferredInstall.userChoice;
+          if (choice.outcome === 'accepted') this.canInstall = false;
+          this.deferredInstall = null;
         }
-      }">
+      }"
+      @beforeinstallprompt.window.prevent="
+        deferredInstall = $event;
+        canInstall = true;
+      "
+      @appinstalled.window="canInstall = false">
 {% block body %}
   {% if user.is_authenticated %}
     {# ── AUTHENTICATED LAYOUT ── #}
@@ -51,7 +76,7 @@
             <button class="menu-btn" @click="sidebar = !sidebar" aria-label="{% trans 'Menu' %}">
               <i data-feather="menu" style="width:18px;height:18px;"></i>
             </button>
-            <div>
+            <div style="min-width:0;">
               <div class="topbar-title">{% block page_title %}{% trans "Dashboard" %}{% endblock %}</div>
               {% block page_subtitle %}{% endblock %}
             </div>
@@ -60,54 +85,58 @@
           <div class="topbar-right">
             {% block topbar_actions %}{% endblock %}
 
-            {# ── THEME TOGGLE (inline SVG so feather.replace() never touches it) ── #}
+            {# Daily-challenge streak chip — youth only, and only after they've started #}
+            {% if is_youth_user and dc_streak > 0 %}
+              <a href="{% url 'dailychallenge:today' %}" dir="rtl" lang="ar"
+                 class="streak-chip"
+                 title="{% trans 'Daily Challenge' %}">
+                <span class="streak-chip-flame">🔥</span>
+                <span>سلسلة</span>
+                <span class="streak-chip-num">{{ dc_streak }}</span>
+              </a>
+            {% endif %}
+
+            {# Notifications bell #}
+            {% include 'notifications/_bell.html' %}
+
+            {# Install-app button (PWA) — shows only when the browser fires beforeinstallprompt #}
+            <button type="button"
+                    x-show="canInstall"
+                    x-cloak
+                    @click="installApp()"
+                    class="btn btn-secondary btn-sm install-btn"
+                    title="{% trans 'Install app' %}"
+                    aria-label="{% trans 'Install app' %}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span class="hide-sm">{% trans "Install app" %}</span>
+            </button>
+
+            {# Theme toggle — inline SVGs so feather.replace() never touches them #}
             <button type="button"
                     @click="toggleTheme()"
                     class="btn btn-secondary btn-sm theme-toggle"
-                    :title="theme === 'dark' ? '{% trans "Switch to light mode" %}' : '{% trans "Switch to dark mode" %}'"
-                    :aria-label="theme === 'dark' ? '{% trans "Switch to light mode" %}' : '{% trans "Switch to dark mode" %}'">
-              {# Sun icon, shown when in dark mode #}
-              <svg x-show="theme === 'dark'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-              </svg>
-              {# Moon icon, shown when in light mode #}
-              <svg x-show="theme !== 'dark'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-              </svg>
+                    :title="theme === 'dark' ? '{% trans "Light mode" %}' : '{% trans "Dark mode" %}'"
+                    :aria-label="theme === 'dark' ? '{% trans "Light mode" %}' : '{% trans "Dark mode" %}'">
+              <svg x-show="theme === 'dark'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              <svg x-show="theme !== 'dark'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
 
-            {# ── LANGUAGE TOGGLE (one-click switch, like the public navbar) ── #}
+            {# Language toggle #}
             <form action="{% url 'set_language' %}" method="post" style="margin:0;">
               {% csrf_token %}
               {% if request.path|slice:":3" == '/en' %}
                 <input type="hidden" name="next" value="/ar{{ request.path|slice:'3:' }}">
                 <input type="hidden" name="language" value="ar">
                 <button type="submit" class="btn btn-secondary btn-sm" title="التبديل للعربية">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                   <span class="hide-sm">عربي</span>
                 </button>
               {% else %}
                 <input type="hidden" name="next" value="/en{{ request.path|slice:'3:' }}">
                 <input type="hidden" name="language" value="en">
                 <button type="submit" class="btn btn-secondary btn-sm" title="Switch to English">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                  </svg>
-                  <span class="hide-sm">English</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  <span class="hide-sm">EN</span>
                 </button>
               {% endif %}
             </form>
@@ -118,10 +147,12 @@
           {% if messages %}
             <div class="mb-4">
               {% for message in messages %}
-                <div class="alert alert-{{ message.tags|default:'info' }}" x-data="{ show: true }" x-show="show">
+                <div class="alert alert-{{ message.tags|default:'info' }}" x-data="{ show: true }" x-show="show" x-transition.opacity>
                   <i data-feather="{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}alert-circle{% elif message.tags == 'warning' %}alert-triangle{% else %}info{% endif %}" style="width:18px;height:18px;flex-shrink:0;"></i>
                   <span style="flex:1;">{{ message }}</span>
-                  <button @click="show = false" style="padding:0;background:none;border:none;color:inherit;cursor:pointer;"><i data-feather="x" style="width:16px;height:16px;"></i></button>
+                  <button @click="show = false" style="padding:0;background:none;border:none;color:inherit;cursor:pointer;opacity:0.7;" aria-label="{% trans 'Close' %}">
+                    <i data-feather="x" style="width:16px;height:16px;"></i>
+                  </button>
                 </div>
               {% endfor %}
             </div>
@@ -137,7 +168,7 @@
       {% include 'partials/public_nav.html' %}
       <main class="public-main">
         {% if messages %}
-          <div class="public-container">
+          <div class="public-container mt-4">
             {% for message in messages %}
               <div class="alert alert-{{ message.tags|default:'info' }}">
                 <span>{{ message }}</span>
@@ -152,11 +183,25 @@
   {% endif %}
 {% endblock %}
 
+  {# Floating Arabic FAQ chatbot — visible on every page #}
+  {% include 'partials/chatbot.html' %}
+
+  {# Register the PWA service worker (only over https or localhost) #}
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/sw.js', { scope: '/' })
+          .catch((err) => console.warn('SW registration failed:', err));
+      });
+    }
+  </script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => feather.replace());
-    document.addEventListener('alpine:init', () => feather.replace());
     document.addEventListener('alpine:initialized', () => feather.replace());
   </script>
+  <script src="{% static 'js/boys_center.js' %}?v=20"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

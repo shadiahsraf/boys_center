@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Rate our services" %}{% endblock %}
+
+{% block guest_body %}
+  {% include 'partials/public_nav.html' %}
+
+  <main class="public-main">
+    <div class="public-container" style="padding-top:48px;padding-bottom:64px;">
+      <div class="rate-header">
+        <div class="rate-header-badge">⭐ {% trans "Your opinion matters" %}</div>
+        <h1 class="rate-header-title" dir="rtl" lang="ar">اختار الخدمة اللي عاوز تقيمها</h1>
+        <p class="rate-header-sub">{% trans "Pick a service below to share your rating. No login needed — fully anonymous." %}</p>
+      </div>
+
+      {% if facilities %}
+        <div class="rate-grid">
+          {% for f in facilities %}
+            <a href="{% url 'ratings:facility' f.id %}" class="rate-card">
+              <div class="rate-card-icon">{{ f.icon|default:"⭐" }}</div>
+              <div class="rate-card-name" dir="rtl" lang="ar">{{ f.name }}</div>
+              {% if f.description %}
+                <div class="rate-card-desc" dir="rtl" lang="ar">{{ f.description }}</div>
+              {% endif %}
+              <div class="rate-card-meta">
+                <span class="rate-card-meta-q">📝 {{ f.q_count }} {% trans "questions" %}</span>
+                <span class="rate-card-meta-arrow">←</span>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="rate-empty">
+          <div class="rate-empty-icon">📭</div>
+          <div class="rate-empty-title" dir="rtl" lang="ar">لا توجد خدمات متاحة للتقييم حالياً</div>
+          <div class="rate-empty-sub">{% trans "Please check back later." %}</div>
+        </div>
+      {% endif %}
+    </div>
+  </main>
+
+  {% include 'partials/public_footer.html' %}
+{% endblock %}

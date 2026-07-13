@@ -1,21 +1,24 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{% trans "Matches" %}{% endblock %}
 {% block page_title %}{% trans "Matches" %}{% endblock %}
 
 {% block topbar_actions %}
   {% if is_admin_user or is_coach_manager_user or is_coach_user %}
-    <a href="{% url 'sports:match_create' %}" class="btn btn-primary"><i data-feather="plus"></i>{% trans "Schedule match" %}</a>
+    <a href="{% url 'sports:match_create' %}" class="btn btn-primary btn-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      {% trans "Schedule match" %}
+    </a>
   {% endif %}
 {% endblock %}
 
 {% block content %}
-<!-- Filters -->
-<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px;">
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
   <a href="{% url 'sports:match_list' %}" class="btn {% if not filter_sport and not filter_status %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "All" %}</a>
   <a href="?status=upcoming" class="btn {% if filter_status == 'upcoming' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "Upcoming" %}</a>
   <a href="?status=completed" class="btn {% if filter_status == 'completed' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "Completed" %}</a>
-  <span style="border-inline-start:1px solid var(--color-slate-300); margin: 0 4px;"></span>
+  <span style="border-inline-start:1px solid var(--border-secondary);align-self:stretch;margin:0 4px;"></span>
   {% for v, l in sport_choices %}
     <a href="?sport={{ v }}" class="btn {% if filter_sport == v %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{{ l }}</a>
   {% endfor %}
@@ -25,39 +28,73 @@
   {% for m in matches %}
     <div class="card">
       <div class="card-body">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
           <span class="badge badge-slate">{{ m.icon }} {{ m.get_sport_display }}</span>
-          {% if m.is_completed %}<span class="badge badge-success">{% trans "Final" %}</span>
-          {% else %}<span class="badge badge-info">{% trans "Upcoming" %}</span>{% endif %}
+          {% if m.is_completed %}
+            <span class="badge badge-success">{% trans "Final" %}</span>
+          {% else %}
+            <span class="badge badge-brand">{% trans "Upcoming" %}</span>
+          {% endif %}
         </div>
-        <div style="display:flex; align-items:center; gap:14px;">
-          <div style="flex:1; text-align:center;">
-            <div style="font-weight:700; color:var(--color-slate-900);">{{ m.home_team.name }}</div>
-            <div class="cell-secondary">{% trans "Home" %}</div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="flex:1;text-align:center;">
+            <div style="font-weight:700;color:var(--text-primary);">{{ m.home_team.name }}</div>
+            <div class="cell-secondary" style="font-size:11px;">{% trans "Home" %}</div>
           </div>
-          <div style="text-align:center; padding:10px 18px; background:var(--color-slate-900); border-radius:var(--radius-lg); color:white;">
+          <div style="text-align:center;padding:10px 18px;background:var(--slate-900);border-radius:var(--radius-lg);color:#fff;min-width:72px;">
             {% if m.is_completed %}
-              <div style="font-size:22px; font-weight:800; line-height:1;">{{ m.home_score }} - {{ m.away_score }}</div>
-              <div style="font-size:10px; opacity:0.6; text-transform:uppercase; letter-spacing:0.5px; margin-top:3px;">{% trans "Final" %}</div>
+              <div style="font-size:22px;font-weight:800;line-height:1;">{{ m.home_score }}–{{ m.away_score }}</div>
+              <div style="font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;">{% trans "FT" %}</div>
             {% else %}
-              <div style="font-size:18px; font-weight:800; line-height:1;">VS</div>
-              <div style="font-size:10px; opacity:0.6; margin-top:3px;">{{ m.scheduled_at|date:"M d" }}</div>
+              <div style="font-size:18px;font-weight:800;line-height:1;">VS</div>
+              <div style="font-size:10px;opacity:0.6;margin-top:3px;">{{ m.scheduled_at|date:"M d" }}</div>
             {% endif %}
           </div>
-          <div style="flex:1; text-align:center;">
-            <div style="font-weight:700; color:var(--color-slate-900);">{{ m.away_team.name }}</div>
-            <div class="cell-secondary">{% trans "Away" %}</div>
+          <div style="flex:1;text-align:center;">
+            <div style="font-weight:700;color:var(--text-primary);">{{ m.away_team.name }}</div>
+            <div class="cell-secondary" style="font-size:11px;">{% trans "Away" %}</div>
           </div>
         </div>
-        <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--color-slate-100); display:flex; gap:14px; font-size:12px; color:var(--color-slate-500);">
-          <span><i data-feather="map-pin" style="width:11px;height:11px;display:inline;"></i> {{ m.location }}</span>
-          <span><i data-feather="clock" style="width:11px;height:11px;display:inline;"></i> {{ m.scheduled_at|date:"M d, H:i" }}</span>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-secondary);display:flex;gap:14px;font-size:12px;color:var(--text-tertiary);flex-wrap:wrap;align-items:center;">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            {{ m.location }}
+          </span>
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:3px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {{ m.scheduled_at|date:"M d, H:i" }}
+          </span>
+          {% if m.competition %}
+            <span style="margin-inline-start:auto;">
+              <span class="badge badge-brand" style="font-size:10px;">{{ m.competition.icon }} {{ m.competition.name|truncatechars:24 }}</span>
+            </span>
+          {% endif %}
         </div>
+        {% if is_admin_user or is_coach_manager_user or is_coach_user %}
+          <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">
+            {% if not m.is_completed %}
+              <a href="{% url 'sports:match_finish' m.pk %}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                {% trans "Finish match" %}
+              </a>
+            {% else %}
+              <a href="{% url 'sports:match_finish' m.pk %}" class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                {% trans "Edit result" %}
+              </a>
+            {% endif %}
+            <a href="{% url 'sports:match_update' m.pk %}" class="btn btn-ghost btn-sm" title="{% trans 'Edit match' %}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </a>
+          </div>
+        {% endif %}
       </div>
     </div>
   {% empty %}
     <div class="empty-state" style="grid-column:1/-1;">
-      <div class="empty-state-icon"><i data-feather="zap"></i></div>
+      <div class="empty-state-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
       <h3>{% trans "No matches yet" %}</h3>
       <p>{% trans "Schedule your first match to get the season started." %}</p>
     </div>

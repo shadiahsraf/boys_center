@@ -1,14 +1,27 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{{ object.title }}{% endblock %}
 {% block page_title %}{{ object.title }}{% endblock %}
+{% block page_subtitle %}
+  <div class="topbar-subtitle" style="display:flex;gap:6px;align-items:center;">
+    <span class="badge badge-{% if object.session_type == 'training' %}brand{% elif object.session_type == 'prayer' %}warning{% elif object.session_type == 'match' %}danger{% else %}slate{% endif %}" style="font-size:10px;">{{ object.get_session_type_display }}</span>
+    {% if object.is_active %}<span class="badge badge-success" style="font-size:10px;"><span class="badge-dot"></span>{% trans "Live" %}</span>
+    {% else %}<span class="badge badge-slate" style="font-size:10px;">{% trans "Closed" %}</span>{% endif %}
+  </div>
+{% endblock %}
 
 {% block topbar_actions %}
   <form method="post" action="{% url 'attendance:toggle' object.pk %}" style="display:inline;">
     {% csrf_token %}
     <button type="submit" class="btn btn-secondary btn-sm">
-      {% if object.is_open %}<i data-feather="lock"></i>{% trans "Close session" %}
-      {% else %}<i data-feather="unlock"></i>{% trans "Reopen session" %}{% endif %}
+      {% if object.is_open %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        {% trans "Close session" %}
+      {% else %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+        {% trans "Reopen session" %}
+      {% endif %}
     </button>
   </form>
 {% endblock %}
@@ -16,34 +29,34 @@
 {% block content %}
 <div class="page-header">
   <div>
-    <div class="page-header-meta">
-      <span class="badge badge-{% if object.session_type == 'training' %}brand{% elif object.session_type == 'prayer' %}warning{% elif object.session_type == 'match' %}danger{% else %}slate{% endif %}">{{ object.get_session_type_display }}</span>
-      {% if object.is_active %}
-        <span class="badge status-active"><span class="badge-dot"></span>{% trans "Live" %}</span>
-      {% else %}
-        <span class="badge status-inactive">{% trans "Closed" %}</span>
-      {% endif %}
-    </div>
-    <h1 class="page-title">{{ object.title }}</h1>
-    <p class="page-subtitle">
-      <i data-feather="calendar" style="width:13px;height:13px;display:inline;"></i> {{ object.date|date:"l, M d, Y" }} ·
-      <i data-feather="clock" style="width:13px;height:13px;display:inline;"></i> {{ object.start_time|time:"H:i" }}{% if object.end_time %}-{{ object.end_time|time:"H:i" }}{% endif %} ·
-      <i data-feather="map-pin" style="width:13px;height:13px;display:inline;"></i> {{ object.location }}
+    <p class="page-subtitle" style="display:flex;gap:12px;flex-wrap:wrap;">
+      <span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:3px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        {{ object.date|date:"l, M d, Y" }}
+      </span>
+      <span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:3px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        {{ object.start_time|time:"H:i" }}{% if object.end_time %}–{{ object.end_time|time:"H:i" }}{% endif %}
+      </span>
+      <span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ object.location }}
+      </span>
     </p>
   </div>
 </div>
 
 <div class="grid-dashboard">
-  <!-- Live records -->
+  <!-- Live check-ins table -->
   <div class="card" x-data="liveRecords({{ object.attendance_count }}, '{% url 'attendance_api:session_records' object.pk %}')" x-init="startPolling()">
     <div class="card-header">
       <div>
         <h3 class="card-title">{% trans "Check-ins" %} <span class="badge badge-brand" x-text="count"></span></h3>
-        <div class="card-subtitle" x-show="object.is_active">{% trans "Updates automatically every few seconds." %}</div>
+        {% if object.is_active %}<div class="card-subtitle">{% trans "Updates automatically every 5 seconds." %}</div>{% endif %}
       </div>
       {% if object.is_active %}
-        <div style="display:flex; align-items:center; gap:6px; color:var(--color-success-600); font-size:12px; font-weight:600;">
-          <span class="badge-dot" style="background:var(--color-success-500); animation:pulse 1.5s infinite;"></span>
+        <div style="display:flex;align-items:center;gap:6px;color:var(--success-600);font-size:12px;font-weight:600;">
+          <span class="badge-dot" style="background:var(--success-500);animation:pulse 1.5s infinite;"></span>
           {% trans "Live" %}
         </div>
       {% endif %}
@@ -78,9 +91,11 @@
             <tr x-show="records.length === 0">
               <td colspan="4">
                 <div class="empty-state">
-                  <div class="empty-state-icon"><i data-feather="users"></i></div>
+                  <div class="empty-state-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
                   <h3>{% trans "Waiting for check-ins" %}</h3>
-                  <p>{% trans "Players will appear here as they scan the QR code and enter their member code." %}</p>
+                  <p>{% trans "Players will appear here as they scan the QR code." %}</p>
                 </div>
               </td>
             </tr>
@@ -90,24 +105,25 @@
     </div>
   </div>
 
-  <!-- QR Code + Manual entry -->
+  <!-- QR Code + Manual check-in -->
   <div>
     <div class="card mb-4">
-      <div class="card-header">
-        <h3 class="card-title">{% trans "Session QR Code" %}</h3>
-      </div>
+      <div class="card-header"><h3 class="card-title">{% trans "Session QR Code" %}</h3></div>
       <div class="card-body text-center">
         {% if object.qr_code %}
           <div class="qr-display">
             <img src="{{ object.qr_code.url }}" alt="Session QR">
           </div>
-          <p class="cell-secondary mt-3">{% trans "Players scan this code to check in." %}</p>
-          <div style="background:var(--color-slate-50); padding:8px 10px; border-radius:var(--radius); margin-top:12px; font-family:'SF Mono',monospace; font-size:11px; color:var(--color-slate-600); word-break:break-all;">
+          <p class="cell-secondary mt-3" style="font-size:12px;">{% trans "Players scan this code to check in." %}</p>
+          <div style="background:var(--surface-sunken);padding:8px 10px;border-radius:var(--radius);margin-top:12px;font-family:'SF Mono',monospace;font-size:11px;color:var(--text-tertiary);word-break:break-all;">
             {{ request.scheme }}://{{ request.get_host }}/{{ CURRENT_LANGUAGE }}/attendance/check-in/{{ object.token }}/
           </div>
-          <a href="{{ object.qr_code.url }}" download class="btn btn-secondary btn-sm mt-3"><i data-feather="download" style="width:13px;height:13px;"></i>{% trans "Download QR" %}</a>
+          <a href="{{ object.qr_code.url }}" download class="btn btn-secondary btn-sm mt-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            {% trans "Download QR" %}
+          </a>
         {% else %}
-          <div class="cell-secondary">{% trans "QR code generation pending..." %}</div>
+          <p class="cell-secondary">{% trans "QR code generation pending…" %}</p>
         {% endif %}
       </div>
     </div>
@@ -126,15 +142,15 @@
             body: 'member_code=' + encodeURIComponent(code)
           }).then(r => r.json()).then(data => {
             loading = false;
-            if (data.success) { code = ''; error = ''; setTimeout(() => $dispatch('refresh-records'), 200); }
+            if (data.success) { code = ''; error = ''; }
             else error = data.error;
           });
         ">
           <div class="form-group">
-            <input x-model="code" type="text" class="tw-input" placeholder="{% trans 'Member code' %}" style="text-transform:uppercase; font-family:'SF Mono',monospace;" autocomplete="off">
+            <input x-model="code" type="text" placeholder="{% trans 'Member code' %}" style="text-transform:uppercase;font-family:'SF Mono',monospace;" autocomplete="off">
           </div>
           <button type="submit" class="btn btn-primary btn-block" :disabled="loading || !code">
-            <i data-feather="user-plus" style="width:14px;height:14px;"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
             <span x-show="!loading">{% trans "Add check-in" %}</span>
             <span x-show="loading"><span class="spinner"></span></span>
           </button>
@@ -157,13 +173,11 @@ function liveRecords(initialCount, url) {
       fetch(url).then(r => r.json()).then(data => {
         this.count = data.count;
         this.records = data.records;
-        this.$nextTick(() => feather.replace());
       });
     },
     startPolling() {
       this.fetchRecords();
       this.interval = setInterval(() => this.fetchRecords(), 5000);
-      window.addEventListener('refresh-records', () => this.fetchRecords());
     }
   };
 }

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% if object %}{% trans "Edit competition" %}{% else %}{% trans "New competition" %}{% endif %}{% endblock %}
+{% block page_title %}{% if object %}{% trans "Edit competition" %}{% else %}{% trans "New competition" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:640px;margin:0 auto;">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">{% trans "Competition details" %}</h3>
+        <div class="card-subtitle">{% trans "Group matches under a league, cup or friendly series." %}</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label">{% trans "Name" %} <span style="color:var(--danger-500);">*</span></label>
+          {{ form.name }}
+          {% if form.name.errors %}<div class="form-error">{{ form.name.errors|join:", " }}</div>{% endif %}
+        </div>
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">{% trans "Type" %}</label>
+            {{ form.competition_type }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Sport" %}</label>
+            {{ form.sport }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Season" %}</label>
+            {{ form.season }}
+            <div class="form-help">{% trans "e.g. 2025-2026" %}</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+            {{ form.is_active }}
+            <span style="font-weight:500;">{% trans "Active competition (shows in filters)" %}</span>
+          </label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button type="submit" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            {% if object %}{% trans "Save changes" %}{% else %}{% trans "Create competition" %}{% endif %}
+          </button>
+          <a href="{% url 'sports:competition_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

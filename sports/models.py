@@ -57,9 +57,50 @@ class CoachAssignment(models.Model):
         return f"{self.coach} → {self.get_sport_display()}"
 
 
+class CompetitionType(models.TextChoices):
+    LEAGUE = 'league', _('League')
+    CUP = 'cup', _('Cup')
+    FRIENDLY = 'friendly', _('Friendly')
+
+
+class Competition(models.Model):
+    """A grouping of matches — league season, knockout cup, or friendly series."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(_('Name'), max_length=120)
+    competition_type = models.CharField(_('Type'), max_length=20,
+                                        choices=CompetitionType.choices,
+                                        default=CompetitionType.LEAGUE)
+    sport = models.CharField(_('Sport'), max_length=30, choices=SportType.choices)
+    season = models.CharField(_('Season'), max_length=30, blank=True,
+                              help_text=_('e.g. 2025-2026'))
+    is_active = models.BooleanField(_('Active'), default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-is_active', '-created_at']
+        verbose_name = _('Competition')
+        verbose_name_plural = _('Competitions')
+
+    def __str__(self):
+        suffix = f' · {self.season}' if self.season else ''
+        return f'{self.name}{suffix}'
+
+    @property
+    def icon(self):
+        if self.competition_type == CompetitionType.CUP:
+            return '🏆'
+        if self.competition_type == CompetitionType.FRIENDLY:
+            return '🤝'
+        return '🏅'
+
+
 class Match(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sport = models.CharField(max_length=30, choices=SportType.choices)
+    competition = models.ForeignKey(
+        Competition, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='matches', verbose_name=_('Competition'),
+    )
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_matches')
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_matches')
     scheduled_at = models.DateTimeField()

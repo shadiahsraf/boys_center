@@ -1,20 +1,34 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{% trans "Evaluations" %}{% endblock %}
 {% block page_title %}{% trans "Evaluations" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{{ paginator.count }} {% trans "total" %}</div>{% endblock %}
 
 {% block topbar_actions %}
-  <a href="{% url 'evaluations:create' %}" class="btn btn-primary"><i data-feather="plus"></i>{% trans "New evaluation" %}</a>
+  <a href="{% url 'evaluations:create' %}" class="btn btn-primary btn-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    {% trans "New evaluation" %}
+  </a>
 {% endblock %}
 
 {% block content %}
 <div class="card mb-4">
   <div class="card-body" style="padding:14px 18px;">
-    <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-      <div style="flex:1; min-width:240px;">
-        <input type="text" name="q" value="{{ filter_q }}" class="tw-input" placeholder="{% trans 'Search by player or coach...' %}">
+    <form method="get" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <div style="flex:1;min-width:240px;">
+        <input type="text" name="q" value="{{ filter_q }}" placeholder="{% trans 'Search by player or coach…' %}">
       </div>
-      <button type="submit" class="btn btn-primary"><i data-feather="search"></i>{% trans "Search" %}</button>
+      <button type="submit" class="btn btn-primary btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        {% trans "Search" %}
+      </button>
+      {% if filter_q %}
+        <a href="{% url 'evaluations:list' %}" class="btn btn-ghost btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          {% trans "Clear" %}
+        </a>
+      {% endif %}
     </form>
   </div>
 </div>
@@ -38,27 +52,38 @@
           {% for e in evaluations %}
             <tr>
               <td data-label="{% trans 'Player' %}">
-                <a href="{% url 'evaluations:player' e.player.pk %}" style="text-decoration:none; color:inherit;">
+                <a href="{% url 'evaluations:player' e.player.pk %}" style="text-decoration:none;color:inherit;">
                   <div class="table-cell-flex">
-                    <div class="avatar avatar-xs">{{ e.player.initials }}</div>
+                    <div class="avatar avatar-xs avatar-sky">{{ e.player.initials }}</div>
                     <span class="cell-primary">{{ e.player.get_full_name }}</span>
                   </div>
                 </a>
               </td>
               <td data-label="{% trans 'Coach' %}"><span class="cell-secondary">{{ e.coach.get_full_name }}</span></td>
-              <td data-label="{% trans 'Performance' %}"><div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= e.performance %} filled{% endif %}">★</span>{% endfor %}</div></td>
-              <td data-label="{% trans 'Behavior' %}"><div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= e.behavior %} filled{% endif %}">★</span>{% endfor %}</div></td>
-              <td data-label="{% trans 'Commitment' %}"><div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= e.commitment %} filled{% endif %}">★</span>{% endfor %}</div></td>
-              <td data-label="{% trans 'Avg' %}"><strong>{{ e.average }}</strong></td>
+              <td data-label="{% trans 'Performance' %}">
+                <div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= e.performance %} filled{% endif %}">★</span>{% endfor %}</div>
+              </td>
+              <td data-label="{% trans 'Behavior' %}">
+                <div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= e.behavior %} filled{% endif %}">★</span>{% endfor %}</div>
+              </td>
+              <td data-label="{% trans 'Commitment' %}">
+                <div class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= e.commitment %} filled{% endif %}">★</span>{% endfor %}</div>
+              </td>
+              <td data-label="{% trans 'Avg' %}"><strong style="color:var(--text-primary);">{{ e.average }}</strong></td>
               <td data-label="{% trans 'Date' %}"><span class="cell-secondary">{{ e.created_at|date:"M d, Y" }}</span></td>
             </tr>
           {% empty %}
             <tr><td colspan="7">
               <div class="empty-state">
-                <div class="empty-state-icon"><i data-feather="star"></i></div>
+                <div class="empty-state-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
                 <h3>{% trans "No evaluations yet" %}</h3>
                 <p>{% trans "Coaches can evaluate players after sessions." %}</p>
-                <a href="{% url 'evaluations:create' %}" class="btn btn-primary"><i data-feather="plus"></i>{% trans "Create one" %}</a>
+                <a href="{% url 'evaluations:create' %}" class="btn btn-primary btn-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  {% trans "Create one" %}
+                </a>
               </div>
             </td></tr>
           {% endfor %}
@@ -68,10 +93,10 @@
   </div>
   {% if is_paginated %}
     <nav class="pagination">
-      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filter_q }}"><i data-feather="chevron-left" style="width:14px;height:14px;"></i></a>{% endif %}
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filter_q }}">←</a>{% endif %}
       <span class="active">{{ page_obj.number }}</span>
-      <span>/ {{ page_obj.paginator.num_pages }}</span>
-      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filter_q }}"><i data-feather="chevron-right" style="width:14px;height:14px;"></i></a>{% endif %}
+      <span style="color:var(--text-muted);">/ {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filter_q }}">→</a>{% endif %}
     </nav>
   {% endif %}
 </div>

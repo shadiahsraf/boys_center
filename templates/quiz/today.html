@@ -1,0 +1,425 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{# Arabic-only page, regardless of the app's current language. #}
+
+{% block title %}اختبار اليوم الإنجيلي{% endblock %}
+{% block page_title %}اختبار اليوم الإنجيلي{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">3 أسئلة يومياً للحفاظ على سلسلتك</div>{% endblock %}
+
+{% block content %}
+
+{{ state_json|json_script:"quiz-state" }}
+
+<div class="quiz-wrap" dir="rtl" lang="ar" x-data="quizApp()">
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       HERO — Streak banner with 7-day history calendar
+       ──────────────────────────────────────────────────────────────────── -->
+  <div class="quiz-hero" :class="streakCurrent > 0 ? 'is-active' : 'is-cold'">
+    <div class="quiz-hero-bg" aria-hidden="true">
+      <div class="quiz-hero-orb"></div>
+    </div>
+
+    <div class="quiz-hero-content">
+      <!-- Left: streak number + flame -->
+      <div class="quiz-hero-streak">
+        <div class="quiz-hero-flame"
+             x-text="streakCurrent > 0 ? '🔥' : '🕊️'"></div>
+        <div>
+          <div class="quiz-hero-streak-num">
+            <span x-text="streakCurrent"></span>
+          </div>
+          <div class="quiz-hero-streak-label">يوم متتالي</div>
+        </div>
+      </div>
+
+      <!-- Center: 7-day history -->
+      <div class="quiz-history">
+        <div class="quiz-history-title">آخر 7 أيام</div>
+        <div class="quiz-history-row">
+          <template x-for="d in history" :key="d.date">
+            <div class="quiz-history-cell"
+                 :class="{
+                   'is-complete': d.complete,
+                   'is-partial':  d.partial,
+                   'is-today':    d.is_today
+                 }"
+                 :title="d.date">
+              <div class="quiz-history-day" x-text="d.short_label"></div>
+              <div class="quiz-history-dot">
+                <span x-show="d.complete">✓</span>
+                <span x-show="!d.complete && d.partial">•</span>
+              </div>
+              <div class="quiz-history-num" x-text="d.day_of_month"></div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Right: best + total stats -->
+      <div class="quiz-hero-stats">
+        <div class="quiz-hero-stat" title="أفضل سلسلة لك">
+          <div class="quiz-hero-stat-icon">🏆</div>
+          <div>
+            <div class="quiz-hero-stat-num" x-text="streakBest"></div>
+            <div class="quiz-hero-stat-label">الأفضل</div>
+          </div>
+        </div>
+        <div class="quiz-hero-stat" title="إجمالي الأيام">
+          <div class="quiz-hero-stat-icon">📅</div>
+          <div>
+            <div class="quiz-hero-stat-num" x-text="totalDays"></div>
+            <div class="quiz-hero-stat-label">المجموع</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       EMPTY POOL FALLBACK
+       ──────────────────────────────────────────────────────────────────── -->
+  <template x-if="items.length === 0">
+    <div class="quiz-empty">
+      <div class="quiz-empty-icon">📭</div>
+      <div class="quiz-empty-title">لا توجد أسئلة متاحة الآن</div>
+      <div class="quiz-empty-sub">يرجى التواصل مع الإدارة لإضافة الأسئلة.</div>
+    </div>
+  </template>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       SINGLE-QUESTION FOCUSED FLOW
+       ──────────────────────────────────────────────────────────────────── -->
+  <template x-if="items.length > 0 && !allDone">
+    <div class="quiz-stage">
+      <!-- Progress dots -->
+      <div class="quiz-progress-dots">
+        <template x-for="(it, i) in items" :key="it.id">
+          <div class="quiz-dot"
+               :class="{
+                 'is-current':   i === currentIndex,
+                 'is-done':      it.answered,
+                 'is-correct':   it.answered && it.isCorrect,
+                 'is-wrong':     it.answered && !it.isCorrect
+               }">
+            <span class="quiz-dot-num" x-text="i + 1"></span>
+          </div>
+        </template>
+      </div>
+      <div class="quiz-progress-text">
+        السؤال
+        <strong><span x-text="currentIndex + 1"></span></strong>
+        من
+        <strong><span x-text="items.length"></span></strong>
+      </div>
+
+      <!-- Active question card (animates between questions, swipe-to-advance enabled) -->
+      <div class="quiz-stage-card"
+           :key="currentIndex"
+           @touchstart.passive="onTouchStart($event)"
+           @touchend.passive="onTouchEnd($event)"
+           :style="`transform: translateX(${dragX}px); transition: ${dragging ? 'none' : 'transform 250ms var(--ease)'}`">
+        <div class="quiz-stage-eyebrow">
+          <span class="quiz-stage-book">📖</span>
+          <span>سؤال إنجيلي</span>
+        </div>
+        <div class="quiz-stage-question" x-text="current.text"></div>
+
+        <div class="quiz-stage-options">
+          <template x-for="opt in current.options" :key="opt.letter">
+            <button type="button"
+                    class="quiz-stage-opt"
+                    :class="{
+                      'is-chosen':   current.chosen === opt.letter,
+                      'is-correct':  current.answered && opt.letter === current.correct,
+                      'is-wrong':    current.answered && current.chosen === opt.letter && !current.isCorrect,
+                      'is-disabled': current.answered && opt.letter !== current.correct && opt.letter !== current.chosen,
+                      'is-busy':     busy && current.chosen === opt.letter
+                    }"
+                    :disabled="current.answered || busy"
+                    @click="answer(opt.letter)">
+              <span class="quiz-stage-opt-letter" x-text="opt.letter.toUpperCase()"></span>
+              <span class="quiz-stage-opt-text" x-text="opt.text"></span>
+              <template x-if="current.answered && opt.letter === current.correct">
+                <span class="quiz-stage-opt-mark">✓</span>
+              </template>
+              <template x-if="current.answered && current.chosen === opt.letter && !current.isCorrect">
+                <span class="quiz-stage-opt-mark">✗</span>
+              </template>
+            </button>
+          </template>
+        </div>
+
+        <!-- Feedback panel + advance button -->
+        <template x-if="current.answered">
+          <div class="quiz-stage-feedback"
+               :class="current.isCorrect ? 'is-correct' : 'is-wrong'">
+            <div class="quiz-stage-feedback-icon"
+                 x-text="current.isCorrect ? '🎉' : '💡'"></div>
+            <div class="quiz-stage-feedback-body">
+              <template x-if="current.isCorrect">
+                <div>
+                  <div class="quiz-stage-feedback-headline">إجابة صحيحة!</div>
+                  <template x-if="current.reference">
+                    <div class="quiz-stage-feedback-ref"
+                         x-text="current.reference"></div>
+                  </template>
+                </div>
+              </template>
+              <template x-if="!current.isCorrect">
+                <div>
+                  <div class="quiz-stage-feedback-headline">الإجابة الصحيحة:</div>
+                  <div class="quiz-stage-feedback-correct"
+                       x-text="current.options.find(o => o.letter === current.correct).text"></div>
+                  <template x-if="current.reference">
+                    <div class="quiz-stage-feedback-ref"
+                         x-text="current.reference"></div>
+                  </template>
+                </div>
+              </template>
+            </div>
+            <button type="button" class="quiz-stage-next" @click="next()">
+              <span x-text="isLast ? 'إنهاء' : 'التالي'"></span>
+              <span aria-hidden="true">←</span>
+            </button>
+          </div>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <!-- ────────────────────────────────────────────────────────────────────
+       COMPLETION SCREEN
+       ──────────────────────────────────────────────────────────────────── -->
+  <template x-if="items.length > 0 && allDone">
+    <div class="quiz-finish">
+      <!-- Confetti for perfect score -->
+      <div class="quiz-confetti" x-show="correctToday === items.length" aria-hidden="true">
+        <template x-for="n in 24" :key="n">
+          <span class="quiz-confetti-piece"
+                :style="`--i:${n}; --d:${(n * 137) % 360}deg; --c:${['#D4AF37','#5A0F0F','#7A1C1C','#e8cc5e','#15803d'][n % 5]};`"></span>
+        </template>
+      </div>
+
+      <div class="quiz-finish-medal"
+           x-text="correctToday === items.length ? '🏆' : (correctToday >= 2 ? '✨' : '🌱')"></div>
+      <div class="quiz-finish-headline">
+        <template x-if="correctToday === items.length">
+          <span>ممتاز! أحسنت 🎉</span>
+        </template>
+        <template x-if="correctToday >= 2 && correctToday < items.length">
+          <span>أداء جيد!</span>
+        </template>
+        <template x-if="correctToday < 2">
+          <span>أحسنت على المحاولة</span>
+        </template>
+      </div>
+
+      <!-- Score grid -->
+      <div class="quiz-finish-stats">
+        <div class="quiz-finish-stat">
+          <div class="quiz-finish-stat-num">
+            <span x-text="correctToday"></span>/<span x-text="items.length"></span>
+          </div>
+          <div class="quiz-finish-stat-label">إجابات صحيحة</div>
+        </div>
+        <div class="quiz-finish-stat quiz-finish-stat-streak">
+          <div class="quiz-finish-stat-num">
+            🔥 <span x-text="streakCurrent"></span>
+          </div>
+          <div class="quiz-finish-stat-label">سلسلة الأيام</div>
+        </div>
+        <div class="quiz-finish-stat">
+          <div class="quiz-finish-stat-num">
+            🏆 <span x-text="streakBest"></span>
+          </div>
+          <div class="quiz-finish-stat-label">أفضل سلسلة</div>
+        </div>
+      </div>
+
+      <!-- Reward verse -->
+      <div class="quiz-verse">
+        <div class="quiz-verse-mark">✝</div>
+        <div class="quiz-verse-body">
+          <div class="quiz-verse-text">"<span x-text="verse.text"></span>"</div>
+          <div class="quiz-verse-ref" x-text="verse.reference"></div>
+        </div>
+      </div>
+
+      <div class="quiz-finish-hint">عودك غداً للحفاظ على سلسلتك 🌅</div>
+
+      <div class="quiz-finish-actions">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">
+          العودة إلى لوحتي
+        </a>
+      </div>
+    </div>
+  </template>
+
+  <div class="quiz-footnote">
+    عودك يومياً للحفاظ على سلسلتك. تخطّيت يوم؟ تبدأ من جديد 🌱
+    <br>
+    <span class="quiz-tip">💡 جرّب الاختصارات: <kbd>١</kbd>-<kbd>٤</kbd> للإجابة، أو اسحب للجانب للسؤال التالي</span>
+  </div>
+</div>
+
+<script>
+function quizApp() {
+  const initial = JSON.parse(document.getElementById('quiz-state').textContent);
+  const firstUnanswered = (initial.items || []).findIndex(it => !it.answered);
+
+  // Tiny haptic helper — silently no-ops on devices without the API
+  function buzz(pattern) {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      try { navigator.vibrate(pattern); } catch (e) {}
+    }
+  }
+
+  return {
+    items: initial.items || [],
+    streakCurrent: initial.streakCurrent || 0,
+    streakBest: initial.streakBest || 0,
+    totalDays: initial.totalDays || 0,
+    correctToday: initial.correctToday || 0,
+    allDone: initial.allDone || false,
+    history: initial.history || [],
+    verse: initial.verse || { text: '', reference: '' },
+    questionsPerDay: initial.questionsPerDay || 3,
+    currentIndex: firstUnanswered === -1 ? 0 : firstUnanswered,
+    busy: false,
+
+    // Touch / swipe state
+    touchStartX: 0,
+    touchStartY: 0,
+    touchStartTime: 0,
+    dragX: 0,
+    dragging: false,
+
+    get current() { return this.items[this.currentIndex] || {}; },
+    get isLast()  { return this.currentIndex >= this.items.length - 1; },
+
+    init() {
+      // Keyboard shortcuts: 1/2/3/4 or A/B/C/D to answer; → / ← / Enter / Space to advance.
+      this._onKey = (e) => {
+        if (this.allDone || this.items.length === 0) return;
+        // Don't hijack typing in inputs (none on this page, but defensive)
+        if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+        const cur = this.current;
+        if (!cur || !cur.options) return;
+
+        const key = e.key.toLowerCase();
+        const letterMap = { '1': 'a', '2': 'b', '3': 'c', '4': 'd', 'a':'a', 'b':'b', 'c':'c', 'd':'d' };
+        if (letterMap[key] && !cur.answered) {
+          e.preventDefault();
+          this.answer(letterMap[key]);
+          return;
+        }
+        if ((e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowLeft') && cur.answered) {
+          e.preventDefault();
+          this.next();
+        }
+      };
+      window.addEventListener('keydown', this._onKey);
+    },
+
+    destroy() {
+      if (this._onKey) window.removeEventListener('keydown', this._onKey);
+    },
+
+    onTouchStart(e) {
+      if (this.allDone) return;
+      const t = e.touches[0];
+      this.touchStartX = t.clientX;
+      this.touchStartY = t.clientY;
+      this.touchStartTime = Date.now();
+      this.dragging = true;
+      this.dragX = 0;
+    },
+    onTouchEnd(e) {
+      if (!this.dragging) return;
+      this.dragging = false;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - this.touchStartX;
+      const dy = t.clientY - this.touchStartY;
+      const dt = Date.now() - this.touchStartTime;
+      // Snap back
+      this.dragX = 0;
+      // Only fire swipe if mostly horizontal, decent distance, and quick enough
+      if (Math.abs(dx) < 60 || Math.abs(dy) > 80 || dt > 600) return;
+      const cur = this.current;
+      if (!cur || !cur.answered) return;  // can only swipe after answering
+      // RTL: a left-to-right swipe (positive dx) advances; LTR: opposite.
+      const isRTL = document.documentElement.dir === 'rtl' ||
+                    document.querySelector('.quiz-wrap[dir="rtl"]') !== null;
+      const goNext = isRTL ? (dx > 0) : (dx < 0);
+      if (goNext) { buzz(15); this.next(); }
+    },
+
+    async answer(letter) {
+      const item = this.current;
+      if (!item || item.answered || this.busy) return;
+      this.busy = true;
+      item.chosen = letter;
+      // Soft "pick" tap
+      buzz(10);
+
+      const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+      try {
+        const res = await fetch("{% url 'quiz:submit_answer' %}", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+          body: JSON.stringify({ question_id: item.id, answer: letter }),
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          item.chosen = null;
+          alert('حدث خطأ. حاول مرة أخرى.');
+          return;
+        }
+        item.correct = data.correct_letter;
+        item.isCorrect = data.is_correct;
+        item.answered = true;
+        this.correctToday = data.correct_today;
+        this.streakCurrent = data.streak_current;
+        this.streakBest = data.streak_best;
+
+        // Haptic feedback based on outcome
+        if (item.isCorrect) {
+          buzz([20, 40, 60]);   // light "ding" pattern
+        } else {
+          buzz([80, 40, 80]);   // longer "buzz" for wrong
+        }
+
+        if (data.day_complete) {
+          setTimeout(() => {
+            this.allDone = true;
+            // Celebration vibration on perfect score
+            if (this.correctToday === this.items.length) {
+              buzz([60, 30, 60, 30, 120]);
+            }
+          }, 900);
+        }
+      } catch (e) {
+        item.chosen = null;
+        alert('فشل الاتصال بالخادم.');
+      } finally {
+        this.busy = false;
+      }
+    },
+
+    next() {
+      if (this.isLast) {
+        if (this.items.every(it => it.answered)) this.allDone = true;
+        return;
+      }
+      this.currentIndex += 1;
+      buzz(8);
+    }
+  };
+}
+</script>
+
+{# Hidden CSRF token for the fetch call #}
+<form style="display:none;">{% csrf_token %}</form>
+{% endblock %}

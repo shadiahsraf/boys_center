@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Thank you" %}{% endblock %}
+
+{% block guest_body %}
+  {% include 'partials/public_nav.html' %}
+
+  <main class="public-main">
+    <div class="public-container" style="padding-top:64px;padding-bottom:96px;max-width:640px;">
+      <div class="rate-thanks">
+        <div class="rate-thanks-emoji">🎉</div>
+        <h1 class="rate-thanks-title" dir="rtl" lang="ar">شكراً لتقييمك!</h1>
+        <p class="rate-thanks-sub" dir="rtl" lang="ar">
+          رأيك يساعدنا على تطوير خدماتنا. تم تسجيل تقييمك لخدمة
+          <strong>{{ facility.name }}</strong>.
+        </p>
+
+        <div class="rate-thanks-actions">
+          <a href="{% url 'ratings:index' %}" class="btn btn-primary">
+            <span dir="rtl" lang="ar">قيّم خدمة أخرى</span>
+          </a>
+          <a href="{% url 'landing' %}" class="btn btn-secondary">
+            <span dir="rtl" lang="ar">العودة للصفحة الرئيسية</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  {% include 'partials/public_footer.html' %}
+{% endblock %}

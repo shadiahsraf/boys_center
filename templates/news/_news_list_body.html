@@ -2,31 +2,43 @@
 <div class="grid-cards">
   {% for post in posts %}
     <a href="{% url 'news:detail' post.pk %}" class="news-card">
-      {% if post.image %}<img src="{{ post.image.url }}" class="news-card-image" alt="">
-      {% else %}<div class="news-card-image-placeholder"><i data-feather="image"></i></div>{% endif %}
+      {% if post.image %}
+        <img src="{{ post.image.url }}" class="news-card-image" alt="">
+      {% else %}
+        <div class="news-card-image-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+      {% endif %}
       <div class="news-card-body">
         {% if post.is_featured %}<span class="badge badge-warning mb-2" style="align-self:flex-start;">{% trans "Featured" %}</span>{% endif %}
         <div class="news-card-title">{{ post.title|truncatechars:60 }}</div>
         <div class="news-card-excerpt">{{ post.excerpt|default:post.content|truncatechars:100 }}</div>
         <div class="news-card-meta">
-          {% if post.author %}<span><i data-feather="user" style="width:11px;height:11px;display:inline;"></i> {{ post.author.first_name|default:"Admin" }}</span>{% endif %}
+          {% if post.author %}
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              {{ post.author.first_name|default:"Admin" }}
+            </span>
+          {% endif %}
           <span>{{ post.created_at|timesince }} {% trans "ago" %}</span>
         </div>
       </div>
     </a>
   {% empty %}
     <div class="empty-state" style="grid-column:1/-1;">
-      <div class="empty-state-icon"><i data-feather="bell"></i></div>
+      <div class="empty-state-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </div>
       <h3>{% trans "No news yet" %}</h3>
       <p>{% trans "News and announcements will appear here." %}</p>
     </div>
   {% endfor %}
 </div>
 {% if is_paginated %}
-<nav class="pagination mt-6">
-  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}"><i data-feather="chevron-left" style="width:14px;height:14px;"></i></a>{% endif %}
-  <span class="active">{{ page_obj.number }}</span>
-  <span>/ {{ page_obj.paginator.num_pages }}</span>
-  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}"><i data-feather="chevron-right" style="width:14px;height:14px;"></i></a>{% endif %}
-</nav>
+  <nav class="pagination mt-6">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">←</a>{% endif %}
+    <span class="active">{{ page_obj.number }}</span>
+    <span style="color:var(--text-muted);">/ {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">→</a>{% endif %}
+  </nav>
 {% endif %}

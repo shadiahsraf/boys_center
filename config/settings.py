@@ -1,9 +1,36 @@
+import os
 from pathlib import Path
+from urllib.parse import urlparse
+
+# Load .env from BASE_DIR if present (dev-friendly)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'django-insecure-boys-center-development-key-change-in-production'
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-boys-center-development-key-change-in-production',
+)
+DEBUG = os.environ.get('DJANGO_DEBUG', 'true').lower() in ('1', 'true', 'yes', 'on')
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',') if h.strip()]
+
+# ─── CSRF ────────────────────────────────────────────────────────────────
+# Django 4.0+ checks the Origin header on every state-changing request.
+# By default we trust the common local-dev origins. Set
+# DJANGO_CSRF_TRUSTED_ORIGINS=https://example.com,http://192.168.1.10:8000
+# to add more (comma-separated). Always include the scheme.
+_default_csrf = (
+    'http://localhost:8000,http://127.0.0.1:8000,'
+    'http://localhost,http://127.0.0.1'
+)
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', _default_csrf).split(',')
+    if o.strip()
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -19,6 +46,10 @@ INSTALLED_APPS = [
     'events',
     'news',
     'reports',
+    'notifications',
+    'quiz',
+    'dailychallenge',
+    'ratings',
 ]
 
 # Order matters - LocaleMiddleware must come AFTER SessionMiddleware and BEFORE CommonMiddleware
@@ -47,6 +78,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
                 'users.context_processors.user_role_context',
+                'notifications.context_processors.notifications',
+                'quiz.context_processors.quiz_streak',
+                'dailychallenge.context_processors.daily_challenge',
             ],
         },
     },
@@ -54,12 +88,57 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# ─── DATABASE ─────────────────────────────────────────────────────────────
+# Priority:
+#   1. DATABASE_URL  (postgres://user:pass@host:port/dbname)  — easiest, deploy-friendly
+#   2. discrete DB_* env vars (DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT)
+#   3. fall back to local SQLite for dev convenience
+def _build_databases():
+    url = os.environ.get('DATABASE_URL', '').strip()
+    if url:
+        u = urlparse(url)
+        engine_map = {
+            'postgres': 'django.db.backends.postgresql',
+            'postgresql': 'django.db.backends.postgresql',
+            'mysql': 'django.db.backends.mysql',
+            'sqlite': 'django.db.backends.sqlite3',
+        }
+        engine = engine_map.get(u.scheme, 'django.db.backends.postgresql')
+        return {
+            'default': {
+                'ENGINE': engine,
+                'NAME': (u.path or '').lstrip('/') or 'postgres',
+                'USER': u.username or '',
+                'PASSWORD': u.password or '',
+                'HOST': u.hostname or 'localhost',
+                'PORT': str(u.port) if u.port else '5432',
+                'CONN_MAX_AGE': 60,
+            }
+        }
+
+    if os.environ.get('DB_NAME'):
+        return {
+            'default': {
+                'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
+                'NAME': os.environ['DB_NAME'],
+                'USER': os.environ.get('DB_USER', ''),
+                'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+                'HOST': os.environ.get('DB_HOST', 'localhost'),
+                'PORT': os.environ.get('DB_PORT', '5432'),
+                'CONN_MAX_AGE': 60,
+            }
+        }
+
+    # Dev fallback — SQLite at <project>/db.sqlite3
+    return {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
+
+DATABASES = _build_databases()
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -67,19 +146,20 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'users.User'
-LOGIN_URL = '/en/auth/login/'
-LOGIN_REDIRECT_URL = '/en/dashboard/'
-LOGOUT_REDIRECT_URL = '/en/auth/login/'
+LOGIN_URL = '/ar/auth/login/'
+LOGIN_REDIRECT_URL = '/ar/dashboard/'
+LOGOUT_REDIRECT_URL = '/ar/auth/login/'
 
-LANGUAGE_CODE = 'en'
+# Arabic is the primary language; English is available as a toggle.
+LANGUAGE_CODE = 'ar'
 TIME_ZONE = 'Africa/Cairo'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
 LANGUAGES = [
-    ('en', 'English'),
     ('ar', 'العربية'),
+    ('en', 'English'),
 ]
 LOCALE_PATHS = [BASE_DIR / 'locale']
 

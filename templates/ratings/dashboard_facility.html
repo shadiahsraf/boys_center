@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ facility.name }} — {% trans "Ratings" %}{% endblock %}
+{% block page_title %}{{ facility.icon }} {{ facility.name }}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Submitted ratings & averages" %}</div>{% endblock %}
+
+{% block content %}
+<div class="page-section">
+
+  <div class="rate-mgmt-head">
+    <a href="{% url 'ratings:dashboard' %}" class="btn btn-ghost btn-sm">← {% trans "All facilities" %}</a>
+    <div style="flex:1;"></div>
+    <a href="{% url 'ratings:export_excel' %}?facility={{ facility.id }}" class="btn btn-secondary btn-sm">⬇ {% trans "Export Excel" %}</a>
+    <a href="{% url 'ratings:manage_update' facility.id %}" class="btn btn-ghost btn-sm">{% trans "Edit facility" %}</a>
+  </div>
+
+  <!-- Per-question averages -->
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">{% trans "Average per question" %}</h3></div>
+    <div class="card-body" style="padding:0;">
+      <table class="table">
+        <thead><tr><th>{% trans "Question" %}</th><th style="text-align:center;">{% trans "Avg" %}</th><th style="text-align:center;">{% trans "Answers" %}</th></tr></thead>
+        <tbody>
+          {% for r in question_rows %}
+            <tr>
+              <td dir="auto">{{ r.question.text }}</td>
+              <td style="text-align:center;"><strong>{{ r.average|default:"—" }}</strong> <small style="color:var(--text-muted);">/ 5</small></td>
+              <td style="text-align:center;">{{ r.count }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:18px;">{% trans "No questions configured." %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- All submissions -->
+  <div class="card" style="margin-top:18px;">
+    <div class="card-header">
+      <h3 class="card-title">{% trans "All submissions" %} ({{ submission_rows|length }})</h3>
+    </div>
+    <div class="card-body table-scroll" style="padding:0;">
+      <table class="table" style="min-width:720px;">
+        <thead>
+          <tr>
+            <th>{% trans "When" %}</th>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Phone" %}</th>
+            {% for q in questions %}
+              <th style="text-align:center;" title="{{ q.text }}">{{ forloop.counter }}</th>
+            {% endfor %}
+            <th>{% trans "Comment" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in submission_rows %}
+            <tr>
+              <td><small>{{ row.submission.submitted_at|date:"Y-m-d H:i" }}</small></td>
+              <td>{{ row.submission.visitor_name|default:"—" }}</td>
+              <td dir="ltr">{{ row.submission.phone|default:"—" }}</td>
+              {% for a in row.answers %}
+                <td style="text-align:center;">
+                  {% if a.stars %}
+                    <span title="{{ a.stars }}/5" style="color:#D4AF37;">{% for i in "12345"|make_list %}{% if forloop.counter <= a.stars %}★{% else %}<span style="opacity:.25;">★</span>{% endif %}{% endfor %}</span>
+                  {% else %}—{% endif %}
+                </td>
+              {% endfor %}
+              <td style="max-width:240px;" dir="auto">{{ row.submission.comment|default:"—" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="{{ questions|length|add:4 }}" style="text-align:center;color:var(--text-muted);padding:24px;">{% trans "No submissions yet." %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

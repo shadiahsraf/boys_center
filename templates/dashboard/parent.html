@@ -1,140 +1,484 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block page_title %}{% trans "Parent Dashboard" %}{% endblock %}
+{% block title %}{% trans "Parent Dashboard" %}{% endblock %}
+{% block page_title %}{% trans "Dashboard" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Parent Portal" %}</div>{% endblock %}
 
 {% block content %}
-<div class="page-header">
-  <div>
-    <div class="page-header-meta">
-      <i data-feather="heart" style="width:14px;height:14px;color:var(--color-success-500);"></i>
-      <span>{% trans "Parent Portal" %}</span>
-    </div>
-    <h1 class="page-title">{% trans "Welcome" %}, {{ user.first_name|default:user.username }}</h1>
-    <p class="page-subtitle">{% trans "Track your children's activities and performance." %}</p>
-  </div>
-</div>
-
-{% if my_children %}
-  <!-- Children cards -->
-  <div class="grid-cards mb-6">
-    {% for child in my_children %}
-      <a href="{% url 'users:detail' child.pk %}" class="card" style="display:block; text-decoration:none; color:inherit;">
-        <div class="card-body" style="display:flex; gap:14px; align-items:center;">
-          <div class="avatar avatar-lg avatar-sky">
-            {% if child.photo %}<img src="{{ child.photo.url }}">{% else %}{{ child.initials }}{% endif %}
-          </div>
-          <div style="flex:1; min-width:0;">
-            <div style="font-weight:700; color:var(--color-slate-900); font-size:15px;">{{ child.get_full_name }}</div>
-            <div class="cell-secondary">{% trans "Member" %} #{{ child.member_code }}</div>
-            <span class="badge role-youth mt-2">{% trans "Youth" %}</span>
-          </div>
-          <i data-feather="chevron-right" style="color:var(--color-slate-400);"></i>
+{% if user.roles|length > 1 %}
+  {# ═══ Multi-role user — keep original dashboard layout ═══ #}
+  <div class="welcome-banner role-parent">
+    <div class="welcome-banner-inner">
+      <div>
+        <div class="welcome-banner-meta">
+          <span class="welcome-banner-meta-dot"></span>
+          {% trans "Parent Portal" %}
         </div>
-      </a>
-    {% endfor %}
-  </div>
-{% endif %}
-
-<div class="grid-dashboard">
-  <div class="card">
-    <div class="card-header">
-      <h3 class="card-title">{% trans "Recent Attendance" %}</h3>
-    </div>
-    <div class="card-body p-0">
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>{% trans "Child" %}</th>
-              <th>{% trans "Session" %}</th>
-              <th>{% trans "Date" %}</th>
-              <th>{% trans "Status" %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for r in child_attendance %}
-              <tr>
-                <td><div class="cell-primary">{{ r.user.first_name }}</div></td>
-                <td>{{ r.session.title|truncatechars:30 }}</td>
-                <td><div class="cell-secondary">{{ r.check_in_time|date:"M d" }}</div></td>
-                <td>
-                  {% if r.status == 'present' %}<span class="badge badge-success">{% trans "Present" %}</span>
-                  {% elif r.status == 'late' %}<span class="badge badge-warning">{% trans "Late" %}</span>
-                  {% else %}<span class="badge badge-slate">{{ r.status }}</span>{% endif %}
-                </td>
-              </tr>
-            {% empty %}
-              <tr><td colspan="4">
-                <div class="empty-state">
-                  <div class="empty-state-icon"><i data-feather="check-square"></i></div>
-                  <p>{% trans "No attendance records yet." %}</p>
-                </div>
-              </td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <h1>{% trans "Welcome" %}, {{ user.first_name|default:user.username }}</h1>
+        <p>{% trans "Track your children's activities and performance." %}</p>
+      </div>
+      <div class="welcome-banner-actions">
+        <a href="{% url 'events:list' %}" class="btn welcome-banner-ghost btn-sm">{% trans "Events" %}</a>
+        <a href="{% url 'news:list' %}" class="btn welcome-banner-cta btn-sm">{% trans "News" %}</a>
       </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header">
-      <h3 class="card-title">{% trans "Latest Evaluations" %}</h3>
-    </div>
-    <div class="card-body" style="padding:0;">
-      {% for ev in child_evaluations %}
-        <div style="padding:14px 22px; border-bottom:1px solid var(--color-slate-100);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <div class="cell-primary">{{ ev.player.first_name }}</div>
-            <div class="cell-secondary">{{ ev.created_at|date:"M d" }}</div>
-          </div>
-          <div style="display:flex; justify-content:space-between; gap:8px; font-size:11.5px;">
-            <div><span class="cell-secondary">{% trans "Performance" %}</span><br>
-              <span class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.performance %} filled{% endif %}">★</span>{% endfor %}</span>
+  {% if my_children %}
+    <div class="grid-cards mb-6">
+      {% for child in my_children %}
+        <a href="{% url 'users:detail' child.pk %}" class="card" style="display:block;text-decoration:none;color:inherit;">
+          <div class="card-body" style="display:flex;gap:14px;align-items:center;">
+            <div class="avatar avatar-lg avatar-brand">
+              {% if child.photo %}<img src="{{ child.photo.url }}" alt="">{% else %}{{ child.initials }}{% endif %}
             </div>
-            <div><span class="cell-secondary">{% trans "Behavior" %}</span><br>
-              <span class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.behavior %} filled{% endif %}">★</span>{% endfor %}</span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;color:var(--text-primary);font-size:15px;">{{ child.get_full_name }}</div>
+              <div class="cell-secondary">{% trans "Member" %} #{{ child.member_code }}</div>
             </div>
-            <div><span class="cell-secondary">{% trans "Commitment" %}</span><br>
-              <span class="star-rating">{% for i in "12345" %}<span class="star{% if forloop.counter <= ev.commitment %} filled{% endif %}">★</span>{% endfor %}</span>
-            </div>
-          </div>
-        </div>
-      {% empty %}
-        <div class="empty-state">
-          <div class="empty-state-icon"><i data-feather="star"></i></div>
-          <p>{% trans "No evaluations yet." %}</p>
-        </div>
-      {% endfor %}
-    </div>
-  </div>
-</div>
-
-<!-- Latest news -->
-<div class="card mt-6">
-  <div class="card-header">
-    <h3 class="card-title">{% trans "Latest News" %}</h3>
-    <a href="{% url 'news:list' %}" class="btn btn-ghost btn-sm">{% trans "All news" %}</a>
-  </div>
-  <div class="card-body" style="padding:16px;">
-    <div class="grid-cards">
-      {% for post in latest_news|slice:":3" %}
-        <a href="{% url 'news:detail' post.pk %}" class="news-card">
-          {% if post.image %}<img src="{{ post.image.url }}" class="news-card-image" alt="">
-          {% else %}<div class="news-card-image-placeholder"><i data-feather="image"></i></div>{% endif %}
-          <div class="news-card-body">
-            <div class="news-card-title">{{ post.title|truncatechars:50 }}</div>
-            <div class="news-card-excerpt">{{ post.excerpt|default:post.content|truncatechars:80 }}</div>
           </div>
         </a>
-      {% empty %}
-        <div class="empty-state" style="grid-column:1/-1;">
-          <div class="empty-state-icon"><i data-feather="bell"></i></div>
-          <p>{% trans "No news yet." %}</p>
-        </div>
       {% endfor %}
     </div>
+  {% endif %}
+
+  <div class="grid-dashboard">
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">{% trans "Recent Attendance" %}</h3></div>
+      <div class="card-body p-0">
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>{% trans "Child" %}</th><th>{% trans "Session" %}</th><th>{% trans "Date" %}</th><th>{% trans "Status" %}</th></tr></thead>
+            <tbody>
+              {% for r in child_attendance %}
+                <tr>
+                  <td><div class="cell-primary">{{ r.user.first_name }}</div></td>
+                  <td><div class="cell-secondary">{{ r.session.title|truncatechars:30 }}</div></td>
+                  <td><div class="cell-secondary">{{ r.check_in_time|date:"M d" }}</div></td>
+                  <td>
+                    {% if r.status == 'present' %}<span class="badge badge-success">{% trans "Present" %}</span>
+                    {% elif r.status == 'late' %}<span class="badge badge-warning">{% trans "Late" %}</span>
+                    {% else %}<span class="badge badge-slate">{{ r.status }}</span>{% endif %}
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="4"><div class="empty-state"><p>{% trans "No attendance records yet." %}</p></div></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+
+{% else %}
+  {# ═══ Single-role parent — new creative tabbed dashboard ═══ #}
+  <div x-data="{ tab: 'overview', activeChild: 'all' }">
+
+    <!-- Profile Hero -->
+    <div class="profile-hero">
+      <div class="profile-hero-bg"><div class="profile-hero-grid"></div></div>
+      <div class="profile-hero-inner">
+        <a href="{% url 'users:photo_update' %}" class="profile-hero-avatar profile-hero-avatar-link" title="{% trans 'Change photo' %}">
+          {% if user.photo %}
+            <img src="{{ user.photo.url }}" alt="">
+          {% else %}
+            {{ user.initials }}
+          {% endif %}
+          <div class="profile-hero-avatar-badge">✝</div>
+          <span class="profile-hero-avatar-edit" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </span>
+        </a>
+        <div class="profile-hero-meta">
+          <div class="profile-hero-eyebrow">{% trans "Parent Portal" %}</div>
+          <div class="profile-hero-name">{% trans "Welcome" %}, {{ user.first_name|default:user.username }} 🌿</div>
+          <div class="profile-hero-sub">
+            <span class="profile-hero-sub-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              {{ my_children|length }} {% if my_children|length == 1 %}{% trans "child" %}{% else %}{% trans "children" %}{% endif %}
+            </span>
+            <span class="profile-hero-sub-divider"></span>
+            <span class="profile-hero-sub-item">{% trans "Member since" %} {{ user.date_joined|date:"M Y" }}</span>
+          </div>
+        </div>
+        <div class="profile-hero-stats">
+          <div class="profile-hero-stat">
+            <div class="profile-hero-stat-value">{{ child_attendance_total|default:0 }}</div>
+            <div class="profile-hero-stat-label">{% trans "Check-ins" %}</div>
+          </div>
+          <div class="profile-hero-stat">
+            <div class="profile-hero-stat-value">{{ child_evaluations_total|default:0 }}</div>
+            <div class="profile-hero-stat-label">{% trans "Evals" %}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab navigation -->
+    <div class="dash-tabs" role="tablist">
+      <button class="dash-tab" :class="{ 'active': tab === 'overview' }" @click="tab = 'overview'" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        {% trans "Overview" %}
+      </button>
+      <button class="dash-tab" :class="{ 'active': tab === 'children' }" @click="tab = 'children'" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        {% trans "My Children" %}
+        <span class="dash-tab-badge">{{ my_children|length }}</span>
+      </button>
+      <button class="dash-tab" :class="{ 'active': tab === 'attendance' }" @click="tab = 'attendance'" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        {% trans "Attendance" %}
+      </button>
+      <button class="dash-tab" :class="{ 'active': tab === 'evaluations' }" @click="tab = 'evaluations'" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        {% trans "Evaluations" %}
+      </button>
+      <button class="dash-tab" :class="{ 'active': tab === 'news' }" @click="tab = 'news'" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
+        {% trans "News" %}
+      </button>
+    </div>
+
+    <!-- ═══ OVERVIEW PANEL ═══ -->
+    <div class="dash-panel" x-show="tab === 'overview'" x-transition>
+      <div class="metric-grid">
+        <div class="metric-card metric-brand">
+          <div class="metric-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="metric-card-label">{% trans "Children" %}</div>
+          <div class="metric-card-value">{{ my_children|length }}</div>
+          <div class="metric-card-trend">{% trans "Active members" %}</div>
+        </div>
+        <div class="metric-card metric-success">
+          <div class="metric-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/></svg>
+          </div>
+          <div class="metric-card-label">{% trans "Total Check-ins" %}</div>
+          <div class="metric-card-value">{{ child_attendance_total|default:0 }}</div>
+          <div class="metric-card-trend">{% trans "Across all children" %}</div>
+        </div>
+        <div class="metric-card metric-gold">
+          <div class="metric-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="metric-card-label">{% trans "Total Evaluations" %}</div>
+          <div class="metric-card-value">{{ child_evaluations_total|default:0 }}</div>
+          <div class="metric-card-trend">{% trans "Across all children" %}</div>
+        </div>
+        <div class="metric-card metric-brand">
+          <div class="metric-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+          </div>
+          <div class="metric-card-label">{% trans "Upcoming Events" %}</div>
+          <div class="metric-card-value">{{ upcoming_events|length }}</div>
+          <div class="metric-card-trend">{% trans "Stay informed" %}</div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <a href="#" @click.prevent="tab = 'children'" class="quick-action">
+          <div class="quick-action-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="quick-action-body">
+            <div class="quick-action-title">{% trans "My Children" %}</div>
+            <div class="quick-action-sub">{{ my_children|length }} {% trans "member" %}{{ my_children|length|pluralize }}</div>
+          </div>
+        </a>
+        <a href="{% url 'events:list' %}" class="quick-action">
+          <div class="quick-action-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+          </div>
+          <div class="quick-action-body">
+            <div class="quick-action-title">{% trans "Schedule" %}</div>
+            <div class="quick-action-sub">{% trans "Upcoming events" %}</div>
+          </div>
+        </a>
+        <a href="#" @click.prevent="tab = 'attendance'" class="quick-action">
+          <div class="quick-action-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/></svg>
+          </div>
+          <div class="quick-action-body">
+            <div class="quick-action-title">{% trans "Attendance" %}</div>
+            <div class="quick-action-sub">{% trans "Recent check-ins" %}</div>
+          </div>
+        </a>
+        <a href="#" @click.prevent="tab = 'news'" class="quick-action">
+          <div class="quick-action-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div class="quick-action-body">
+            <div class="quick-action-title">{% trans "Latest News" %}</div>
+            <div class="quick-action-sub">{% trans "Updates & stories" %}</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="grid-dashboard">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{% trans "Recent Activity" %}</h3>
+            <a href="#" @click.prevent="tab = 'attendance'" class="btn btn-ghost btn-sm">{% trans "View all" %}</a>
+          </div>
+          <div class="card-body p-0">
+            {% for r in child_attendance|slice:":5" %}
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--border-secondary);">
+                <div class="avatar avatar-sm avatar-brand">{{ r.user.initials }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:13.5px;font-weight:600;color:var(--text-primary);"><strong>{{ r.user.first_name }}</strong> {% trans "checked in to" %} {{ r.session.title|truncatechars:30 }}</div>
+                  <div style="font-size:11.5px;color:var(--text-tertiary);">{{ r.check_in_time|date:"M d, H:i" }}</div>
+                </div>
+                {% if r.status == 'present' %}<span class="badge badge-success">{% trans "Present" %}</span>
+                {% elif r.status == 'late' %}<span class="badge badge-warning">{% trans "Late" %}</span>{% endif %}
+              </div>
+            {% empty %}
+              <div class="empty-state"><p>{% trans "No recent activity yet." %}</p></div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{% trans "Upcoming Events" %}</h3>
+            <a href="{% url 'events:list' %}" class="btn btn-ghost btn-sm">{% trans "All" %}</a>
+          </div>
+          <div class="card-body p-0">
+            {% for ev in upcoming_events|slice:":4" %}
+              <a href="{% url 'events:detail' ev.pk %}" class="event-tile event-color-{{ ev.color }}" style="border-radius:0;border:none;border-bottom:1px solid var(--border-secondary);">
+                <div class="event-date-block">
+                  <div class="day">{{ ev.start_datetime|date:"d" }}</div>
+                  <div class="month">{{ ev.start_datetime|date:"M" }}</div>
+                </div>
+                <div class="event-tile-meta">
+                  <div class="event-tile-title">{{ ev.title|truncatechars:30 }}</div>
+                  <div class="event-tile-info">{{ ev.start_datetime|date:"H:i" }}</div>
+                </div>
+              </a>
+            {% empty %}
+              <div class="empty-state"><p>{% trans "No upcoming events." %}</p></div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CHILDREN PANEL ═══ -->
+    <div class="dash-panel" x-show="tab === 'children'" x-transition style="display:none;">
+      {% if my_children %}
+        <div class="grid-cards">
+          {% for child in my_children %}
+            <a href="{% url 'users:detail' child.pk %}" class="card" style="display:block;text-decoration:none;color:inherit;">
+              <div class="card-body" style="display:flex;gap:14px;align-items:flex-start;">
+                <div class="avatar avatar-lg avatar-brand" style="border-radius:18px;">
+                  {% if child.photo %}<img src="{{ child.photo.url }}" alt="">{% else %}{{ child.initials }}{% endif %}
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-weight:700;color:var(--text-primary);font-size:15px;">{{ child.get_full_name }}</div>
+                  <div style="font-family:'SF Mono',monospace;font-size:12px;color:#b8962e;font-weight:700;letter-spacing:1.5px;margin-top:2px;">{{ child.member_code }}</div>
+                  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+                    <span class="badge role-youth">{% trans "Youth" %}</span>
+                    {% if child.date_of_birth %}
+                      <span class="badge badge-slate">{{ child.date_of_birth|date:"Y" }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="card">
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <h3>{% trans "No children linked yet" %}</h3>
+            <p>{% trans "Contact an admin to link your children to your account." %}</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- ═══ ATTENDANCE PANEL ═══ -->
+    <div class="dash-panel" x-show="tab === 'attendance'" x-transition style="display:none;">
+      {% if my_children|length > 1 %}
+        <div class="child-picker">
+          <button class="child-chip" :class="{ 'active': activeChild === 'all' }" @click="activeChild = 'all'" type="button">
+            <span class="child-chip-avatar">★</span>
+            {% trans "All children" %}
+          </button>
+          {% for child in my_children %}
+            <button class="child-chip" :class="{ 'active': activeChild === '{{ child.pk }}' }" @click="activeChild = '{{ child.pk }}'" type="button">
+              <span class="child-chip-avatar">
+                {% if child.photo %}<img src="{{ child.photo.url }}" alt="">{% else %}{{ child.initials }}{% endif %}
+              </span>
+              {{ child.first_name }}
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3 class="card-title">{% trans "Recent Attendance" %}</h3>
+            <div class="card-subtitle">{% trans "Latest check-ins" %}</div>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>{% trans "Child" %}</th>
+                  <th>{% trans "Session" %}</th>
+                  <th>{% trans "Date" %}</th>
+                  <th>{% trans "Status" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in child_attendance %}
+                  <tr x-show="activeChild === 'all' || activeChild === '{{ r.user.pk }}'">
+                    <td>
+                      <div style="display:flex;align-items:center;gap:10px;">
+                        <div class="avatar avatar-sm avatar-brand">{{ r.user.initials }}</div>
+                        <div class="cell-primary">{{ r.user.first_name }}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="cell-primary">{{ r.session.title|truncatechars:35 }}</div>
+                      <div class="cell-secondary">{{ r.session.location|truncatechars:30 }}</div>
+                    </td>
+                    <td><div class="cell-secondary">{{ r.check_in_time|date:"M d, H:i" }}</div></td>
+                    <td>
+                      {% if r.status == 'present' %}<span class="badge badge-success">{% trans "Present" %}</span>
+                      {% elif r.status == 'late' %}<span class="badge badge-warning">{% trans "Late" %}</span>
+                      {% else %}<span class="badge badge-slate">{{ r.status }}</span>{% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="4">
+                    <div class="empty-state">
+                      <div class="empty-state-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/></svg>
+                      </div>
+                      <p>{% trans "No attendance records yet." %}</p>
+                    </div>
+                  </td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EVALUATIONS PANEL ═══ -->
+    <div class="dash-panel" x-show="tab === 'evaluations'" x-transition style="display:none;">
+      {% if my_children|length > 1 %}
+        <div class="child-picker">
+          <button class="child-chip" :class="{ 'active': activeChild === 'all' }" @click="activeChild = 'all'" type="button">
+            <span class="child-chip-avatar">★</span>
+            {% trans "All children" %}
+          </button>
+          {% for child in my_children %}
+            <button class="child-chip" :class="{ 'active': activeChild === '{{ child.pk }}' }" @click="activeChild = '{{ child.pk }}'" type="button">
+              <span class="child-chip-avatar">
+                {% if child.photo %}<img src="{{ child.photo.url }}" alt="">{% else %}{{ child.initials }}{% endif %}
+              </span>
+              {{ child.first_name }}
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div style="display:grid;gap:14px;">
+        {% for ev in child_evaluations %}
+          <div class="eval-card" x-show="activeChild === 'all' || activeChild === '{{ ev.player.pk }}'">
+            <div class="eval-card-head">
+              <div class="eval-card-coach">
+                <div class="avatar avatar-sm avatar-brand">{{ ev.player.initials }}</div>
+                <div class="eval-card-coach-meta">
+                  <div class="eval-card-coach-name">{{ ev.player.first_name }} {{ ev.player.last_name }}</div>
+                  <div class="eval-card-coach-date">{% trans "By" %} {{ ev.coach.first_name|default:"Coach" }} · {{ ev.created_at|date:"M d, Y" }}</div>
+                </div>
+              </div>
+              <div class="eval-card-avg">
+                <div class="eval-card-avg-num">{{ ev.average }}</div>
+                <div class="eval-card-avg-lbl">{% trans "AVG" %}</div>
+              </div>
+            </div>
+            <div class="eval-card-bars">
+              <div class="eval-bar">
+                <div class="eval-bar-label">{% trans "Performance" %}</div>
+                <div class="eval-bar-track"><div class="eval-bar-fill" style="width: {{ ev.performance|floatformat:0 }}0%;"></div></div>
+                <div class="eval-bar-value">{{ ev.performance }}<small>/5</small></div>
+              </div>
+              <div class="eval-bar">
+                <div class="eval-bar-label">{% trans "Behavior" %}</div>
+                <div class="eval-bar-track"><div class="eval-bar-fill" style="width: {{ ev.behavior|floatformat:0 }}0%;"></div></div>
+                <div class="eval-bar-value">{{ ev.behavior }}<small>/5</small></div>
+              </div>
+              <div class="eval-bar">
+                <div class="eval-bar-label">{% trans "Commitment" %}</div>
+                <div class="eval-bar-track"><div class="eval-bar-fill" style="width: {{ ev.commitment|floatformat:0 }}0%;"></div></div>
+                <div class="eval-bar-value">{{ ev.commitment }}<small>/5</small></div>
+              </div>
+            </div>
+            {% if ev.notes %}<div class="eval-card-note">"{{ ev.notes }}"</div>{% endif %}
+          </div>
+        {% empty %}
+          <div class="card">
+            <div class="empty-state">
+              <div class="empty-state-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <h3>{% trans "No evaluations yet" %}</h3>
+              <p>{% trans "Coaches will share feedback after sessions." %}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- ═══ NEWS PANEL ═══ -->
+    <div class="dash-panel" x-show="tab === 'news'" x-transition style="display:none;">
+      <div class="grid-cards">
+        {% for post in latest_news %}
+          <a href="{% url 'news:detail' post.pk %}" class="news-card">
+            {% if post.image %}
+              <img src="{{ post.image.url }}" class="news-card-image" alt="">
+            {% else %}
+              <div class="news-card-image-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+            {% endif %}
+            <div class="news-card-body">
+              {% if post.is_featured %}<span class="badge badge-warning mb-2" style="align-self:flex-start;">{% trans "Featured" %}</span>{% endif %}
+              <div class="news-card-title">{{ post.title|truncatechars:60 }}</div>
+              <div class="news-card-excerpt">{{ post.excerpt|default:post.content|truncatechars:100 }}</div>
+              <div class="news-card-meta">
+                {% if post.author %}<span>{{ post.author.first_name|default:"Admin" }}</span>{% endif %}
+                <span>{{ post.created_at|timesince }} {% trans "ago" %}</span>
+              </div>
+            </div>
+          </a>
+        {% empty %}
+          <div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-state-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <h3>{% trans "No news yet" %}</h3>
+            <p>{% trans "Announcements will appear here." %}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+{% endif %}
 {% endblock %}

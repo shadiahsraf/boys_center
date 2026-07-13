@@ -4,49 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% trans "Checked in" %}</title>
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=2">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" defer></script>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=26">
 </head>
 <body>
 <div class="checkin-page">
   <div class="checkin-card text-center">
     {% if duplicate %}
-      <div style="width:72px;height:72px;border-radius:50%;background:var(--color-warning-100);color:var(--color-warning-700);display:grid;place-items:center;margin:0 auto 18px;">
-        <i data-feather="info" style="width:36px;height:36px;"></i>
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--warning-100);color:var(--warning-700);display:grid;place-items:center;margin:0 auto 18px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       </div>
-      <h1 style="font-size:20px; font-weight:800; color:var(--color-slate-900);">{% trans "Already checked in!" %}</h1>
+      <h1 style="font-size:20px;font-weight:800;color:var(--text-primary);">{% trans "Already checked in!" %}</h1>
       <p class="cell-secondary mt-2">{% trans "You have already been recorded for this session." %}</p>
     {% elif status == 'late' %}
-      <div style="width:72px;height:72px;border-radius:50%;background:var(--color-warning-100);color:var(--color-warning-700);display:grid;place-items:center;margin:0 auto 18px;">
-        <i data-feather="clock" style="width:36px;height:36px;"></i>
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--warning-100);color:var(--warning-700);display:grid;place-items:center;margin:0 auto 18px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       </div>
-      <h1 style="font-size:20px; font-weight:800; color:var(--color-slate-900);">{% trans "Checked in (late)" %}</h1>
+      <h1 style="font-size:20px;font-weight:800;color:var(--text-primary);">{% trans "Checked in (late)" %}</h1>
       <p class="cell-secondary mt-2">{% trans "Your attendance has been recorded as late." %}</p>
     {% else %}
-      <div style="width:72px;height:72px;border-radius:50%;background:var(--color-success-100);color:var(--color-success-700);display:grid;place-items:center;margin:0 auto 18px;">
-        <i data-feather="check-circle" style="width:36px;height:36px;"></i>
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--success-100);color:var(--success-700);display:grid;place-items:center;margin:0 auto 18px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       </div>
-      <h1 style="font-size:20px; font-weight:800; color:var(--color-slate-900);">{% trans "Successfully checked in!" %}</h1>
+      <h1 style="font-size:20px;font-weight:800;color:var(--text-primary);">{% trans "Successfully checked in!" %}</h1>
       <p class="cell-secondary mt-2">{% trans "Welcome" %}, {{ user.get_full_name|default:user.username }}.</p>
     {% endif %}
 
-    <div style="margin-top:24px; padding:16px; background:var(--color-slate-50); border-radius:var(--radius-lg); text-align:start;">
-      <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+    <div style="margin-top:24px;padding:16px;background:var(--surface-sunken);border-radius:var(--radius-lg);text-align:start;">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
         <div class="avatar avatar-md avatar-sky">{{ user.initials }}</div>
         <div>
-          <div style="font-weight:700;color:var(--color-slate-900);">{{ user.get_full_name|default:user.username }}</div>
-          <div class="cell-secondary"><code>{{ user.member_code }}</code></div>
+          <div style="font-weight:700;color:var(--text-primary);">{{ user.get_full_name|default:user.username }}</div>
+          <div class="cell-secondary"><code style="font-size:11px;">{{ user.member_code }}</code></div>
         </div>
       </div>
-      <div style="border-top:1px solid var(--color-slate-200); padding-top:10px; margin-top:10px; font-size:13px; color:var(--color-slate-600);">
-        <div><strong>{{ session.title }}</strong></div>
+      <div style="border-top:1px solid var(--border-secondary);padding-top:10px;font-size:13px;color:var(--text-secondary);">
+        <div style="font-weight:600;color:var(--text-primary);">{{ session.title }}</div>
         <div class="cell-secondary mt-1">{{ session.date|date:"M d, Y" }} · {{ session.start_time|time:"H:i" }} · {{ session.location }}</div>
       </div>
     </div>
 
-    <p class="cell-secondary mt-4">{% trans "You may close this page now." %}</p>
+    <p class="cell-secondary mt-4" style="font-size:13px;">{% trans "You may close this page now." %}</p>
   </div>
 </div>
-<script>document.addEventListener('DOMContentLoaded', () => feather.replace());</script>
 </body>
 </html>

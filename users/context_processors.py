@@ -4,8 +4,8 @@ from django.utils.translation import get_language
 def user_role_context(request):
     """Inject role flags and language info into all templates."""
     ctx = {
-        'CURRENT_LANGUAGE': get_language() or 'en',
-        'IS_RTL': (get_language() or 'en').startswith('ar'),
+        'CURRENT_LANGUAGE': get_language() or 'ar',
+        'IS_RTL': (get_language() or 'ar').startswith('ar'),
     }
     if request.user.is_authenticated:
         u = request.user

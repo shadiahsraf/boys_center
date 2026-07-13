@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-26 13:46+0300\n"
+"POT-Creation-Date: 2026-06-01 21:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Arabic\n"
@@ -18,1999 +18,2285 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: attendance/models.py:13 events/models.py:8
 msgid "Training"
 msgstr "تدريب"
 
-#: attendance/models.py:14 events/models.py:10 templates/landing.html:57
 msgid "Prayer Meeting"
 msgstr "اجتماع صلاة"
 
-#: attendance/models.py:15 events/models.py:9
-#: templates/sports/team_detail.html:42 templates/sports/team_detail.html:46
 msgid "Match"
 msgstr "مباراة"
 
-#: attendance/models.py:16
 msgid "Event"
 msgstr "حدث"
 
-#: attendance/models.py:26 events/models.py:28 news/models.py:9
-#: templates/events/event_form.html:15 templates/news/news_form.html:16
 msgid "Title"
 msgstr "العنوان"
 
-#: attendance/models.py:27 templates/attendance/session_list.html:43
-#: templates/attendance/session_list.html:58
-#: templates/events/event_form.html:20
-#: templates/reports/attendance_report.html:30
-#: templates/reports/attendance_report.html:40
-#: templates/users/user_detail.html:130 templates/users/user_detail.html:139
 msgid "Type"
 msgstr "النوع"
 
-#: attendance/models.py:28 evaluations/models.py:12 sports/models.py:27
-#: templates/evaluations/evaluation_form.html:34
-#: templates/sports/match_form.html:18 templates/sports/team_form.html:24
 msgid "Sport"
 msgstr "الرياضة"
 
-#: attendance/models.py:31
 msgid "Token"
 msgstr "رمز"
 
-#: attendance/models.py:32 templates/attendance/session_form.html:32
-#: templates/attendance/session_list.html:44
-#: templates/attendance/session_list.html:63 templates/dashboard/coach.html:71
-#: templates/dashboard/parent.html:51
-#: templates/evaluations/evaluation_list.html:34
-#: templates/evaluations/evaluation_list.html:53
-#: templates/events/_event_detail_body.html:16
-#: templates/reports/attendance_report.html:31
-#: templates/reports/attendance_report.html:41
-#: templates/sports/team_detail.html:42 templates/sports/team_detail.html:50
-#: templates/users/user_detail.html:131 templates/users/user_detail.html:140
 msgid "Date"
 msgstr "التاريخ"
 
-#: attendance/models.py:33 templates/attendance/session_form.html:36
 msgid "Start time"
 msgstr "وقت البدء"
 
-#: attendance/models.py:34 templates/attendance/session_form.html:40
 msgid "End time"
 msgstr "وقت الانتهاء"
 
-#: attendance/models.py:35 events/models.py:33
-#: templates/attendance/session_form.html:46
-#: templates/events/_event_detail_body.html:30
-#: templates/events/event_form.html:24 templates/sports/match_form.html:32
 msgid "Location"
 msgstr "الموقع"
 
-#: attendance/models.py:36
 msgid "Expires at"
 msgstr "ينتهي في"
 
-#: attendance/models.py:37
 msgid "After this time the QR is invalid"
 msgstr "بعد هذا الوقت يصبح الرمز غير صالح"
 
-#: attendance/models.py:38
 msgid "Is open"
 msgstr "مفتوح"
 
-#: attendance/models.py:44
 msgid "Attendance Session"
 msgstr "جلسة حضور"
 
-#: attendance/models.py:90 templates/dashboard/parent.html:62
-#: templates/dashboard/youth.html:119 templates/users/user_detail.html:142
 msgid "Present"
 msgstr "حاضر"
 
-#: attendance/models.py:91 templates/dashboard/parent.html:63
-#: templates/dashboard/youth.html:120 templates/users/user_detail.html:143
 msgid "Late"
 msgstr "متأخر"
 
-#: attendance/models.py:92
 msgid "Absent"
 msgstr "غائب"
 
-#: attendance/models.py:93
 msgid "Excused"
 msgstr "بعذر"
 
-#: attendance/views.py:83
 msgid "Session created. QR code is now available."
 msgstr "تم إنشاء الجلسة. رمز QR متاح الآن."
 
-#: attendance/views.py:115
 msgid "Session status updated."
 msgstr "تم تحديث حالة الجلسة."
 
-#: attendance/views.py:132 attendance/views.py:148
 msgid "Invalid or unknown QR code."
 msgstr "رمز QR غير صالح أو غير معروف."
 
-#: attendance/views.py:137
 msgid "This session is no longer accepting check-ins."
 msgstr "هذه الجلسة لم تعد تقبل تسجيل الحضور."
 
-#: attendance/views.py:153
 msgid "This session has expired."
 msgstr "انتهت صلاحية هذه الجلسة."
 
-#: attendance/views.py:159
 msgid "Please enter your member code."
 msgstr "يرجى إدخال رمز عضويتك."
 
-#: attendance/views.py:165
 msgid "Member code not found. Please check and try again."
 msgstr "رمز العضوية غير موجود. تحقق وحاول مرة أخرى."
 
-#: attendance/views.py:203
 msgid "Member not found"
 msgstr "العضو غير موجود"
 
-#: attendance/views.py:209
 msgid "Already checked in"
 msgstr "تم التسجيل مسبقاً"
 
-#: evaluations/models.py:14 templates/dashboard/parent.html:93
-#: templates/dashboard/youth.html:70
-#: templates/evaluations/evaluation_form.html:49
-#: templates/evaluations/evaluation_list.html:30
-#: templates/evaluations/evaluation_list.html:49
-#: templates/evaluations/player_evaluations.html:20
-#: templates/evaluations/player_evaluations.html:61
-#: templates/users/user_detail.html:69
+#, python-format
+msgid "Each question must have exactly ONE correct choice (found %(n)d)."
+msgstr "يجب أن يكون لكل سؤال إجابة صحيحة واحدة فقط (وُجد %(n)d)."
+
+msgid "Questions"
+msgstr "الأسئلة"
+
+msgid "Preview"
+msgstr "معاينة"
+
+msgid "Bible reference"
+msgstr "المرجع الكتابي"
+
+msgid "Reference only, e.g. \"John 15:1-8\" — the text is not shown."
+msgstr "المرجع فقط، مثال: \\\"يوحنا 15:1-8\\\" — لا يُعرض النص."
+
+msgid "Published"
+msgstr "منشور"
+
+msgid "Daily content"
+msgstr "محتوى اليوم"
+
+msgid "Question"
+msgstr "سؤال"
+
+msgid "Order"
+msgstr "الترتيب"
+
+msgid "Choice"
+msgstr "خيار"
+
+msgid "Correct answer"
+msgstr "الإجابة الصحيحة"
+
+msgid "Choices"
+msgstr "الخيارات"
+
+msgid "Challenge progress"
+msgstr "تقدّم التحدي"
+
+msgid "Challenge answer"
+msgstr "إجابة التحدي"
+
+msgid "Challenge answers"
+msgstr "إجابات التحدي"
+
+msgid "Only youth members can answer the daily challenge."
+msgstr "يمكن لأعضاء الشباب فقط الإجابة على التحدي اليومي."
+
+msgid "No challenge is available for today."
+msgstr "لا يوجد تحدٍّ متاح اليوم."
+
+msgid "Daily challenge completed! Your streak is updated."
+msgstr "تم إكمال تحدي اليوم! تم تحديث سلسلتك."
+
+msgid "Date is required."
+msgstr "التاريخ مطلوب."
+
+msgid "Invalid date — use the picker."
+msgstr "تاريخ غير صحيح — استخدم منتقي التاريخ."
+
+msgid "Another challenge already exists for this date."
+msgstr "يوجد تحدٍّ آخر لهذا التاريخ بالفعل."
+
+msgid "Bible reference is required."
+msgstr "المرجع الكتابي مطلوب."
+
+msgid "Question text is required."
+msgstr "نص السؤال مطلوب."
+
+msgid "Required."
+msgstr "مطلوب."
+
+msgid "Pick the correct answer."
+msgstr "اختر الإجابة الصحيحة."
+
+#, python-format
+msgid "Daily challenge created for %(d)s."
+msgstr "تم إنشاء تحدي يوم %(d)s."
+
+msgid "Daily challenge updated."
+msgstr "تم تحديث التحدي اليومي."
+
+#, python-format
+msgid "Daily challenge for %(d)s was deleted."
+msgstr "تم حذف تحدي يوم %(d)s."
+
 msgid "Performance"
 msgstr "الأداء"
 
-#: evaluations/models.py:18 templates/dashboard/parent.html:96
-#: templates/dashboard/youth.html:74
-#: templates/evaluations/evaluation_form.html:63
-#: templates/evaluations/evaluation_list.html:31
-#: templates/evaluations/evaluation_list.html:50
-#: templates/evaluations/player_evaluations.html:27
-#: templates/evaluations/player_evaluations.html:65
-#: templates/users/user_detail.html:76
 msgid "Behavior"
 msgstr "السلوك"
 
-#: evaluations/models.py:22 templates/dashboard/parent.html:99
-#: templates/dashboard/youth.html:78
-#: templates/evaluations/evaluation_form.html:77
-#: templates/evaluations/evaluation_list.html:32
-#: templates/evaluations/evaluation_list.html:51
-#: templates/evaluations/player_evaluations.html:34
-#: templates/evaluations/player_evaluations.html:69
-#: templates/users/user_detail.html:83
 msgid "Commitment"
 msgstr "الالتزام"
 
-#: evaluations/models.py:25 templates/sports/match_form.html:53
 msgid "Notes"
 msgstr "ملاحظات"
 
-#: evaluations/models.py:30
 msgid "Evaluation"
 msgstr "تقييم"
 
-#: evaluations/views.py:24
 msgid "Optional notes about the player..."
 msgstr "ملاحظات اختيارية عن اللاعب..."
 
-#: evaluations/views.py:88
 msgid "Evaluation saved successfully."
 msgstr "تم حفظ التقييم بنجاح."
 
-#: events/models.py:11
 msgid "Parent Activity"
 msgstr "نشاط لأولياء الأمور"
 
-#: events/models.py:12
 msgid "Camp"
 msgstr "مخيّم"
 
-#: events/models.py:13
 msgid "Other Event"
 msgstr "حدث آخر"
 
-#: events/models.py:29
 msgid "Event type"
 msgstr "نوع الحدث"
 
-#: events/models.py:30 templates/events/_event_detail_body.html:37
-#: templates/events/event_form.html:39
 msgid "Description"
 msgstr "الوصف"
 
-#: events/models.py:31 templates/events/event_form.html:30
 msgid "Start"
 msgstr "البداية"
 
-#: events/models.py:32 templates/events/event_form.html:34
 msgid "End"
 msgstr "النهاية"
 
-#: events/views.py:69
 msgid "Event created."
 msgstr "تم إنشاء الحدث."
 
-#: events/views.py:92
 msgid "Event deleted."
 msgstr "تم حذف الحدث."
 
-#: news/models.py:10 templates/news/news_form.html:34
 msgid "Title (Arabic)"
 msgstr "العنوان (بالعربي)"
 
-#: news/models.py:11 templates/news/news_form.html:20
 msgid "Excerpt"
 msgstr "ملخص"
 
-#: news/models.py:12 templates/news/news_form.html:24
 msgid "Content"
 msgstr "المحتوى"
 
-#: news/models.py:13 templates/news/news_form.html:38
 msgid "Content (Arabic)"
 msgstr "المحتوى (بالعربي)"
 
-#: news/models.py:16
 msgid "Is published"
 msgstr "منشور"
 
-#: news/models.py:17 templates/dashboard/admin.html:123
-#: templates/landing.html:111 templates/news/_news_detail_body.html:11
-#: templates/news/_news_list_body.html:8 templates/news/news_form.html:52
 msgid "Featured"
 msgstr "مميَّز"
 
-#: news/models.py:23
 msgid "News Post"
 msgstr "منشور"
 
-#: news/views.py:21
 msgid "Short summary shown in cards..."
 msgstr "ملخص قصير يظهر في البطاقات..."
 
-#: news/views.py:60
 msgid "News post published."
 msgstr "تم نشر المنشور."
 
-#: news/views.py:82
 msgid "Post deleted."
 msgstr "تم حذف الحدث."
 
-#: sports/models.py:8 templates/landing.html:43
-#: templates/partials/public_footer.html:21 users/forms.py:9
-msgid "Football"
-msgstr "كرة القدم"
-
-#: sports/models.py:9 templates/landing.html:50
-#: templates/partials/public_footer.html:22 users/forms.py:10
-msgid "Basketball"
-msgstr "كرة السلة"
-
-#: sports/models.py:10 templates/partials/public_footer.html:23
-#: users/forms.py:11
-msgid "Volleyball"
-msgstr "الكرة الطائرة"
-
-#: sports/models.py:11 templates/partials/public_footer.html:24
-#: users/forms.py:12
-msgid "Handball"
-msgstr "كرة اليد"
-
-#: sports/models.py:12 templates/partials/public_footer.html:25
-#: users/forms.py:13
-msgid "Table Tennis"
-msgstr "تنس الطاولة"
-
-#: sports/models.py:26
-msgid "Name"
-msgstr "الاسم"
-
-#: sports/models.py:28 templates/sports/team_form.html:28
-msgid "Age group"
-msgstr "الفئة العمرية"
-
-#: sports/models.py:29 templates/sports/team_form.html:30
-msgid "e.g. U-12, U-15, U-18"
-msgstr "مثال: تحت 12، تحت 15، تحت 18"
-
-#: sports/models.py:106
-msgid "Goals=1, Basketball=2 or 3, etc."
-msgstr "أهداف=1، كرة سلة=2 أو 3، إلخ."
-
-#: sports/models.py:115
-msgid "Monday"
-msgstr "الإثنين"
-
-#: sports/models.py:115
-msgid "Tuesday"
-msgstr "الثلاثاء"
-
-#: sports/models.py:115
-msgid "Wednesday"
-msgstr "الأربعاء"
-
-#: sports/models.py:116
-msgid "Thursday"
-msgstr "الخميس"
-
-#: sports/models.py:116
-msgid "Friday"
-msgstr "الجمعة"
-
-#: sports/models.py:116
-msgid "Saturday"
-msgstr "السبت"
-
-#: sports/models.py:116
-msgid "Sunday"
-msgstr "الأحد"
-
-#: sports/views.py:106
-msgid "Team created successfully."
-msgstr "تم إنشاء الفريق بنجاح."
-
-#: sports/views.py:154
-msgid "Match scheduled."
-msgstr "تمت جدولة المباراة."
-
-#: templates/attendance/check_in_form.html:6
-msgid "Check in"
-msgstr "تسجيل الحضور"
-
-#: templates/attendance/check_in_form.html:15
-msgid "Boys Center · Check-in"
-msgstr "سنتر الأولاد · تسجيل الحضور"
-
-#: templates/attendance/check_in_form.html:36
-msgid "Your member code"
-msgstr "رمز عضويتك"
-
-#: templates/attendance/check_in_form.html:38
-msgid "e.g. JOH1001"
-msgstr "مثال: JOH1001"
-
-#: templates/attendance/check_in_form.html:42
-msgid "You'll find this code on your profile or member card."
-msgstr "ستجد هذا الرمز في ملفك الشخصي أو بطاقة العضوية."
-
-#: templates/attendance/check_in_form.html:46
-msgid "Check in now"
-msgstr "سجّل حضورك الآن"
-
-#: templates/attendance/check_in_form.html:51
-msgid "Session expires"
-msgstr "تنتهي الجلسة"
-
-#: templates/attendance/check_in_invalid.html:6
-msgid "Check-in unavailable"
-msgstr "تسجيل الحضور غير متاح"
-
-#: templates/attendance/check_in_invalid.html:16
-msgid "Cannot check in"
-msgstr "لا يمكن تسجيل الحضور"
-
-#: templates/attendance/check_in_invalid.html:19
-#: templates/attendance/session_list.html:42
-#: templates/attendance/session_list.html:54 templates/dashboard/coach.html:70
-#: templates/dashboard/parent.html:50
-#: templates/reports/attendance_report.html:29
-#: templates/reports/attendance_report.html:39
-#: templates/users/user_detail.html:129 templates/users/user_detail.html:138
-msgid "Session"
-msgstr "الجلسة"
-
-#: templates/attendance/check_in_success.html:6
-msgid "Checked in"
-msgstr "تم التحضير"
-
-#: templates/attendance/check_in_success.html:17
-msgid "Already checked in!"
-msgstr "تم تسجيل حضورك مسبقاً!"
-
-#: templates/attendance/check_in_success.html:18
-msgid "You have already been recorded for this session."
-msgstr "تم تسجيلك بالفعل في هذه الجلسة."
-
-#: templates/attendance/check_in_success.html:23
-msgid "Checked in (late)"
-msgstr "تم التسجيل (متأخراً)"
-
-#: templates/attendance/check_in_success.html:24
-msgid "Your attendance has been recorded as late."
-msgstr "تم تسجيل حضورك كمتأخر."
-
-#: templates/attendance/check_in_success.html:29
-msgid "Successfully checked in!"
-msgstr "تم تسجيل حضورك بنجاح!"
-
-#: templates/attendance/check_in_success.html:30
-#: templates/dashboard/manager.html:13 templates/dashboard/parent.html:13
-msgid "Welcome"
-msgstr "مرحباً"
-
-#: templates/attendance/check_in_success.html:47
-msgid "You may close this page now."
-msgstr "يمكنك إغلاق هذه الصفحة الآن."
-
-#: templates/attendance/session_detail.html:10
-msgid "Close session"
-msgstr "إغلاق الجلسة"
-
-#: templates/attendance/session_detail.html:11
-msgid "Reopen session"
-msgstr "إعادة فتح الجلسة"
-
-#: templates/attendance/session_detail.html:22
-#: templates/attendance/session_detail.html:47
-#: templates/attendance/session_list.html:80 templates/dashboard/coach.html:89
-msgid "Live"
-msgstr "مباشر"
-
-#: templates/attendance/session_detail.html:24
-#: templates/attendance/session_list.html:25
-#: templates/attendance/session_list.html:82 templates/dashboard/coach.html:91
-msgid "Closed"
-msgstr "مغلق"
-
-#: templates/attendance/session_detail.html:41
-#: templates/dashboard/admin.html:157
-msgid "Check-ins"
-msgstr "التحضيرات"
-
-#: templates/attendance/session_detail.html:42
-msgid "Updates automatically every few seconds."
-msgstr "يتم التحديث تلقائياً كل بضع ثوانٍ."
-
-#: templates/attendance/session_detail.html:56
-#: templates/attendance/session_detail.html:65
-#: templates/dashboard/parent.html:29 templates/users/user_list.html:41
-#: templates/users/user_list.html:52
-msgid "Member"
-msgstr "عضو"
-
-#: templates/attendance/session_detail.html:57
-#: templates/attendance/session_detail.html:71
-#: templates/users/user_detail.html:31 templates/users/user_list.html:42
-#: templates/users/user_list.html:63
-msgid "Code"
-msgstr "الرمز"
-
-#: templates/attendance/session_detail.html:58
-#: templates/attendance/session_detail.html:72
-#: templates/attendance/session_list.html:47
-#: templates/attendance/session_list.html:78 templates/dashboard/coach.html:73
-#: templates/dashboard/parent.html:52 templates/users/user_detail.html:132
-#: templates/users/user_detail.html:141 templates/users/user_list.html:45
-#: templates/users/user_list.html:70
-msgid "Status"
-msgstr "الحالة"
-
-#: templates/attendance/session_detail.html:59
-#: templates/attendance/session_detail.html:75
-#: templates/events/_event_detail_body.html:23
-msgid "Time"
-msgstr "الوقت"
-
-#: templates/attendance/session_detail.html:82
-msgid "Waiting for check-ins"
-msgstr "في انتظار التحضيرات"
-
-#: templates/attendance/session_detail.html:83
-msgid ""
-"Players will appear here as they scan the QR code and enter their member "
-"code."
-msgstr ""
-
-#: templates/attendance/session_detail.html:97
-msgid "Session QR Code"
-msgstr "رمز QR للجلسة"
-
-#: templates/attendance/session_detail.html:104
-msgid "Players scan this code to check in."
-msgstr "يقوم اللاعبون بمسح هذا الرمز لتسجيل الحضور."
-
-#: templates/attendance/session_detail.html:108
-msgid "Download QR"
-msgstr "تحميل الرمز"
-
-#: templates/attendance/session_detail.html:110
-msgid "QR code generation pending..."
-msgstr "جارٍ توليد رمز QR..."
-
-#: templates/attendance/session_detail.html:117
-msgid "Manual check-in"
-msgstr "تسجيل يدوي"
-
-#: templates/attendance/session_detail.html:118
-msgid "If a player can't scan the QR"
-msgstr "إذا تعذّر على اللاعب مسح الرمز"
-
-#: templates/attendance/session_detail.html:134
-msgid "Member code"
-msgstr "رمز العضو"
-
-#: templates/attendance/session_detail.html:138
-msgid "Add check-in"
-msgstr "إضافة تحضير"
-
-#: templates/attendance/session_form.html:4
-msgid "New Session"
-msgstr "جلسة جديدة"
-
-#: templates/attendance/session_form.html:10
-msgid "Create attendance session"
-msgstr "إنشاء جلسة حضور"
-
-#: templates/attendance/session_form.html:11
-msgid "A unique QR code will be generated automatically."
-msgstr "سيتم توليد رمز QR فريد تلقائياً."
-
-#: templates/attendance/session_form.html:21
-msgid "Session title"
-msgstr "اسم الجلسة"
-
-#: templates/attendance/session_form.html:26
-msgid "Session type"
-msgstr "نوع الجلسة"
-
-#: templates/attendance/session_form.html:50
-msgid "Sport (optional)"
-msgstr "الرياضة (اختياري)"
-
-#: templates/attendance/session_form.html:55
-#: templates/attendance/session_list.html:95
-msgid "Create session"
-msgstr "إنشاء جلسة"
-
-#: templates/attendance/session_form.html:56
-#: templates/evaluations/evaluation_form.html:102
-#: templates/events/event_confirm_delete.html:26
-#: templates/events/event_form.html:44
-#: templates/news/news_confirm_delete.html:26 templates/news/news_form.html:59
-#: templates/sports/match_form.html:57 templates/sports/team_form.html:48
-#: templates/users/user_confirm_delete.html:37
-#: templates/users/user_form.html:181
-msgid "Cancel"
-msgstr "إلغاء"
-
-#: templates/attendance/session_list.html:4
-msgid "Attendance Sessions"
-msgstr "جلسات الحضور"
-
-#: templates/attendance/session_list.html:7 templates/dashboard/admin.html:20
-#: templates/dashboard/coach.html:17
-msgid "New session"
-msgstr "جلسة جديدة"
-
-#: templates/attendance/session_list.html:16
-msgid "Search by title or location..."
-msgstr "ابحث بالعنوان أو الموقع..."
-
-#: templates/attendance/session_list.html:19
-#: templates/events/_event_list_body.html:9
-msgid "All types"
-msgstr "كل الأنواع"
-
-#: templates/attendance/session_list.html:23
-msgid "All statuses"
-msgstr "كل الحالات"
-
-#: templates/attendance/session_list.html:24 templates/dashboard/admin.html:38
-#: templates/users/user_list.html:71
-msgid "Active"
-msgstr "نشط"
-
-#: templates/attendance/session_list.html:27
-msgid "Filter"
-msgstr "تصفية"
-
-#: templates/attendance/session_list.html:29 templates/users/user_list.html:24
-msgid "Clear"
-msgstr "مسح"
-
-#: templates/attendance/session_list.html:45
-#: templates/attendance/session_list.html:67
-#: templates/evaluations/evaluation_list.html:29
-#: templates/evaluations/evaluation_list.html:48
-#: templates/reports/attendance_report.html:32
-#: templates/reports/attendance_report.html:42
-#: templates/sports/team_form.html:33 users/models.py:13 users/models.py:90
-msgid "Coach"
-msgstr "المدرب"
-
-#: templates/attendance/session_list.html:46
-#: templates/attendance/session_list.html:75 templates/dashboard/coach.html:72
-#: templates/partials/sidebar.html:30
-#: templates/reports/attendance_report.html:33
-#: templates/reports/attendance_report.html:43
-msgid "Attendance"
-msgstr "الحضور"
-
-#: templates/attendance/session_list.html:86 templates/users/user_list.html:76
-msgid "View"
-msgstr "عرض"
-
-#: templates/attendance/session_list.html:93
-msgid "No sessions found"
-msgstr "لا توجد جلسات"
-
-#: templates/attendance/session_list.html:94
-msgid "Create your first session to start tracking attendance."
-msgstr "أنشئ أول جلسة لبدء تتبع الحضور."
-
-#: templates/base.html:7 templates/landing.html:19
-#: templates/partials/public_footer.html:7
-#: templates/partials/public_footer.html:30
-#: templates/partials/public_nav.html:7 templates/partials/sidebar.html:6
-#: templates/users/login.html:11
-msgid "Boys Center"
-msgstr "سنتر الأولاد"
-
-#: templates/base.html:46 templates/partials/public_nav.html:49
-#: templates/partials/topbar.html:4
-msgid "Menu"
-msgstr "القائمة"
-
-#: templates/base.html:50 templates/dashboard/admin.html:4
-#: templates/partials/sidebar.html:15 templates/partials/topbar.html:8
-msgid "Dashboard"
-msgstr "اللوحة الرئيسية"
-
-#: templates/base.html:61 templates/partials/public_nav.html:21
-#: templates/partials/topbar.html:21
-msgid "Toggle theme"
-msgstr "تبديل المظهر"
-
-#: templates/dashboard/admin.html:5
-msgid "Overview of all club activity"
-msgstr "نظرة عامة على نشاط النادي"
-
-#: templates/dashboard/admin.html:13
-msgid "Admin Console"
-msgstr "لوحة المدير العام"
-
-#: templates/dashboard/admin.html:15
-msgid "Welcome back"
-msgstr "أهلاً بعودتك"
-
-#: templates/dashboard/admin.html:16
-msgid "Here's what's happening at Boys Center today."
-msgstr "إليك ما يجري في سنتر الأولاد اليوم."
-
-#: templates/dashboard/admin.html:19 templates/users/user_list.html:8
-msgid "Add member"
-msgstr "إضافة عضو"
-
-#: templates/dashboard/admin.html:28
-msgid "Total Members"
-msgstr "إجمالي الأعضاء"
-
-#: templates/dashboard/admin.html:30
-msgid "youth"
-msgstr "شاب"
-
-#: templates/dashboard/admin.html:36 templates/dashboard/manager.html:21
-msgid "Coaches"
-msgstr "المدربون"
-
-#: templates/dashboard/admin.html:44 templates/partials/sidebar.html:41
-#: templates/sports/team_list.html:4
-msgid "Teams"
-msgstr "الفرق"
-
-#: templates/dashboard/admin.html:46
-msgid "Across all sports"
-msgstr "في جميع الرياضات"
-
-#: templates/dashboard/admin.html:52 templates/dashboard/manager.html:35
-msgid "Sessions / Week"
-msgstr "الجلسات/الأسبوع"
-
-#: templates/dashboard/admin.html:54
-msgid "evaluations"
-msgstr "تقييم"
-
-#: templates/dashboard/admin.html:66
-msgid "Attendance Trend"
-msgstr "اتجاه الحضور"
-
-#: templates/dashboard/admin.html:67
-msgid "Last 14 days"
-msgstr "آخر 14 يوماً"
-
-#: templates/dashboard/admin.html:69
-msgid "View reports"
-msgstr "عرض التقارير"
-
-#: templates/dashboard/admin.html:79 templates/dashboard/coach.html:111
-#: templates/dashboard/manager.html:75
-msgid "Upcoming Events"
-msgstr "الأحداث القادمة"
-
-#: templates/dashboard/admin.html:80 templates/dashboard/manager.html:76
-#: templates/events/_event_list_body.html:6 templates/sports/match_list.html:15
-msgid "All"
-msgstr "الكل"
-
-#: templates/dashboard/admin.html:100 templates/dashboard/coach.html:128
-#: templates/dashboard/manager.html:93
-msgid "No upcoming events."
-msgstr "لا أحداث قادمة."
-
-#: templates/dashboard/admin.html:110 templates/dashboard/parent.html:117
-msgid "Latest News"
-msgstr "آخر الأخبار"
-
-#: templates/dashboard/admin.html:111 templates/dashboard/parent.html:118
-#: templates/landing.html:99
-msgid "All news"
-msgstr "كل الأخبار"
-
-#: templates/dashboard/admin.html:128 templates/dashboard/manager.html:61
-#: templates/landing.html:116 templates/news/_news_detail_body.html:33
-#: templates/news/_news_list_body.html:13
-msgid "ago"
-msgstr "منذ"
-
-#: templates/dashboard/admin.html:135 templates/landing.html:123
-#: templates/news/_news_list_body.html:20
-msgid "No news yet"
-msgstr "لا توجد أخبار بعد"
-
-#: templates/dashboard/admin.html:136
-msgid "Posts will appear here once published."
-msgstr "ستظهر المنشورات هنا بعد النشر."
-
-#: templates/dashboard/coach.html:4
-msgid "Coach Dashboard"
-msgstr "لوحة المدرب"
-
-#: templates/dashboard/coach.html:11
-msgid "Coach Console"
-msgstr "لوحة المدرب"
-
-#: templates/dashboard/coach.html:13 templates/dashboard/youth.html:13
-msgid "Hi"
-msgstr "مرحباً"
-
-#: templates/dashboard/coach.html:14
-msgid "Manage your sessions and players."
-msgstr "أدر جلساتك ولاعبيك."
-
-#: templates/dashboard/coach.html:18
-msgid "Evaluate"
-msgstr "تقييم"
-
-#: templates/dashboard/coach.html:29
-msgid "You have active sessions"
-msgstr "لديك جلسات نشطة"
-
-#: templates/dashboard/coach.html:30
-msgid "Players can scan the QR codes to check in."
-msgstr "يمكن للاعبين مسح رموز QR لتسجيل الحضور."
-
-#: templates/dashboard/coach.html:45
-msgid "My Sessions"
-msgstr "جلساتي"
-
-#: templates/dashboard/coach.html:52
-msgid "Evaluations Given"
-msgstr "التقييمات المعطاة"
-
-#: templates/dashboard/coach.html:62 templates/dashboard/youth.html:111
-msgid "Recent Sessions"
-msgstr "آخر الجلسات"
-
-#: templates/dashboard/coach.html:63 templates/dashboard/manager.html:53
-#: templates/users/user_detail.html:94
-msgid "View all"
-msgstr "عرض الكل"
-
-#: templates/dashboard/coach.html:99
-msgid "No sessions yet. Create your first session to get started."
-msgstr "لا توجد جلسات. أنشئ أول جلسة للبدء."
-
-#: templates/dashboard/manager.html:4
-msgid "Manager Dashboard"
-msgstr "لوحة المدير"
-
-#: templates/dashboard/manager.html:11
-msgid "Manager Console"
-msgstr "لوحة المدير"
-
-#: templates/dashboard/manager.html:14
-msgid "Monitor coaches, sessions, and overall club performance."
-msgstr "راقب المدربين والجلسات وأداء النادي."
-
-#: templates/dashboard/manager.html:28
-msgid "Youth Members"
-msgstr "أعضاء الشباب"
-
-#: templates/dashboard/manager.html:42
-msgid "Upcoming Matches"
-msgstr "المباريات القادمة"
-
-#: templates/dashboard/manager.html:52
-msgid "Recent Activity"
-msgstr "آخر الأنشطة"
-
-#: templates/dashboard/manager.html:67
-msgid "No recent activity."
-msgstr "لا نشاط حديث."
-
-#: templates/dashboard/parent.html:4
-msgid "Parent Dashboard"
-msgstr "لوحة ولي الأمر"
-
-#: templates/dashboard/parent.html:11
-msgid "Parent Portal"
-msgstr "بوابة ولي الأمر"
-
-#: templates/dashboard/parent.html:14
-msgid "Track your children's activities and performance."
-msgstr "تابع أنشطة أبنائك وأدائهم."
-
-#: templates/dashboard/parent.html:30 users/models.py:16 users/models.py:98
-msgid "Youth"
-msgstr "شاب"
-
-#: templates/dashboard/parent.html:42
-msgid "Recent Attendance"
-msgstr "آخر الحضور"
-
-#: templates/dashboard/parent.html:49
-msgid "Child"
-msgstr "الابن"
-
-#: templates/dashboard/parent.html:71
-msgid "No attendance records yet."
-msgstr "لا توجد سجلات حضور بعد."
-
-#: templates/dashboard/parent.html:83
-msgid "Latest Evaluations"
-msgstr "آخر التقييمات"
-
-#: templates/dashboard/parent.html:107 templates/users/user_detail.html:115
-msgid "No evaluations yet."
-msgstr "لا توجد تقييمات بعد."
-
-#: templates/dashboard/parent.html:134
-msgid "No news yet."
-msgstr "لا توجد أخبار بعد."
-
-#: templates/dashboard/youth.html:4
-msgid "My Dashboard"
-msgstr "لوحتي"
-
-#: templates/dashboard/youth.html:11
-msgid "My Profile"
-msgstr "ملفي الشخصي"
-
-#: templates/dashboard/youth.html:14
-msgid "Your activity, evaluations, and member info."
-msgstr "نشاطك وتقييماتك ومعلومات عضويتك."
-
-#: templates/dashboard/youth.html:21
-msgid "Member Code"
-msgstr "رمز العضو"
-
-#: templates/dashboard/youth.html:23
-msgid "Show this code at check-in"
-msgstr "أظهر هذا الرمز عند تسجيل الحضور"
-
-#: templates/dashboard/youth.html:29
-msgid "Sessions Attended"
-msgstr "الجلسات المحضورة"
-
-#: templates/dashboard/youth.html:36
-msgid "Avg Performance"
-msgstr "متوسط الأداء"
-
-#: templates/dashboard/youth.html:43
-msgid "Avg Behavior"
-msgstr "متوسط السلوك"
-
-#: templates/dashboard/youth.html:53
-msgid "My Recent Evaluations"
-msgstr "تقييماتي الأخيرة"
-
-#: templates/dashboard/youth.html:65
-#: templates/evaluations/player_evaluations.html:56
-msgid "average"
-msgstr "المتوسط"
-
-#: templates/dashboard/youth.html:89
-msgid "No evaluations yet. Keep up the good work!"
-msgstr "لا توجد تقييمات بعد. واصل العمل الجيد!"
-
-#: templates/dashboard/youth.html:97
-msgid "My QR Code"
-msgstr "رمز QR الخاص بي"
-
-#: templates/dashboard/youth.html:103
-msgid "Show this to your coach for quick check-in."
-msgstr "أرِ هذا لمدربك لتسجيل سريع."
-
-#: templates/dashboard/youth.html:105
-msgid "QR code not available."
-msgstr "رمز QR غير متاح."
-
-#: templates/dashboard/youth.html:126
-msgid "No sessions attended yet."
-msgstr "لم تحضر أي جلسة بعد."
-
-#: templates/evaluations/evaluation_form.html:4
-msgid "New Evaluation"
-msgstr "تقييم جديد"
-
-#: templates/evaluations/evaluation_form.html:10
-msgid "Evaluate a player"
-msgstr "تقييم لاعب"
-
-#: templates/evaluations/evaluation_form.html:11
-msgid "Rate performance, behavior and commitment on a 1–5 scale."
-msgstr "قيّم الأداء والسلوك والالتزام على مقياس من 1 إلى 5."
-
-#: templates/evaluations/evaluation_form.html:30
-#: templates/evaluations/evaluation_list.html:28
-#: templates/evaluations/evaluation_list.html:40
-msgid "Player"
-msgstr "اللاعب"
-
-#: templates/evaluations/evaluation_form.html:45
-msgid "Ratings"
-msgstr "التقييمات"
-
-#: templates/evaluations/evaluation_form.html:91
-msgid "Notes (optional)"
-msgstr "ملاحظات (اختياري)"
-
-#: templates/evaluations/evaluation_form.html:100
-msgid "Save evaluation"
-msgstr "حفظ التقييم"
-
-#: templates/evaluations/evaluation_list.html:4
-#: templates/evaluations/player_evaluations.html:4
-#: templates/partials/sidebar.html:34
-msgid "Evaluations"
-msgstr "التقييمات"
-
-#: templates/evaluations/evaluation_list.html:7
 msgid "New evaluation"
 msgstr "تقييم جديد"
 
-#: templates/evaluations/evaluation_list.html:15
-msgid "Search by player or coach..."
-msgstr "ابحث باللاعب أو المدرب..."
+msgid "New session"
+msgstr "جلسة جديدة"
 
-#: templates/evaluations/evaluation_list.html:17
-#: templates/users/activity_log.html:13 templates/users/user_list.html:23
-msgid "Search"
-msgstr "بحث"
+msgid "News posted"
+msgstr "خبر جديد"
 
-#: templates/evaluations/evaluation_list.html:33
-#: templates/evaluations/evaluation_list.html:52
-msgid "Avg"
-msgstr "متوسط"
+msgid "Upcoming event"
+msgstr "حدث قادم"
 
-#: templates/evaluations/evaluation_list.html:59
-#: templates/evaluations/player_evaluations.html:82
-msgid "No evaluations yet"
-msgstr "لا توجد تقييمات بعد"
+msgid "Attendance recorded"
+msgstr "تم تسجيل الحضور"
 
-#: templates/evaluations/evaluation_list.html:60
-msgid "Coaches can evaluate players after sessions."
-msgstr "يمكن للمدربين تقييم اللاعبين بعد الجلسات."
+msgid "System notice"
+msgstr "إشعار نظام"
 
-#: templates/evaluations/evaluation_list.html:61
-msgid "Create one"
-msgstr "أنشئ واحداً"
+msgid "Kind"
+msgstr "النوع"
 
-#: templates/evaluations/player_evaluations.html:10
-msgid "Back to profile"
-msgstr "العودة للملف الشخصي"
+msgid "Message"
+msgstr "الرسالة"
 
-#: templates/evaluations/player_evaluations.html:13
-msgid "evaluations recorded"
-msgstr "تقييم مسجَّل"
+msgid "Link"
+msgstr "رابط"
 
-#: templates/evaluations/player_evaluations.html:42
-msgid "Evaluation history"
-msgstr "سجل التقييمات"
+msgid "Read"
+msgstr "مقروء"
 
-#: templates/evaluations/player_evaluations.html:83
-msgid "This player hasn't been evaluated by any coach."
-msgstr "لم يتم تقييم هذا اللاعب من قِبل أي مدرب."
+msgid "Created"
+msgstr "أُنشئ"
 
-#: templates/events/_event_detail_body.html:4
-msgid "Back to events"
-msgstr "العودة للأحداث"
+msgid "Notification"
+msgstr "إشعار"
 
-#: templates/events/_event_list_body.html:4 templates/sports/match_list.html:16
-#: templates/sports/match_list.html:31 templates/sports/team_detail.html:54
+msgid "Notifications"
+msgstr "الإشعارات"
+
+msgid "A coach"
+msgstr "أحد المدربين"
+
+#, python-format
+msgid "New evaluation from %(coach)s"
+msgstr "تقييم جديد من %(coach)s"
+
+#, python-format
+msgid "%(player)s received a new evaluation."
+msgstr "تلقّى %(player)s تقييماً جديداً."
+
+#, python-format
+msgid "New session: %(title)s"
+msgstr "جلسة جديدة: %(title)s"
+
+#, python-format
+msgid "%(date)s at %(location)s"
+msgstr "%(date)s في %(location)s"
+
+#, python-format
+msgid "%(player)s checked in"
+msgstr "سجَّل %(player)s حضوره"
+
+#, python-format
+msgid "Status: %(status)s · %(session)s"
+msgstr "الحالة: %(status)s · %(session)s"
+
+#, python-format
+msgid "News: %(title)s"
+msgstr "خبر: %(title)s"
+
+#, python-format
+msgid "%(winner)s won %(home)s vs %(away)s"
+msgstr "%(winner)s فاز في %(home)s ضد %(away)s"
+
+#, python-format
+msgid "Draw: %(home)s vs %(away)s"
+msgstr "تعادل: %(home)s ضد %(away)s"
+
+#, python-format
+msgid "Final score: %(h)s — %(a)s"
+msgstr "النتيجة النهائية: %(h)s — %(a)s"
+
+#, python-format
+msgid "Upcoming: %(title)s"
+msgstr "قادم: %(title)s"
+
+#, python-format
+msgid "%(date)s · %(location)s"
+msgstr "%(date)s · %(location)s"
+
+msgid "All notifications marked as read."
+msgstr "تم تحديد جميع الإشعارات كمقروءة."
+
+msgid "Football"
+msgstr "كرة القدم"
+
+msgid "Basketball"
+msgstr "كرة السلة"
+
+msgid "Volleyball"
+msgstr "الكرة الطائرة"
+
+msgid "Handball"
+msgstr "كرة اليد"
+
+msgid "Table Tennis"
+msgstr "تنس الطاولة"
+
+msgid "Name"
+msgstr "الاسم"
+
+msgid "Age group"
+msgstr "الفئة العمرية"
+
+msgid "e.g. U-12, U-15, U-18"
+msgstr "مثال: تحت 12، تحت 15، تحت 18"
+
+msgid "League"
+msgstr "دوري"
+
+msgid "Cup"
+msgstr "كأس"
+
+msgid "Friendly"
+msgstr "ودية"
+
+msgid "Season"
+msgstr "الموسم"
+
+msgid "e.g. 2025-2026"
+msgstr "مثال: 2025-2026"
+
+msgid "Active"
+msgstr "نشط"
+
+msgid "Competition"
+msgstr "البطولة"
+
+msgid "Competitions"
+msgstr "البطولات"
+
+msgid "Goals=1, Basketball=2 or 3, etc."
+msgstr "أهداف=1، كرة سلة=2 أو 3، إلخ."
+
+msgid "Monday"
+msgstr "الإثنين"
+
+msgid "Tuesday"
+msgstr "الثلاثاء"
+
+msgid "Wednesday"
+msgstr "الأربعاء"
+
+msgid "Thursday"
+msgstr "الخميس"
+
+msgid "Friday"
+msgstr "الجمعة"
+
+msgid "Saturday"
+msgstr "السبت"
+
+msgid "Sunday"
+msgstr "الأحد"
+
+msgid "— No competition —"
+msgstr "— بدون بطولة —"
+
+msgid "Team created successfully."
+msgstr "تم إنشاء الفريق بنجاح."
+
+msgid "Match scheduled."
+msgstr "تمت جدولة المباراة."
+
+msgid "Competition created."
+msgstr "تم إنشاء البطولة."
+
+msgid "Competition updated."
+msgstr "تم تحديث البطولة."
+
+msgid "Scores must be whole numbers."
+msgstr "يجب أن تكون النتائج أرقاماً صحيحة."
+
+msgid "Scores cannot be negative."
+msgstr "لا يمكن أن تكون النتائج سالبة."
+
+msgid "Match finished — draw recorded."
+msgstr "انتهت المباراة — تم تسجيل تعادل."
+
+#, python-format
+msgid "Match finished — winner: %(team)s."
+msgstr "انتهت المباراة — الفائز: %(team)s."
+
+msgid "Check in"
+msgstr "تسجيل الحضور"
+
+msgid "Boys Center · Check-in"
+msgstr "سنتر الأولاد · تسجيل الحضور"
+
+msgid "Your member code"
+msgstr "رمز عضويتك"
+
+msgid "e.g. JOH1001"
+msgstr "مثال: JOH1001"
+
+msgid "You'll find this code on your profile or member card."
+msgstr "ستجد هذا الرمز في ملفك الشخصي أو بطاقة العضوية."
+
+msgid "Check in now"
+msgstr "سجّل حضورك الآن"
+
+msgid "Session expires"
+msgstr "تنتهي الجلسة"
+
+msgid "Check-in unavailable"
+msgstr "تسجيل الحضور غير متاح"
+
+msgid "Cannot check in"
+msgstr "لا يمكن تسجيل الحضور"
+
+msgid "Session"
+msgstr "الجلسة"
+
+msgid "Checked in"
+msgstr "تم التحضير"
+
+msgid "Already checked in!"
+msgstr "تم تسجيل حضورك مسبقاً!"
+
+msgid "You have already been recorded for this session."
+msgstr "تم تسجيلك بالفعل في هذه الجلسة."
+
+msgid "Checked in (late)"
+msgstr "تم التسجيل (متأخراً)"
+
+msgid "Your attendance has been recorded as late."
+msgstr "تم تسجيل حضورك كمتأخر."
+
+msgid "Successfully checked in!"
+msgstr "تم تسجيل حضورك بنجاح!"
+
+msgid "Welcome"
+msgstr "مرحباً"
+
+msgid "You may close this page now."
+msgstr "يمكنك إغلاق هذه الصفحة الآن."
+
+msgid "Live"
+msgstr "مباشر"
+
+msgid "Closed"
+msgstr "مغلق"
+
+msgid "Close session"
+msgstr "إغلاق الجلسة"
+
+msgid "Reopen session"
+msgstr "إعادة فتح الجلسة"
+
+msgid "Check-ins"
+msgstr "التحضيرات"
+
+msgid "Updates automatically every 5 seconds."
+msgstr "يتم التحديث تلقائياً كل 5 ثوانٍ."
+
+msgid "Member"
+msgstr "عضو"
+
+msgid "Code"
+msgstr "الرمز"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "Time"
+msgstr "الوقت"
+
+msgid "Waiting for check-ins"
+msgstr "في انتظار التحضيرات"
+
+msgid "Players will appear here as they scan the QR code."
+msgstr "سيظهر اللاعبون هنا بمجرد مسح رمز QR."
+
+msgid "Session QR Code"
+msgstr "رمز QR للجلسة"
+
+msgid "Players scan this code to check in."
+msgstr "يقوم اللاعبون بمسح هذا الرمز لتسجيل الحضور."
+
+msgid "Download QR"
+msgstr "تحميل الرمز"
+
+msgid "QR code generation pending…"
+msgstr "جارٍ توليد رمز QR…"
+
+msgid "Manual check-in"
+msgstr "تسجيل يدوي"
+
+msgid "If a player can't scan the QR"
+msgstr "إذا تعذّر على اللاعب مسح الرمز"
+
+msgid "Member code"
+msgstr "رمز العضو"
+
+msgid "Add check-in"
+msgstr "إضافة تحضير"
+
+msgid "New Session"
+msgstr "جلسة جديدة"
+
+msgid "A unique QR code will be generated automatically"
+msgstr "سيتم توليد رمز QR فريد تلقائياً"
+
+msgid "Session details"
+msgstr "تفاصيل الجلسة"
+
+msgid "Session title"
+msgstr "اسم الجلسة"
+
+msgid "Session type"
+msgstr "نوع الجلسة"
+
+msgid "Sport (optional)"
+msgstr "الرياضة (اختياري)"
+
+msgid "Create session"
+msgstr "إنشاء جلسة"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Attendance Sessions"
+msgstr "جلسات الحضور"
+
+msgid "total"
+msgstr "إجمالي"
+
+msgid "Search by title or location…"
+msgstr "ابحث بالعنوان أو الموقع…"
+
+msgid "All types"
+msgstr "كل الأنواع"
+
+msgid "All statuses"
+msgstr "كل الحالات"
+
+msgid "Filter"
+msgstr "تصفية"
+
+msgid "Clear"
+msgstr "مسح"
+
+msgid "Coach"
+msgstr "المدرب"
+
+msgid "Attendance"
+msgstr "الحضور"
+
+msgid "View"
+msgstr "عرض"
+
+msgid "No sessions found"
+msgstr "لا توجد جلسات"
+
+msgid "Create your first session to start tracking attendance."
+msgstr "أنشئ أول جلسة لبدء تتبع الحضور."
+
+msgid "Boys Center"
+msgstr "سنتر الأولاد"
+
+msgid "Menu"
+msgstr "القائمة"
+
+msgid "Dashboard"
+msgstr "اللوحة الرئيسية"
+
+msgid "Install app"
+msgstr "تثبيت التطبيق"
+
+msgid "Light mode"
+msgstr "الوضع الفاتح"
+
+msgid "Dark mode"
+msgstr "الوضع الداكن"
+
+msgid "Close"
+msgstr "إغلاق"
+
+msgid "Delete challenge"
+msgstr "حذف التحدي"
+
+msgid "Delete this challenge?"
+msgstr "حذف هذا التحدي؟"
+
+#, python-format
+msgid ""
+"\n"
+"        The challenge for <strong>%(d)s</strong> (%(r)s) will be permanently "
+"deleted,\n"
+"        along with its questions and any answers youth have submitted. This "
+"cannot be undone.\n"
+"        "
+msgstr ""
+
+msgid "Yes, delete"
+msgstr "نعم، احذف"
+
+msgid "Edit challenge"
+msgstr "تعديل التحدي"
+
+msgid "New challenge"
+msgstr "تحدٍّ جديد"
+
+#, python-format
+msgid "Editing the challenge for %(d)s"
+msgstr "تعديل تحدي يوم %(d)s"
+
+msgid "Schedule a Bible challenge with 3 questions"
+msgstr "جدوِل تحدياً إنجيلياً مع 3 أسئلة"
+
+msgid "Challenge details"
+msgstr "تفاصيل التحدي"
+
+msgid "One challenge per day. The date must be unique."
+msgstr "تحدٍّ واحد لكل يوم. التاريخ يجب أن يكون فريداً."
+
+msgid "Reference only — the text is not displayed to youth."
+msgstr "المرجع فقط — لا يُعرض النص للشباب."
+
+msgid "Published (visible to youth on this date)"
+msgstr "منشور (يظهر للشباب في هذا التاريخ)"
+
+#, python-format
+msgid "Question %(n)s"
+msgstr "السؤال %(n)s"
+
+msgid "Question text"
+msgstr "نص السؤال"
+
+msgid "What does this passage teach us about ...?"
+msgstr "ماذا يعلّمنا هذا النص عن ...؟"
+
+msgid "Tick the radio next to the correct answer."
+msgstr "حدد الزر المجاور للإجابة الصحيحة."
+
+msgid "Mark as correct"
+msgstr "تحديد كصحيحة"
+
+msgid "Choice text"
+msgstr "نص الخيار"
+
+msgid "Save changes"
+msgstr "حفظ التغييرات"
+
+msgid "Create challenge"
+msgstr "إنشاء التحدي"
+
+msgid "Daily Challenges"
+msgstr "إدارة التحديات اليومية"
+
+msgid "Schedule a Bible challenge for each day"
+msgstr "جدوِل تحدياً إنجيلياً لكل يوم"
+
+msgid "Today"
+msgstr "اليوم"
+
+msgid "A challenge is scheduled for today."
+msgstr "هناك تحدٍّ مجدول لليوم."
+
+msgid "No challenge yet — youth see an empty state."
+msgstr "لا يوجد تحدٍّ بعد — سيرى الشباب حالة فارغة."
+
+msgid "Tomorrow"
+msgstr "غداً"
+
+msgid "Tomorrow is ready."
+msgstr "تحدي الغد جاهز."
+
+msgid "Add tomorrow's questions to stay ahead."
+msgstr "أضف أسئلة الغد لتبقى متقدماً."
+
+msgid "Total"
+msgstr "الإجمالي"
+
+#, python-format
+msgid "%(published)s published of %(total)s"
+msgstr "%(published)s منشور من أصل %(total)s"
+
+msgid "Past"
+msgstr "سابق"
+
 msgid "Upcoming"
 msgstr "قادم"
 
-#: templates/events/_event_list_body.html:5
-msgid "Past"
-msgstr "سابقة"
+msgid "Draft"
+msgstr "مسودة"
 
-#: templates/events/_event_list_body.html:35
+msgid "questions"
+msgstr "أسئلة"
+
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Prev"
+msgstr "السابق"
+
+msgid "Next"
+msgstr "التالي"
+
+msgid "No challenges yet"
+msgstr "لا توجد تحديات بعد"
+
+msgid "Create your first daily challenge to get started."
+msgstr "أنشئ أول تحدٍّ يومي للبدء."
+
+msgid "Daily Challenge"
+msgstr "التحدي اليومي"
+
+msgid "A daily Bible quiz"
+msgstr "اختبار إنجيلي يومي"
+
+msgid "day streak"
+msgstr "يوم متتالي"
+
+msgid "You completed today's challenge — come back tomorrow!"
+msgstr "أكملت تحدي اليوم — عُد غداً!"
+
+msgid "Keep it going — finish today's questions."
+msgstr "واصل التقدّم — أكمل أسئلة اليوم."
+
+msgid "Start your streak by completing today's challenge."
+msgstr "ابدأ سلسلتك بإكمال تحدي اليوم."
+
+msgid "Best streak"
+msgstr "أفضل سلسلة"
+
+msgid "Best"
+msgstr "الأفضل"
+
+#, python-format
+msgid ""
+"Admin preview of %(target_date)s — answers are revealed and cannot be "
+"submitted."
+msgstr ""
+
+msgid ""
+"Review mode — only youth members can answer. The correct choices are "
+"highlighted below."
+msgstr ""
+"وضع المراجعة — يمكن لأعضاء الشباب فقط الإجابة. الإجابات الصحيحة مميَّزة "
+"بالأسفل."
+
+msgid "No content today"
+msgstr "لا يوجد محتوى اليوم"
+
+msgid "Please check back later — a new daily challenge will be available soon."
+msgstr "يرجى العودة لاحقاً — سيتوفر تحدٍّ يومي جديد قريباً."
+
+msgid "Today's reading"
+msgstr "قراءة اليوم"
+
+msgid "Completed"
+msgstr "مكتمل"
+
+#, python-format
+msgid "You scored %(correct_count)s / %(total_questions)s"
+msgstr "نتيجتك %(correct_count)s / %(total_questions)s"
+
+msgid "Submit answers"
+msgstr "إرسال الإجابات"
+
+msgid "Back to dashboard"
+msgstr "العودة للوحة"
+
+msgid "Come back every day to keep your streak alive 🌅"
+msgstr "عُد كل يوم للحفاظ على سلسلتك 🌅"
+
+msgid "Admin Console"
+msgstr "لوحة المدير العام"
+
+msgid "Add member"
+msgstr "إضافة عضو"
+
+msgid "Welcome back"
+msgstr "أهلاً بعودتك"
+
+msgid "Here's what's happening at Boys Center today."
+msgstr "إليك ما يجري في سنتر الأولاد اليوم."
+
+msgid "Reports"
+msgstr "التقارير"
+
+msgid "Total Members"
+msgstr "إجمالي الأعضاء"
+
+msgid "youth"
+msgstr "شاب"
+
+msgid "Coaches"
+msgstr "المدربون"
+
+msgid "Teams"
+msgstr "الفرق"
+
+msgid "Across all sports"
+msgstr "في جميع الرياضات"
+
+msgid "Sessions this week"
+msgstr "الجلسات هذا الأسبوع"
+
+msgid "evaluations"
+msgstr "تقييم"
+
+msgid "Attendance Trend"
+msgstr "اتجاه الحضور"
+
+msgid "Last 14 days"
+msgstr "آخر 14 يوماً"
+
+msgid "View reports"
+msgstr "عرض التقارير"
+
+msgid "Upcoming Events"
+msgstr "الأحداث القادمة"
+
+msgid "All"
+msgstr "الكل"
+
+msgid "No upcoming events."
+msgstr "لا أحداث قادمة."
+
+msgid "Latest News"
+msgstr "آخر الأخبار"
+
+msgid "All news"
+msgstr "كل الأخبار"
+
+msgid "ago"
+msgstr "منذ"
+
+msgid "No news yet"
+msgstr "لا توجد أخبار بعد"
+
+msgid "Posts will appear here once published."
+msgstr "ستظهر المنشورات هنا بعد النشر."
+
+msgid "Coach Dashboard"
+msgstr "لوحة المدرب"
+
+msgid "Coach Console"
+msgstr "لوحة المدرب"
+
+msgid "Evaluate"
+msgstr "تقييم"
+
+msgid "Hi"
+msgstr "مرحباً"
+
+msgid "Manage your sessions and players."
+msgstr "أدر جلساتك ولاعبيك."
+
+msgid "You have active sessions"
+msgstr "لديك جلسات نشطة"
+
+msgid "Players can scan the QR codes to check in."
+msgstr "يمكن للاعبين مسح رموز QR لتسجيل الحضور."
+
+msgid "My Sessions"
+msgstr "جلساتي"
+
+msgid "Evaluations Given"
+msgstr "التقييمات المعطاة"
+
+msgid "Recent Sessions"
+msgstr "آخر الجلسات"
+
+msgid "View all"
+msgstr "عرض الكل"
+
+msgid "No sessions yet. Create your first session to get started."
+msgstr "لا توجد جلسات. أنشئ أول جلسة للبدء."
+
+msgid "Manager Dashboard"
+msgstr "لوحة المدير"
+
+msgid "Manager Console"
+msgstr "لوحة المدير"
+
+msgid "Monitor coaches, sessions, and overall club performance."
+msgstr "راقب المدربين والجلسات وأداء النادي."
+
+msgid "Members"
+msgstr "الأعضاء"
+
+msgid "Youth Members"
+msgstr "أعضاء الشباب"
+
+msgid "Upcoming Matches"
+msgstr "المباريات القادمة"
+
+msgid "Recent Activity"
+msgstr "آخر الأنشطة"
+
+msgid "No recent activity."
+msgstr "لا نشاط حديث."
+
+msgid "Parent Dashboard"
+msgstr "لوحة ولي الأمر"
+
+msgid "Parent Portal"
+msgstr "بوابة ولي الأمر"
+
+msgid "Track your children's activities and performance."
+msgstr "تابع أنشطة أبنائك وأدائهم."
+
+msgid "Events"
+msgstr "الأحداث"
+
+msgid "News"
+msgstr "الأخبار"
+
+msgid "Recent Attendance"
+msgstr "آخر الحضور"
+
+msgid "Child"
+msgstr "الابن"
+
+msgid "No attendance records yet."
+msgstr "لا توجد سجلات حضور بعد."
+
+msgid "Change photo"
+msgstr "تغيير الصورة"
+
+msgid "child"
+msgstr "طفل"
+
+msgid "children"
+msgstr "أبناء"
+
+msgid "Member since"
+msgstr "عضو منذ"
+
+msgid "Evals"
+msgstr "تقييمات"
+
+msgid "Overview"
+msgstr "نظرة عامة"
+
+msgid "My Children"
+msgstr "أبنائي"
+
+msgid "Evaluations"
+msgstr "التقييمات"
+
+msgid "Children"
+msgstr "الأبناء"
+
+msgid "Active members"
+msgstr "أعضاء نشطون"
+
+msgid "Total Check-ins"
+msgstr "إجمالي التحضيرات"
+
+msgid "Across all children"
+msgstr "لجميع الأبناء"
+
+msgid "Total Evaluations"
+msgstr "إجمالي التقييمات"
+
+msgid "Stay informed"
+msgstr "ابقَ على اطلاع"
+
+msgid "member"
+msgstr "عضو"
+
+msgid "Schedule"
+msgstr "الجدول"
+
+msgid "Upcoming events"
+msgstr "الأحداث القادمة"
+
+msgid "Recent check-ins"
+msgstr "آخر التحضيرات"
+
+msgid "Updates & stories"
+msgstr "تحديثات وقصص"
+
+msgid "checked in to"
+msgstr "حضر إلى"
+
+msgid "No recent activity yet."
+msgstr "لا يوجد نشاط حديث بعد."
+
+msgid "Youth"
+msgstr "شاب"
+
+msgid "No children linked yet"
+msgstr "لم يتم ربط أي أبناء بعد"
+
+msgid "Contact an admin to link your children to your account."
+msgstr "تواصل مع المدير لربط أبنائك بحسابك."
+
+msgid "All children"
+msgstr "كل الأبناء"
+
+msgid "Latest check-ins"
+msgstr "آخر التحضيرات"
+
+msgid "By"
+msgstr "بواسطة"
+
+msgid "AVG"
+msgstr "متوسط"
+
+msgid "No evaluations yet"
+msgstr "لا توجد تقييمات بعد"
+
+msgid "Coaches will share feedback after sessions."
+msgstr "سيشارك المدربون التقييمات بعد الجلسات."
+
+msgid "Announcements will appear here."
+msgstr "ستظهر الإعلانات هنا."
+
+msgid "My Dashboard"
+msgstr "لوحتي"
+
+msgid "Player Profile"
+msgstr "ملف اللاعب"
+
+msgid "Your activity, evaluations, and member info."
+msgstr "نشاطك وتقييماتك ومعلومات عضويتك."
+
+msgid "Leaderboard"
+msgstr "لوحة الصدارة"
+
+msgid "I can do all things through Christ who strengthens me."
+msgstr "أستطيع كل شيء في المسيح الذي يقويني."
+
+msgid "Philippians 4:13"
+msgstr "فيلبي 4:13"
+
+msgid "Member Code"
+msgstr "رمز العضو"
+
+msgid "Sessions Attended"
+msgstr "الجلسات المحضورة"
+
+msgid "Avg Performance"
+msgstr "متوسط الأداء"
+
+msgid "Avg Behavior"
+msgstr "متوسط السلوك"
+
+msgid "Sessions"
+msgstr "الجلسات"
+
+msgid "My Stats"
+msgstr "إحصائياتي"
+
+msgid "My QR"
+msgstr "رمز QR الخاص بي"
+
+msgid "Keep showing up!"
+msgstr "استمر في الحضور!"
+
+msgid "Show My QR"
+msgstr "أظهر رمز QR"
+
+msgid "Quick check-in"
+msgstr "تسجيل سريع"
+
+msgid "Top players"
+msgstr "أفضل اللاعبين"
+
+msgid "Latest stories"
+msgstr "آخر القصص"
+
+msgid "What's next on the calendar"
+msgstr "ما هو القادم في التقويم"
+
+msgid "Performance breakdown"
+msgstr "تفصيل الأداء"
+
+msgid "Quick Stats"
+msgstr "إحصائيات سريعة"
+
+msgid "Total sessions"
+msgstr "إجمالي الجلسات"
+
+msgid "Total evaluations"
+msgstr "إجمالي التقييمات"
+
+msgid "Parent contact"
+msgstr "بيانات ولي الأمر"
+
+msgid "The player and their parent share this single account."
+msgstr "اللاعب وولي الأمر يشاركان نفس الحساب."
+
+msgid "Parent name"
+msgstr "اسم ولي الأمر"
+
+msgid "Parent phone"
+msgstr "هاتف ولي الأمر"
+
+msgid "Parent email"
+msgstr "بريد ولي الأمر"
+
+msgid "No parent contact info yet."
+msgstr "لا توجد بيانات لولي الأمر بعد."
+
+msgid "Add it now."
+msgstr "أضفها الآن."
+
+msgid "Keep up the good work!"
+msgstr "واصل العمل الجيد!"
+
+msgid "Your last check-ins"
+msgstr "آخر تحضيراتك"
+
+msgid "No sessions attended yet."
+msgstr "لم تحضر أي جلسة بعد."
+
+msgid "My QR Code"
+msgstr "رمز QR الخاص بي"
+
+msgid "Show this to your coach for quick check-in."
+msgstr "أرِ هذا لمدربك لتسجيل سريع."
+
+msgid "QR Code"
+msgstr "رمز QR"
+
+msgid "QR code not available."
+msgstr "رمز QR غير متاح."
+
+msgid "How to check in"
+msgstr "كيفية التحضير"
+
+msgid "Open this page"
+msgstr "افتح هذه الصفحة"
+
+msgid "On your phone, before the session starts."
+msgstr "على هاتفك، قبل بدء الجلسة."
+
+msgid "Show your QR to the coach"
+msgstr "أظهر رمز QR للمدرب"
+
+msgid "Or type your member code."
+msgstr "أو اكتب رمز عضويتك."
+
+msgid "You're checked in!"
+msgstr "تم تسجيل حضورك!"
+
+msgid "Your attendance is recorded automatically."
+msgstr "يتم تسجيل حضورك تلقائياً."
+
+msgid "New Evaluation"
+msgstr "تقييم جديد"
+
+msgid "Rate performance, behavior and commitment 1–5"
+msgstr "قيّم الأداء والسلوك والالتزام من 1 إلى 5"
+
+msgid "Player"
+msgstr "اللاعب"
+
+msgid "Ratings"
+msgstr "التقييمات"
+
+msgid "Notes (optional)"
+msgstr "ملاحظات (اختياري)"
+
+msgid "Save evaluation"
+msgstr "حفظ التقييم"
+
+msgid "Search by player or coach…"
+msgstr "ابحث باللاعب أو المدرب…"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Avg"
+msgstr "متوسط"
+
+msgid "Coaches can evaluate players after sessions."
+msgstr "يمكن للمدربين تقييم اللاعبين بعد الجلسات."
+
+msgid "Create one"
+msgstr "أنشئ واحداً"
+
+msgid "evaluations recorded"
+msgstr "تقييم مسجَّل"
+
+msgid "Back to profile"
+msgstr "العودة للملف الشخصي"
+
+msgid "Evaluation history"
+msgstr "سجل التقييمات"
+
+msgid "average"
+msgstr "المتوسط"
+
+msgid "This player hasn't been evaluated by any coach."
+msgstr "لم يتم تقييم هذا اللاعب من قِبل أي مدرب."
+
+msgid "Back to events"
+msgstr "العودة للأحداث"
+
 msgid "No events found"
 msgstr "لا توجد أحداث"
 
-#: templates/events/_event_list_body.html:36
 msgid "Try changing the filters above."
 msgstr "جرّب تغيير عوامل التصفية بالأعلى."
 
-#: templates/events/event_confirm_delete.html:4
 msgid "Delete event"
 msgstr "حذف الحدث"
 
-#: templates/events/event_confirm_delete.html:16
 msgid "Delete this event?"
 msgstr "حذف هذا الحدث؟"
 
-#: templates/events/event_confirm_delete.html:19
 #, python-format
 msgid ""
 "<strong>\"%(title)s\"</strong> will be permanently deleted from the "
 "calendar. This cannot be undone."
 msgstr ""
+"سيتم حذف <strong>\"%(title)s\"</strong> نهائياً من التقويم. لا يمكن التراجع "
+"عن هذا الإجراء."
 
-#: templates/events/event_confirm_delete.html:24
-#: templates/news/news_confirm_delete.html:24
-msgid "Yes, delete"
-msgstr "نعم، احذف"
-
-#: templates/events/event_detail.html:8 templates/news/news_detail.html:8
-#: templates/sports/team_detail.html:8 templates/users/user_detail.html:8
-#: templates/users/user_list.html:78
-msgid "Edit"
-msgstr "تعديل"
-
-#: templates/events/event_detail.html:9 templates/news/news_detail.html:9
-#: templates/users/user_detail.html:10 templates/users/user_list.html:79
-msgid "Delete"
-msgstr "حذف"
-
-#: templates/events/event_form.html:4 templates/events/event_form.html:8
 msgid "Edit event"
 msgstr "تعديل الحدث"
 
-#: templates/events/event_form.html:4 templates/events/event_list.html:8
 msgid "New event"
 msgstr "حدث جديد"
 
-#: templates/events/event_form.html:8
-msgid "Create event"
-msgstr "إنشاء حدث"
+msgid "Event details"
+msgstr "تفاصيل الحدث"
 
-#: templates/events/event_form.html:43
 msgid "Save event"
 msgstr "حفظ الحدث"
 
-#: templates/events/event_list.html:4 templates/events/event_list.html:21
-#: templates/partials/public_footer.html:16
-#: templates/partials/public_nav.html:15 templates/partials/sidebar.html:23
-msgid "Events"
-msgstr "الأحداث"
-
-#: templates/events/event_list.html:20 templates/landing.html:136
 msgid "On the calendar"
 msgstr "في التقويم"
 
-#: templates/events/event_list.html:22
 msgid "Training, matches, prayer meetings and gatherings."
 msgstr "تدريبات ومباريات واجتماعات صلاة ولقاءات."
 
-#: templates/landing.html:4
 msgid "Boys Center — Sports & Faith for Youth"
 msgstr "سنتر الأولاد — رياضة وإيمان للشباب"
 
-#: templates/landing.html:16
 msgid "A Christian sports community"
 msgstr "مجتمع رياضي مسيحي"
 
-#: templates/landing.html:20
-msgid "Building character through sport and faith."
-msgstr "نبني الشخصية بالرياضة والإيمان."
+msgid "Where faith meets"
+msgstr "حيث يلتقي الإيمان"
 
-#: templates/landing.html:23
+msgid "the field"
+msgstr "بالملعب"
+
 msgid ""
 "Football, basketball, volleyball and more — paired with prayer, friendship "
 "and growth. We help young men become disciplined athletes and faithful "
 "disciples."
 msgstr ""
+"كرة قدم وسلة وطائرة والمزيد — مقترنة بالصلاة والصداقة والنمو. نساعد الشباب "
+"ليصبحوا رياضيين منضبطين وتلاميذ مؤمنين."
 
-#: templates/landing.html:27 templates/users/login.html:12
 msgid "Sign in to your account"
 msgstr "سجّل الدخول إلى حسابك"
 
-#: templates/landing.html:30 templates/landing.html:96
-msgid "Latest news"
-msgstr "آخر الأخبار"
+msgid "Learn more"
+msgstr "اعرف المزيد"
 
-#: templates/landing.html:34
-msgid "youth members"
-msgstr "أعضاء الشباب"
-
-#: templates/landing.html:35
-msgid "coaches"
-msgstr "المدربون"
-
-#: templates/landing.html:36
-msgid "teams across 5 sports"
-msgstr "في جميع الرياضات"
-
-#: templates/landing.html:44
-msgid "Mon · Wed · Fri"
-msgstr "إثنين · أربعاء · جمعة"
-
-#: templates/landing.html:51
-msgid "Tue · Thu"
-msgstr "ثلاثاء · خميس"
-
-#: templates/landing.html:58
-msgid "Friday evenings"
-msgstr "مساء الجمعة"
-
-#: templates/landing.html:68
 msgid "What we offer"
 msgstr "ما نقدمه"
 
-#: templates/landing.html:69
 msgid "More than a sports club"
 msgstr "أكثر من مجرد نادٍ رياضي"
 
-#: templates/landing.html:73
+msgid ""
+"Character, discipline and faith — built through the power of sport and "
+"community."
+msgstr "شخصية وانضباط وإيمان — تُبنى من خلال قوة الرياضة والمجتمع."
+
 msgid "Five sports, every level"
 msgstr "خمس رياضات لكل المستويات"
 
-#: templates/landing.html:74
 msgid ""
-"Football, basketball, volleyball, handball and table tennis — for U-12 "
-"through U-18."
+"Football, basketball, volleyball, handball and table tennis — organized "
+"leagues for U-12 through U-18 age groups."
 msgstr ""
+"كرة قدم وسلة وطائرة ويد وتنس طاولة — دوريات منظمة لفئات تحت 12 حتى تحت 18 "
+"سنة."
 
-#: templates/landing.html:78
 msgid "Mentorship that lasts"
 msgstr "إرشاد يدوم"
 
-#: templates/landing.html:79
 msgid ""
 "Coaches who care about more than the scoreboard. Discipline, teamwork and "
 "respect on and off the field."
 msgstr ""
+"مدربون يهتمون بأكثر من النتيجة. انضباط وعمل جماعي واحترام داخل الملعب وخارجه."
 
-#: templates/landing.html:83
 msgid "Faith at the center"
 msgstr "الإيمان في القلب"
 
-#: templates/landing.html:84
 msgid ""
-"Prayer meetings, retreats and parent activities woven through the season — "
-"Christ-centered from start to finish."
+"Prayer meetings, retreats and Christ-centered activities woven through every "
+"season."
+msgstr "اجتماعات صلاة وخلوات وأنشطة محورها المسيح منسوجة في كل موسم."
+
+msgid "Track progress & growth"
+msgstr "تابع التقدّم والنمو"
+
+msgid ""
+"Digital attendance, player evaluations, and leaderboards — helping every "
+"young athlete see how far they've come."
 msgstr ""
+"حضور رقمي وتقييمات لاعبين ولوحات صدارة — تساعد كل رياضي شاب على رؤية مدى "
+"تقدّمه."
 
-#: templates/landing.html:95 templates/news/news_list.html:20
 msgid "Stay updated"
-msgstr "تم تحديث حالة الجلسة."
+msgstr "ابقَ على اطلاع"
 
-#: templates/landing.html:124
+msgid "Latest news"
+msgstr "آخر الأخبار"
+
 msgid "Check back soon — announcements appear here."
 msgstr "ستظهر الأخبار والإعلانات هنا."
 
-#: templates/landing.html:137
-msgid "Upcoming events"
-msgstr "الأحداث القادمة"
-
-#: templates/landing.html:140
 msgid "All events"
-msgstr "كل الأخبار"
+msgstr "كل الأحداث"
 
-#: templates/landing.html:163
 msgid "No upcoming events"
 msgstr "لا أحداث قادمة."
 
-#: templates/landing.html:164
 msgid "New events will be announced soon."
 msgstr "سيتم الإعلان عن أحداث جديدة قريباً."
 
-#: templates/landing.html:176
 msgid "Already a member?"
-msgstr "إضافة عضو"
+msgstr "هل أنت عضو بالفعل؟"
 
-#: templates/landing.html:177
 msgid ""
 "Sign in to track attendance, view evaluations, and stay connected with the "
 "team."
-msgstr ""
+msgstr "سجّل الدخول لتتبع الحضور وعرض التقييمات والبقاء على اتصال مع الفريق."
 
-#: templates/landing.html:180 templates/partials/public_footer.html:17
-#: templates/partials/public_nav.html:46 templates/users/login.html:4
-#: templates/users/login.html:34
 msgid "Sign in"
 msgstr "تسجيل الدخول"
 
-#: templates/news/_news_detail_body.html:4
 msgid "Back to news"
 msgstr "العودة للأخبار"
 
-#: templates/news/_news_detail_body.html:12
-msgid "By"
-msgstr "بواسطة"
-
-#: templates/news/_news_detail_body.html:25
 msgid "Related posts"
 msgstr "منشورات ذات صلة"
 
-#: templates/news/_news_list_body.html:21
 msgid "News and announcements will appear here."
 msgstr "ستظهر الأخبار والإعلانات هنا."
 
-#: templates/news/news_confirm_delete.html:4
 msgid "Delete post"
 msgstr "حذف المنشور"
 
-#: templates/news/news_confirm_delete.html:16
 msgid "Delete this post?"
 msgstr "حذف هذا المنشور؟"
 
-#: templates/news/news_confirm_delete.html:19
 #, python-format
 msgid ""
 "<strong>\"%(title)s\"</strong> will be permanently deleted. This cannot be "
 "undone."
 msgstr ""
+"سيتم حذف <strong>\"%(title)s\"</strong> نهائياً. لا يمكن التراجع عن هذا "
+"الإجراء."
 
-#: templates/news/news_detail.html:4 templates/news/news_list.html:4
-#: templates/news/news_list.html:21 templates/partials/public_footer.html:15
-#: templates/partials/public_nav.html:14 templates/partials/sidebar.html:19
-msgid "News"
-msgstr "الأخبار"
-
-#: templates/news/news_form.html:4
 msgid "Edit post"
 msgstr "تعديل المنشور"
 
-#: templates/news/news_form.html:4 templates/news/news_list.html:8
 msgid "New post"
 msgstr "منشور جديد"
 
-#: templates/news/news_form.html:8
-msgid "Edit news post"
-msgstr "تعديل الخبر"
-
-#: templates/news/news_form.html:8
-msgid "Create news post"
-msgstr "إنشاء منشور"
-
-#: templates/news/news_form.html:13
 msgid "English version"
 msgstr "النسخة الإنجليزية"
 
-#: templates/news/news_form.html:31
 msgid "Arabic version (optional)"
 msgstr "النسخة العربية (اختياري)"
 
-#: templates/news/news_form.html:47
+msgid "Settings"
+msgstr "الإعدادات"
+
 msgid "Cover image"
 msgstr "صورة الغلاف"
 
-#: templates/news/news_form.html:51
-msgid "Published"
-msgstr "منشور"
-
-#: templates/news/news_form.html:58
 msgid "Save post"
 msgstr "حفظ المنشور"
 
-#: templates/news/news_list.html:22
 msgid "Announcements and stories from Boys Center."
 msgstr "إعلانات وأخبار من سنتر الأولاد."
 
-#: templates/partials/public_footer.html:10
+#, python-format
+msgid "%(count)s unread"
+msgid_plural "%(count)s unread"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+msgid "You're all caught up"
+msgstr "أنت محدَّث بكل شيء"
+
+msgid "Mark all read"
+msgstr "تحديد الكل كمقروء"
+
+msgid "No notifications yet"
+msgstr "لا توجد إشعارات بعد"
+
+msgid "View all notifications"
+msgstr "عرض كل الإشعارات"
+
+msgid "Your activity feed"
+msgstr "خلاصة نشاطك"
+
+#, python-format
+msgid "%(count)s unread notification"
+msgid_plural "%(count)s unread notifications"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+msgid "You're all caught up!"
+msgstr "أنت محدَّث بكل شيء!"
+
+msgid "No notifications"
+msgstr "لا توجد إشعارات"
+
+msgid "We'll let you know when something happens."
+msgstr "سنُعلمك عندما يحدث شيء جديد."
+
 msgid ""
 "A Christian sports community building character, faith and friendship "
 "through team sport."
 msgstr ""
+"مجتمع رياضي مسيحي يبني الشخصية والإيمان والصداقة من خلال الرياضة الجماعية."
 
-#: templates/partials/public_footer.html:14
 msgid "Explore"
 msgstr "استكشف"
 
-#: templates/partials/public_footer.html:20 templates/partials/sidebar.html:38
 msgid "Sports"
 msgstr "الرياضات"
 
-#: templates/partials/public_footer.html:30
 msgid "Made with care for our youth."
 msgstr "صُنع باهتمام لأجل شبابنا."
 
-#: templates/partials/public_nav.html:8
 msgid "Sports & Faith"
-msgstr "الرياضات"
+msgstr "رياضة وإيمان"
 
-#: templates/partials/public_nav.html:13 templates/sports/match_list.html:36
 msgid "Home"
-msgstr "مضيف"
+msgstr "الرئيسية"
 
-#: templates/partials/public_nav.html:32
-msgid "العربية"
-msgstr "العربية"
-
-#: templates/partials/sidebar.html:7
 msgid "Youth Club"
 msgstr "نادي الشباب"
 
-#: templates/partials/sidebar.html:12
 msgid "Main"
 msgstr "الرئيسية"
 
-#: templates/partials/sidebar.html:27
 msgid "Operations"
 msgstr "العمليات"
 
-#: templates/partials/sidebar.html:45 templates/sports/match_list.html:4
 msgid "Matches"
 msgstr "المباريات"
 
-#: templates/partials/sidebar.html:49 templates/sports/leaderboard.html:4
-#: templates/sports/leaderboard.html:13
-msgid "Leaderboard"
-msgstr "لوحة الصدارة"
-
-#: templates/partials/sidebar.html:53
 msgid "Administration"
 msgstr "الإدارة"
 
-#: templates/partials/sidebar.html:56 templates/users/user_list.html:4
-msgid "Members"
-msgstr "الأعضاء"
-
-#: templates/partials/sidebar.html:60 templates/reports/dashboard.html:4
-#: templates/reports/dashboard.html:13
-msgid "Reports"
-msgstr "التقارير"
-
-#: templates/partials/sidebar.html:64 templates/users/activity_log.html:4
 msgid "Audit Log"
 msgstr "سجل التدقيق"
 
-#: templates/partials/sidebar.html:78
 msgid "Sign out"
 msgstr "تسجيل الخروج"
 
-#: templates/partials/topbar.html:20
-msgid "Switch to light mode"
-msgstr "التبديل للوضع الفاتح"
-
-#: templates/partials/topbar.html:20
-msgid "Switch to dark mode"
-msgstr "التبديل للوضع الداكن"
-
-#: templates/reports/attendance_report.html:4
 msgid "Attendance Report"
 msgstr "تقرير الحضور"
 
-#: templates/reports/attendance_report.html:14
-msgid "Attendance report"
-msgstr "تقرير الحضور"
-
-#: templates/reports/attendance_report.html:15
 msgid "From"
 msgstr "من"
 
-#: templates/reports/attendance_report.html:15
 msgid "to today"
 msgstr "حتى اليوم"
 
-#: templates/reports/attendance_report.html:18
 msgid "Week"
 msgstr "أسبوع"
 
-#: templates/reports/attendance_report.html:19
 msgid "Month"
 msgstr "شهر"
 
-#: templates/reports/attendance_report.html:49
 msgid "No sessions in this period."
 msgstr "لا توجد جلسات في هذه الفترة."
 
-#: templates/reports/dashboard.html:11
-msgid "Reports & exports"
-msgstr "التقارير والتصدير"
+msgid "View activity reports and export data"
+msgstr "اعرض تقارير النشاط وصدِّر البيانات"
 
-#: templates/reports/dashboard.html:14
-msgid "View activity reports and export to PDF or Excel."
-msgstr "اعرض تقارير النشاط وصدِّرها بصيغة PDF أو Excel."
-
-#: templates/reports/dashboard.html:21
 msgid "Check-ins today"
 msgstr "تحضيرات اليوم"
 
-#: templates/reports/dashboard.html:28
 msgid "Check-ins (7d)"
 msgstr "تحضيرات (7 أيام)"
 
-#: templates/reports/dashboard.html:35
 msgid "Evaluations (7d)"
 msgstr "التقييمات (7 أيام)"
 
-#: templates/reports/dashboard.html:44
 msgid "Attendance reports"
 msgstr "تقارير الحضور"
 
-#: templates/reports/dashboard.html:46
-msgid "View and export attendance data."
-msgstr "اعرض بيانات الحضور وصدِّرها."
+msgid "View and export attendance data by period."
+msgstr "اعرض وصدِّر بيانات الحضور حسب الفترة."
 
-#: templates/reports/dashboard.html:48
 msgid "This week"
 msgstr "هذا الأسبوع"
 
-#: templates/reports/dashboard.html:49
 msgid "This month"
 msgstr "هذا الشهر"
 
-#: templates/reports/dashboard.html:50
 msgid "Export PDF"
 msgstr "تصدير PDF"
 
-#: templates/reports/dashboard.html:51 templates/reports/dashboard.html:62
 msgid "Export Excel"
 msgstr "تصدير Excel"
 
-#: templates/reports/dashboard.html:57
 msgid "Evaluation reports"
 msgstr "تقارير التقييمات"
 
-#: templates/reports/dashboard.html:59
-msgid "Player performance evaluations."
-msgstr "تقييمات أداء اللاعبين."
+msgid "Player performance evaluation data."
+msgstr "بيانات تقييم أداء اللاعبين."
 
-#: templates/reports/dashboard.html:61
 msgid "Browse"
 msgstr "تصفح"
 
-#: templates/sports/leaderboard.html:11
-msgid "Standings"
-msgstr "الترتيب"
+msgid "Edit competition"
+msgstr "تعديل البطولة"
 
-#: templates/sports/leaderboard.html:14
-msgid "Team rankings and top scorers across all sports."
-msgstr "تصنيف الفرق وأفضل الهدافين في جميع الرياضات."
+msgid "New competition"
+msgstr "بطولة جديدة"
 
-#: templates/sports/leaderboard.html:20 templates/sports/team_list.html:15
+msgid "Competition details"
+msgstr "تفاصيل البطولة"
+
+msgid "Group matches under a league, cup or friendly series."
+msgstr "اجمع المباريات تحت دوري أو كأس أو سلسلة ودية."
+
+msgid "Active competition (shows in filters)"
+msgstr "بطولة نشطة (تظهر في عوامل التصفية)"
+
+msgid "Create competition"
+msgstr "إنشاء بطولة"
+
+msgid "Leagues, cups & friendlies"
+msgstr "الدوريات والكؤوس والمباريات الودية"
+
 msgid "All sports"
 msgstr "كل الرياضات"
 
-#: templates/sports/leaderboard.html:29
+msgid "Inactive"
+msgstr "غير نشط"
+
+msgid "matches"
+msgstr "مباريات"
+
+msgid "No competitions yet"
+msgstr "لا توجد بطولات بعد"
+
+msgid ""
+"Create a league or cup to group your matches and track standings separately."
+msgstr "أنشئ دوري أو كأس لتجميع مبارياتك وتتبّع الترتيب بشكل منفصل."
+
+msgid "Team rankings & top scorers"
+msgstr "تصنيف الفرق وأفضل الهدافين"
+
+msgid "All competitions"
+msgstr "كل البطولات"
+
 msgid "Team standings"
 msgstr "ترتيب الفرق"
 
-#: templates/sports/leaderboard.html:36
 msgid "Team"
 msgstr "الفريق"
 
-#: templates/sports/leaderboard.html:44
+msgid "Played"
+msgstr "لُعبت"
+
+msgid "Won"
+msgstr "فوز"
+
+msgid "Drawn"
+msgstr "تعادل"
+
+msgid "Lost"
+msgstr "خسارة"
+
+msgid "Goals for"
+msgstr "أهداف له"
+
+msgid "Goals against"
+msgstr "أهداف عليه"
+
+msgid "Goal difference"
+msgstr "فارق الأهداف"
+
+msgid "Points"
+msgstr "النقاط"
+
 msgid "Pts"
 msgstr "نقاط"
 
-#: templates/sports/leaderboard.html:82
 msgid "No standings yet"
 msgstr "لا توجد ترتيبات بعد"
 
-#: templates/sports/leaderboard.html:83
 msgid "Standings will appear once teams complete matches."
 msgstr "ستظهر الترتيبات بعد إكمال الفرق للمباريات."
 
-#: templates/sports/leaderboard.html:95
 msgid "Top scorers"
 msgstr "أفضل الهدافين"
 
-#: templates/sports/leaderboard.html:110
 msgid "pts"
 msgstr "نقطة"
 
-#: templates/sports/leaderboard.html:116
 msgid "No goals recorded yet."
 msgstr "لم تُسجَّل أهداف بعد."
 
-#: templates/sports/match_form.html:4 templates/sports/match_form.html:9
-msgid "Edit match"
-msgstr "تعديل مباراة"
+msgid "Finish match"
+msgstr "إنهاء المباراة"
 
-#: templates/sports/match_form.html:4 templates/sports/match_list.html:8
-msgid "Schedule match"
-msgstr "جدولة مباراة"
+msgid "Record the final score & scorers"
+msgstr "سجّل النتيجة النهائية والمسجّلين"
 
-#: templates/sports/match_form.html:9
-msgid "Schedule a match"
-msgstr "جدولة مباراة جديدة"
-
-#: templates/sports/match_form.html:21
-msgid "Home team"
-msgstr "الفريق المضيف"
-
-#: templates/sports/match_form.html:24
-msgid "Away team"
-msgstr "الفريق الضيف"
-
-#: templates/sports/match_form.html:29
-msgid "Date & time"
-msgstr "التاريخ والوقت"
-
-#: templates/sports/match_form.html:36
-msgid "Score (only if completed)"
-msgstr "النتيجة (فقط إذا انتهت المباراة)"
-
-#: templates/sports/match_form.html:39
-msgid "Home score"
-msgstr "نتيجة المضيف"
-
-#: templates/sports/match_form.html:42
-msgid "Away score"
-msgstr "نتيجة الضيف"
-
-#: templates/sports/match_form.html:47
-msgid "Match completed"
-msgstr "المباراة منتهية"
-
-#: templates/sports/match_form.html:56
-msgid "Save match"
-msgstr "حفظ المباراة"
-
-#: templates/sports/match_list.html:17
-msgid "Completed"
-msgstr "منتهي"
-
-#: templates/sports/match_list.html:30 templates/sports/match_list.html:41
-msgid "Final"
-msgstr "نهائي"
-
-#: templates/sports/match_list.html:49
 msgid "Away"
 msgstr "ضيف"
 
-#: templates/sports/match_list.html:61
+msgid "is winning"
+msgstr "يتقدّم"
+
+msgid "It's a draw"
+msgstr "إنها تعادل"
+
+msgid "Enter scores below to set the winner"
+msgstr "أدخل النتائج أدناه لتحديد الفائز"
+
+msgid "Final score"
+msgstr "النتيجة النهائية"
+
+msgid "Sync scores from scorers"
+msgstr "احسب النتيجة من المسجّلين"
+
+msgid "Goal scorers"
+msgstr "المسجّلون"
+
+msgid "Add who scored. Minute is optional."
+msgstr "أضف من سجّل. الدقيقة اختيارية."
+
+msgid "Add scorer"
+msgstr "إضافة مسجّل"
+
+msgid "No scorers yet — click 'Add scorer' to record who scored."
+msgstr "لا مسجّلون بعد — اضغط 'إضافة مسجّل' لتسجيل من سجّل."
+
+msgid "— pick player —"
+msgstr "— اختر لاعباً —"
+
+msgid "Min"
+msgstr "دقيقة"
+
+msgid "Remove"
+msgstr "إزالة"
+
+msgid "Any observations from the match..."
+msgstr "أي ملاحظات عن المباراة..."
+
+msgid "Scorers sum:"
+msgstr "مجموع المسجّلين:"
+
+msgid "but score is"
+msgstr "ولكن النتيجة"
+
+msgid "You can sync or override."
+msgstr "يمكنك المزامنة أو التجاوز."
+
+msgid ""
+"Some scorer rows have no player selected. They will be ignored. Continue?"
+msgstr "بعض الصفوف لم يُختر فيها لاعب. سيتم تجاهلها. هل تريد المتابعة؟"
+
+msgid "Edit match"
+msgstr "تعديل مباراة"
+
+msgid "Schedule match"
+msgstr "جدولة مباراة"
+
+msgid "Match details"
+msgstr "تفاصيل المباراة"
+
+msgid "Optional — group this match under a league or cup."
+msgstr "اختياري — اجمع هذه المباراة تحت دوري أو كأس."
+
+msgid "Home team"
+msgstr "الفريق المضيف"
+
+msgid "Away team"
+msgstr "الفريق الضيف"
+
+msgid "Date & time"
+msgstr "التاريخ والوقت"
+
+msgid "Score (only if completed)"
+msgstr "النتيجة (فقط إذا انتهت المباراة)"
+
+msgid "Home score"
+msgstr "نتيجة المضيف"
+
+msgid "Away score"
+msgstr "نتيجة الضيف"
+
+msgid "Match completed"
+msgstr "المباراة منتهية"
+
+msgid "Save match"
+msgstr "حفظ المباراة"
+
+msgid "Final"
+msgstr "نهائي"
+
+msgid "FT"
+msgstr "نهائي"
+
+msgid "Edit result"
+msgstr "تعديل النتيجة"
+
 msgid "No matches yet"
 msgstr "لا مباريات بعد"
 
-#: templates/sports/match_list.html:62
 msgid "Schedule your first match to get the season started."
 msgstr "ابدأ الموسم بجدولة أول مباراة."
 
-#: templates/sports/team_detail.html:24
-msgid "Coached by"
-msgstr "يدرّبه"
-
-#: templates/sports/team_detail.html:30 templates/sports/team_detail.html:68
-#: templates/sports/team_form.html:42
 msgid "Players"
 msgstr "اللاعبون"
 
-#: templates/sports/team_detail.html:31
 msgid "Wins"
 msgstr "فوز"
 
-#: templates/sports/team_detail.html:32
 msgid "Draws"
 msgstr "تعادل"
 
-#: templates/sports/team_detail.html:33
 msgid "Losses"
 msgstr "خسارة"
 
-#: templates/sports/team_detail.html:38
 msgid "Recent matches"
 msgstr "آخر المباريات"
 
-#: templates/sports/team_detail.html:42 templates/sports/team_detail.html:51
 msgid "Result"
 msgstr "النتيجة"
 
-#: templates/sports/team_detail.html:58
 msgid "No matches yet."
 msgstr "لا مباريات بعد."
 
-#: templates/sports/team_detail.html:80
 msgid "No players assigned."
 msgstr "لم يُسند أي لاعب."
 
-#: templates/sports/team_form.html:4 templates/sports/team_form.html:10
 msgid "Edit team"
 msgstr "تعديل الفريق"
 
-#: templates/sports/team_form.html:4 templates/sports/team_list.html:8
 msgid "New team"
 msgstr "فريق جديد"
 
-#: templates/sports/team_form.html:10
-msgid "Create new team"
-msgstr "إنشاء فريق جديد"
+msgid "Team details"
+msgstr "تفاصيل الفريق"
 
-#: templates/sports/team_form.html:20
 msgid "Team name"
 msgstr "اسم الفريق"
 
-#: templates/sports/team_form.html:38
 msgid "Team logo"
 msgstr "شعار الفريق"
 
-#: templates/sports/team_form.html:44
 msgid "Hold Ctrl/Cmd to select multiple players."
 msgstr "اضغط Ctrl/Cmd لاختيار عدة لاعبين."
 
-#: templates/sports/team_form.html:47
 msgid "Save team"
 msgstr "حفظ الفريق"
 
-#: templates/sports/team_list.html:34
 msgid "players"
 msgstr "لاعب"
 
-#: templates/sports/team_list.html:42
 msgid "No teams yet"
 msgstr "لا توجد فرق بعد"
 
-#: templates/sports/team_list.html:43
 msgid "Create your first team to start scheduling matches."
 msgstr "أنشئ أول فريق لبدء جدولة المباريات."
 
-#: templates/sports/team_list.html:45
 msgid "Create team"
 msgstr "إنشاء فريق"
 
-#: templates/users/activity_log.html:11
-msgid "Search by user or action..."
-msgstr "ابحث بالمستخدم أو الإجراء..."
-
-#: templates/users/activity_log.html:21
-msgid "Activity log"
-msgstr "سجل النشاط"
-
-#: templates/users/activity_log.html:22
 msgid "events recorded"
 msgstr "حدث مسجَّل"
 
-#: templates/users/activity_log.html:30 templates/users/activity_log.html:39
-#: users/models.py:52
+msgid "Search by user or action…"
+msgstr "ابحث بالمستخدم أو الإجراء…"
+
 msgid "User"
 msgstr "المستخدم"
 
-#: templates/users/activity_log.html:31 templates/users/activity_log.html:48
 msgid "Action"
 msgstr "الإجراء"
 
-#: templates/users/activity_log.html:32 templates/users/activity_log.html:51
 msgid "IP"
 msgstr "IP"
 
-#: templates/users/activity_log.html:33 templates/users/activity_log.html:52
 msgid "When"
 msgstr "متى"
 
-#: templates/users/activity_log.html:58
 msgid "No activity logged"
 msgstr "لم يُسجَّل أي نشاط"
 
-#: templates/users/activity_log.html:59
 msgid "User actions will appear here as they occur."
 msgstr "ستظهر إجراءات المستخدمين هنا بمجرد حدوثها."
 
-#: templates/users/login.html:18
-msgid "Invalid username or password."
-msgstr "اسم المستخدم أو كلمة المرور غير صحيحين."
+msgid "Invalid username or password. Please try again."
+msgstr "اسم المستخدم أو كلمة المرور غير صحيحين. يرجى المحاولة مرة أخرى."
 
-#: templates/users/login.html:25 templates/users/user_form.html:35
-#: users/forms.py:21
 msgid "Username"
 msgstr "اسم المستخدم"
 
-#: templates/users/login.html:29 templates/users/user_form.html:52
-#: users/forms.py:28 users/forms.py:107
 msgid "Password"
 msgstr "كلمة المرور"
 
-#: templates/users/login.html:39
-msgid "Language"
-msgstr "اللغة"
+msgid "Light"
+msgstr "فاتح"
 
-#: templates/users/login.html:53
-msgid "Light mode"
-msgstr "الوضع الفاتح"
+msgid "Dark"
+msgstr "داكن"
 
-#: templates/users/login.html:53 templates/users/login.html:55
-msgid "Dark mode"
-msgstr "الوضع الداكن"
+msgid "Back to home"
+msgstr "العودة للرئيسية"
 
-#: templates/users/user_confirm_delete.html:4
+msgid "Profile photo"
+msgstr "صورة الملف الشخصي"
+
+msgid "Change your profile picture"
+msgstr "غيِّر صورة ملفك الشخصي"
+
+msgid "JPG, PNG or GIF. Max 5 MB."
+msgstr "JPG أو PNG أو GIF. بحد أقصى 5 ميجابايت."
+
+msgid "Choose a new photo"
+msgstr "اختر صورة جديدة"
+
+msgid "Square images work best. Your initials are shown if no photo is set."
+msgstr "الصور المربعة هي الأفضل. تظهر الأحرف الأولى من اسمك إذا لم تضع صورة."
+
+msgid "Remove your profile photo?"
+msgstr "إزالة صورة ملفك الشخصي؟"
+
+msgid "Remove photo"
+msgstr "إزالة الصورة"
+
+msgid "Save photo"
+msgstr "حفظ الصورة"
+
+msgid "My profile"
+msgstr "ملفي الشخصي"
+
+msgid "Edit your information"
+msgstr "عدِّل بياناتك"
+
+msgid "Personal information"
+msgstr "البيانات الشخصية"
+
+msgid "Used across the app for your profile."
+msgstr "تُستخدم في كل أنحاء التطبيق لملفك الشخصي."
+
+msgid "First name"
+msgstr "الاسم الأول"
+
+msgid "Last name"
+msgstr "اسم العائلة"
+
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+msgid "Phone"
+msgstr "الهاتف"
+
+msgid "Address"
+msgstr "العنوان"
+
 msgid "Delete member"
 msgstr "حذف عضو"
 
-#: templates/users/user_confirm_delete.html:16
 msgid "Delete this member?"
 msgstr "حذف هذا العضو؟"
 
-#: templates/users/user_confirm_delete.html:19
 #, python-format
 msgid ""
 "You're about to permanently delete <strong>%(name)s</strong>. All their "
 "attendance records, evaluations, and parent-child links will be removed. "
 "This action cannot be undone."
 msgstr ""
+"أنت على وشك حذف <strong>%(name)s</strong> نهائياً. سيتم إزالة جميع سجلات "
+"الحضور والتقييمات وروابط الأبناء. لا يمكن التراجع عن هذا الإجراء."
 
-#: templates/users/user_confirm_delete.html:35
 msgid "Yes, delete permanently"
 msgstr "نعم، احذف نهائياً"
 
-#: templates/users/user_detail.html:34 templates/users/user_form.html:72
-msgid "Email"
-msgstr "البريد الإلكتروني"
-
-#: templates/users/user_detail.html:38 templates/users/user_form.html:76
-#: templates/users/user_list.html:44 templates/users/user_list.html:69
-msgid "Phone"
-msgstr "الهاتف"
-
-#: templates/users/user_detail.html:42
 msgid "Born"
 msgstr "تاريخ الميلاد"
 
-#: templates/users/user_detail.html:45
 msgid "Joined"
 msgstr "انضم في"
 
-#: templates/users/user_detail.html:54
 msgid "Member QR"
 msgstr "رمز العضو"
 
-#: templates/users/user_detail.html:93
 msgid "Recent evaluations"
 msgstr "آخر التقييمات"
 
-#: templates/users/user_detail.html:109
+msgid "avg"
+msgstr "المتوسط"
+
 msgid "P"
 msgstr "ل"
 
-#: templates/users/user_detail.html:110
 msgid "B"
 msgstr "س"
 
-#: templates/users/user_detail.html:111
 msgid "C"
 msgstr "ا"
 
-#: templates/users/user_detail.html:123
+msgid "No evaluations yet."
+msgstr "لا توجد تقييمات بعد."
+
 msgid "Recent attendance"
 msgstr "آخر الحضور"
 
-#: templates/users/user_detail.html:149
 msgid "No attendance records."
 msgstr "لا توجد سجلات حضور."
 
-#: templates/users/user_form.html:4 templates/users/user_form.html:20
 msgid "Edit member"
 msgstr "تعديل عضو"
 
-#: templates/users/user_form.html:4
 msgid "New member"
 msgstr "عضو جديد"
 
-#: templates/users/user_form.html:20
-msgid "Add new member"
-msgstr "إضافة عضو جديد"
+msgid "Fill in the details below"
+msgstr "املأ التفاصيل أدناه"
 
-#: templates/users/user_form.html:21
-msgid "Member code and QR will be generated automatically."
-msgstr "سيتم توليد رمز العضو ورمز QR تلقائياً."
-
-#: templates/users/user_form.html:30
 msgid "Account"
 msgstr "الحساب"
 
-#: templates/users/user_form.html:41
-msgid "First name"
-msgstr "الاسم الأول"
-
-#: templates/users/user_form.html:45
-msgid "Last name"
-msgstr "اسم العائلة"
-
-#: templates/users/user_form.html:57
 msgid "Confirm password"
 msgstr "تأكيد كلمة المرور"
 
-#: templates/users/user_form.html:68
 msgid "Contact information"
 msgstr "معلومات الاتصال"
 
-#: templates/users/user_form.html:80
 msgid "Date of birth"
 msgstr "تاريخ الميلاد"
 
-#: templates/users/user_form.html:84
 msgid "Photo"
 msgstr "الصورة"
 
-#: templates/users/user_form.html:89
-msgid "Address"
-msgstr "العنوان"
-
-#: templates/users/user_form.html:98 templates/users/user_list.html:43
-#: templates/users/user_list.html:64
 msgid "Roles"
 msgstr "الأدوار"
 
-#: templates/users/user_form.html:99
 msgid "A user can have multiple roles."
 msgstr "يمكن للمستخدم أن يحمل أكثر من دور."
 
-#: templates/users/user_form.html:119
 msgid "Coach details"
 msgstr "تفاصيل المدرب"
 
-#: templates/users/user_form.html:120
 msgid "These appear on the coach's profile."
 msgstr "تظهر هذه في الملف الشخصي للمدرب."
 
-#: templates/users/user_form.html:125 users/models.py:46
 msgid "Primary sport"
 msgstr "الرياضة الأساسية"
 
-#: templates/users/user_form.html:127
 msgid "Which sport this coach mainly trains."
 msgstr "الرياضة التي يدربها هذا المدرب بشكل أساسي."
 
-#: templates/users/user_form.html:132 templates/users/user_form.html:144
 msgid "Is also a servant (خادم)"
 msgstr "خادم أيضاً"
 
-#: templates/users/user_form.html:146
 msgid "Mark if this person also serves at the church."
 msgstr "حدّد إذا كان هذا الشخص يخدم أيضاً في الكنيسة."
 
-#: templates/users/user_form.html:153
-msgid "Children"
-msgstr "الأبناء"
-
-#: templates/users/user_form.html:154
-msgid "Link this parent to one or more youth members."
-msgstr "اربط ولي الأمر هذا بعضو أو أكثر من الشباب."
-
-#: templates/users/user_form.html:158
-msgid "Select children"
-msgstr "اختر الأبناء"
-
-#: templates/users/user_form.html:170
 msgid "Account is active"
 msgstr "الحساب نشط"
 
-#: templates/users/user_form.html:179
-msgid "Save changes"
-msgstr "حفظ التغييرات"
-
-#: templates/users/user_form.html:179
 msgid "Create member"
 msgstr "إنشاء عضو"
 
-#: templates/users/user_list.html:17
-msgid "Search by name, username, code or phone..."
-msgstr "ابحث بالاسم أو اسم المستخدم أو الرمز أو الهاتف..."
+msgid "Search by name, username or code…"
+msgstr "ابحث بالاسم أو اسم المستخدم أو الرمز…"
 
-#: templates/users/user_list.html:20
 msgid "All roles"
 msgstr "كل الأدوار"
 
-#: templates/users/user_list.html:32
-msgid "All members"
-msgstr "كل الأعضاء"
-
-#: templates/users/user_list.html:33
-msgid "results"
-msgstr "نتيجة"
-
-#: templates/users/user_list.html:72
-msgid "Inactive"
-msgstr "غير نشط"
-
-#: templates/users/user_list.html:88
 msgid "No members found"
 msgstr "لم يتم العثور على أعضاء"
 
-#: templates/users/user_list.html:89
 msgid "Try adjusting your search or filters."
 msgstr "حاول تعديل البحث أو التصفية."
 
-#: users/forms.py:8
 msgid "— select sport —"
 msgstr "— اختر الرياضة —"
 
-#: users/forms.py:41
+msgid "This field is required."
+msgstr "هذا الحقل مطلوب."
+
+msgid "Please enter a valid value."
+msgstr "يرجى إدخال قيمة صحيحة."
+
+msgid ""
+"Please enter a correct username and password. Note that both fields may be "
+"case-sensitive."
+msgstr ""
+"يرجى إدخال اسم مستخدم وكلمة مرور صحيحين. تذكّر أن الحقلين قد يكونا حساسين "
+"لحالة الأحرف."
+
+msgid "This account is inactive."
+msgstr "هذا الحساب غير نشط."
+
+msgid "Please select at least one role."
+msgstr "يرجى اختيار دور واحد على الأقل."
+
 msgid "Primary sport (for coaches)"
 msgstr "الرياضة الأساسية (للمدربين)"
 
-#: users/forms.py:46 users/models.py:48
 msgid "Is servant (خادم)"
 msgstr "خادم"
 
-#: users/forms.py:50
-msgid "Children to link (for parents)"
-msgstr "الأبناء المرتبطون (لأولياء الأمور)"
+msgid "Please enter a valid email address."
+msgstr "يرجى إدخال بريد إلكتروني صحيح."
 
-#: users/forms.py:54
-msgid "Hold Ctrl/Cmd to select multiple. Only youth members appear here."
-msgstr "اضغط Ctrl/Cmd لاختيار عدة. تظهر هنا فقط أعضاء الشباب."
-
-#: users/forms.py:111
 msgid "Confirm Password"
 msgstr "تأكيد كلمة المرور"
 
-#: users/forms.py:134
+msgid "Username is required."
+msgstr "اسم المستخدم مطلوب."
+
+msgid "A user with that username already exists."
+msgstr "يوجد مستخدم بهذا الاسم بالفعل."
+
+msgid "First name is required."
+msgstr "الاسم الأول مطلوب."
+
+msgid "Last name is required."
+msgstr "اسم العائلة مطلوب."
+
 msgid "Passwords do not match."
 msgstr "كلمتا المرور غير متطابقتين."
 
-#: users/models.py:12 users/models.py:85
+msgid "Please choose a valid image file."
+msgstr "يرجى اختيار ملف صورة صالح."
+
+msgid "Image is too large (max 5 MB)."
+msgstr "الصورة كبيرة جداً (الحد الأقصى 5 ميجابايت)."
+
 msgid "Admin"
 msgstr "مدير عام"
 
-#: users/models.py:14 users/models.py:87
 msgid "Coach Manager"
 msgstr "مدير المدربين"
 
-#: users/models.py:15 users/models.py:95
 msgid "Parent"
 msgstr "ولي أمر"
 
-#: users/models.py:47
 msgid "Which sport this coach mainly handles"
 msgstr "الرياضة التي يديرها هذا المدرب بشكل أساسي"
 
-#: users/models.py:49
 msgid "Volunteer servant role at the church"
 msgstr "دور الخدمة التطوعية في الكنيسة"
 
-#: users/models.py:53
+msgid "Name of the player's parent or guardian"
+msgstr "اسم ولي أمر اللاعب"
+
 msgid "Users"
 msgstr "المستخدمون"
 
-#: users/models.py:97
 msgid "Servant"
 msgstr "خادم"
 
-#: users/models.py:141
 msgid "Activity Log"
 msgstr "سجل النشاط"
 
-#: users/models.py:142
 msgid "Activity Logs"
 msgstr "سجلات النشاط"
 
-#: users/views.py:187
 msgid "User created successfully."
 msgstr "تم إنشاء المستخدم بنجاح."
 
-#: users/views.py:259
+msgid "Profile updated."
+msgstr "تم تحديث الملف الشخصي."
+
+msgid "Profile photo updated."
+msgstr "تم تحديث صورة الملف الشخصي."
+
+msgid "Profile photo removed."
+msgstr "تمت إزالة صورة الملف الشخصي."
+
 msgid "You cannot delete your own account."
 msgstr "لا يمكنك حذف حسابك الشخصي."
 
-#: users/views.py:267
 msgid "Cannot delete the only remaining admin."
 msgstr "لا يمكن حذف المدير العام الوحيد المتبقي."
 
-#: users/views.py:279
 #, python-format
 msgid "Member %(name)s has been deleted."
 msgstr "تم حذف العضو %(name)s."
+
+#~ msgid "Link this parent to one or more youth members."
+#~ msgstr "اربط ولي الأمر هذا بعضو أو أكثر من الشباب."
+
+#~ msgid "Select children"
+#~ msgstr "اختر الأبناء"
+
+#~ msgid "Children to link (for parents)"
+#~ msgstr "الأبناء المرتبطون (لأولياء الأمور)"
+
+#~ msgid "Hold Ctrl/Cmd to select multiple. Only youth members appear here."
+#~ msgstr "اضغط Ctrl/Cmd لاختيار عدة. تظهر هنا فقط أعضاء الشباب."
+
+#~ msgid "Recent Check-ins"
+#~ msgstr "آخر التحضيرات"
+
+#~ msgid "Recent feedback"
+#~ msgstr "آخر التقييمات"
+
+#~ msgid "Create attendance session"
+#~ msgstr "إنشاء جلسة حضور"
+
+#~ msgid "Toggle theme"
+#~ msgstr "تبديل المظهر"
+
+#~ msgid "Overview of all club activity"
+#~ msgstr "نظرة عامة على نشاط النادي"
+
+#~ msgid "Sessions / Week"
+#~ msgstr "الجلسات/الأسبوع"
+
+#~ msgid "No news yet."
+#~ msgstr "لا توجد أخبار بعد."
+
+#~ msgid "Show this code at check-in"
+#~ msgstr "أظهر هذا الرمز عند تسجيل الحضور"
+
+#~ msgid "My Recent Evaluations"
+#~ msgstr "تقييماتي الأخيرة"
+
+#~ msgid "Evaluate a player"
+#~ msgstr "تقييم لاعب"
+
+#~ msgid "Create event"
+#~ msgstr "إنشاء حدث"
+
+#~ msgid "Building character through sport and faith."
+#~ msgstr "نبني الشخصية بالرياضة والإيمان."
+
+#~ msgid "youth members"
+#~ msgstr "أعضاء الشباب"
+
+#~ msgid "teams across 5 sports"
+#~ msgstr "في جميع الرياضات"
+
+#~ msgid "Mon · Wed · Fri"
+#~ msgstr "إثنين · أربعاء · جمعة"
+
+#~ msgid "Tue · Thu"
+#~ msgstr "ثلاثاء · خميس"
+
+#~ msgid "Friday evenings"
+#~ msgstr "مساء الجمعة"
+
+#~ msgid ""
+#~ "Football, basketball, volleyball, handball and table tennis — for U-12 "
+#~ "through U-18."
+#~ msgstr "كرة قدم وسلة وطائرة ويد وتنس طاولة — لفئات تحت 12 حتى تحت 18 سنة."
+
+#~ msgid ""
+#~ "Prayer meetings, retreats and parent activities woven through the season "
+#~ "— Christ-centered from start to finish."
+#~ msgstr ""
+#~ "اجتماعات صلاة وخلوات وأنشطة لأولياء الأمور منسوجة خلال الموسم — المسيح في "
+#~ "القلب من البداية إلى النهاية."
+
+#~ msgid "Edit news post"
+#~ msgstr "تعديل الخبر"
+
+#~ msgid "العربية"
+#~ msgstr "العربية"
+
+#~ msgid "Switch to light mode"
+#~ msgstr "التبديل للوضع الفاتح"
+
+#~ msgid "Switch to dark mode"
+#~ msgstr "التبديل للوضع الداكن"
+
+#~ msgid "Reports & exports"
+#~ msgstr "التقارير والتصدير"
+
+#~ msgid "Schedule a match"
+#~ msgstr "جدولة مباراة جديدة"
+
+#~ msgid "Coached by"
+#~ msgstr "يدرّبه"
+
+#~ msgid "Create new team"
+#~ msgstr "إنشاء فريق جديد"
+
+#~ msgid "Activity log"
+#~ msgstr "سجل النشاط"
+
+#~ msgid "Language"
+#~ msgstr "اللغة"
+
+#~ msgid "Add new member"
+#~ msgstr "إضافة عضو جديد"
+
+#~ msgid "Member code and QR will be generated automatically."
+#~ msgstr "سيتم توليد رمز العضو ورمز QR تلقائياً."
+
+#~ msgid "results"
+#~ msgstr "نتيجة"

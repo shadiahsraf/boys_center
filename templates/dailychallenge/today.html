@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Daily Challenge" %}{% endblock %}
+{% block page_title %}{% trans "Daily Challenge" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "A daily Bible quiz" %}</div>{% endblock %}
+
+{% block content %}
+
+{# State for Alpine — embedded as JSON so Arabic strings are safe #}
+{{ history|json_script:"dc-history" }}
+{{ reward_verse|json_script:"dc-verse" }}
+
+<div class="dc-wrap"
+     x-data="dailyChallengeApp({
+       questions: {{ questions|length }},
+       reveal: {{ reveal|yesno:'true,false' }},
+       completed: {{ completed|yesno:'true,false' }},
+       answerable: {{ answerable|yesno:'true,false' }},
+       perfectThreshold: {{ total_questions }},
+       initialCorrect: {{ correct_count }}
+     })">
+
+  <!-- ───── HERO with streak + 7-day calendar ──────────────────────── -->
+  <div class="dc-hero {% if streak > 0 %}is-active{% else %}is-cold{% endif %}">
+    <div class="dc-hero-bg" aria-hidden="true"><div class="dc-hero-orb"></div></div>
+    <div class="dc-hero-content">
+      <div class="dc-hero-streak">
+        <div class="dc-hero-flame">{% if streak > 0 %}🔥{% else %}🕊️{% endif %}</div>
+        <div>
+          <div class="dc-hero-num">{{ streak }}</div>
+          <div class="dc-hero-label">{% trans "day streak" %}</div>
+        </div>
+      </div>
+
+      <div class="dc-hero-history">
+        <div class="dc-hero-history-title">{% trans "Last 7 days" %}</div>
+        <div class="dc-hero-history-row">
+          <template x-for="d in history" :key="d.date">
+            <div class="dc-cell"
+                 :class="{ 'is-complete': d.complete, 'is-partial': d.partial, 'is-today': d.is_today }"
+                 :title="d.date">
+              <div class="dc-cell-day" x-text="d.short_label"></div>
+              <div class="dc-cell-dot"><span x-show="d.complete">✓</span></div>
+              <div class="dc-cell-num" x-text="d.day_of_month"></div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <div class="dc-hero-stats">
+        <div class="dc-hero-stat" title="{% trans 'Best streak' %}">
+          <div class="dc-hero-stat-icon">🏆</div>
+          <div>
+            <div class="dc-hero-stat-num">{{ progress.best_streak }}</div>
+            <div class="dc-hero-stat-label">{% trans "Best" %}</div>
+          </div>
+        </div>
+        <div class="dc-hero-stat" title="{% trans 'Total' %}">
+          <div class="dc-hero-stat-icon">📅</div>
+          <div>
+            <div class="dc-hero-stat-num">{{ progress.total_completed }}</div>
+            <div class="dc-hero-stat-label">{% trans "Total" %}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if preview %}
+    <div class="alert alert-warning" style="display:flex;align-items:center;gap:8px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      {% blocktrans %}Admin preview of {{ target_date }} — answers are revealed and cannot be submitted.{% endblocktrans %}
+    </div>
+  {% elif review_mode %}
+    <div class="alert alert-info" style="display:flex;align-items:center;gap:8px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      {% trans "Review mode — only youth members can answer. The correct choices are highlighted below." %}
+    </div>
+  {% endif %}
+
+  {% if not content %}
+    <!-- ── Empty state ── -->
+    <div class="dc-empty">
+      <div class="dc-empty-icon">📭</div>
+      <div class="dc-empty-title">{% trans "No content today" %}</div>
+      <div class="dc-empty-sub">{% trans "Please check back later — a new daily challenge will be available soon." %}</div>
+    </div>
+  {% else %}
+
+    <!-- ── Bible reference ── -->
+    <div class="dc-reference">
+      <div class="dc-reference-icon">📖</div>
+      <div>
+        <div class="dc-reference-label">{% trans "Today's reading" %}</div>
+        <div class="dc-reference-value">{{ content.bible_reference }}</div>
+      </div>
+      {% if completed %}
+        <span class="badge badge-success dc-done-badge"><span class="badge-dot"></span>{% trans "Completed" %} ✔</span>
+      {% endif %}
+    </div>
+
+    <!-- ── Active solver flow (one-question-at-a-time) ──────────────── -->
+    {% if answerable %}
+      <form method="post" action="{% url 'dailychallenge:submit' %}" x-ref="form" id="dc-form">
+        {% csrf_token %}
+
+        <!-- Progress dots -->
+        <div class="dc-progress-dots">
+          {% for item in questions %}
+            <div class="dc-dot"
+                 :class="{ 'is-current': currentIndex === {{ forloop.counter0 }},
+                           'is-done':    answeredIndexes.includes({{ forloop.counter0 }}) }">
+              <span>{{ forloop.counter }}</span>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="dc-progress-text">
+          {% trans "Question" %}
+          <strong><span x-text="currentIndex + 1"></span></strong>
+          {% trans "of" %}
+          <strong>{{ questions|length }}</strong>
+        </div>
+
+        <!-- Stage: each question is a card; only the current one shows -->
+        {% for item in questions %}
+          <div class="dc-stage"
+               x-show="currentIndex === {{ forloop.counter0 }}"
+               x-transition:enter="dc-fade-in"
+               x-cloak>
+            <div class="dc-stage-eyebrow">
+              <span class="dc-stage-book">📖</span>
+              <span>{% trans "Bible question" %}</span>
+            </div>
+            <div class="dc-stage-question">{{ item.q.text }}</div>
+
+            <div class="dc-stage-options">
+              {% for ch in item.choices %}
+                <label class="dc-stage-opt"
+                       :class="{ 'is-chosen': picks[{{ forloop.parentloop.counter0 }}] === '{{ ch.id }}' }">
+                  <input type="radio"
+                         name="q_{{ item.q.id }}"
+                         value="{{ ch.id }}"
+                         class="dc-radio-hidden"
+                         @change="picks[{{ forloop.parentloop.counter0 }}] = '{{ ch.id }}'; advance({{ forloop.parentloop.counter0 }})"
+                         required>
+                  <span class="dc-stage-letter">{{ ch.letter }}</span>
+                  <span class="dc-stage-text">{{ ch.text }}</span>
+                </label>
+              {% endfor %}
+            </div>
+
+            <div class="dc-stage-nav">
+              <button type="button" class="btn btn-ghost btn-sm"
+                      @click="prev()"
+                      x-show="currentIndex > 0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                {% trans "Previous" %}
+              </button>
+              <div style="flex:1;"></div>
+              {% if forloop.last %}
+                <button type="submit" class="btn btn-primary"
+                        :disabled="!allAnswered()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  {% trans "Submit answers" %}
+                </button>
+              {% else %}
+                <button type="button" class="btn btn-primary"
+                        @click="next()"
+                        :disabled="picks[{{ forloop.counter0 }}] === null">
+                  {% trans "Next" %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </form>
+
+    {% else %}
+      <!-- ── Read-only / completed view (review mode or already answered) ── -->
+      {% if completed %}
+        <div class="dc-result-banner {% if correct_count == total_questions %}is-perfect{% endif %}">
+          <span class="dc-result-medal">{% if correct_count == total_questions %}🏆{% elif correct_count >= 1 %}✨{% else %}🌱{% endif %}</span>
+          <span>
+            {% blocktrans %}You scored {{ correct_count }} / {{ total_questions }}{% endblocktrans %}
+          </span>
+        </div>
+
+        {# Confetti only when perfect #}
+        {% if correct_count == total_questions %}
+          <div class="dc-confetti" aria-hidden="true">
+            {% for n in "012345678901234567890123" %}
+              <span class="dc-confetti-piece" style="--i:{{ forloop.counter0 }}; --d:{% widthratio forloop.counter0 1 137 %}deg;"></span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% for item in questions %}
+        <div class="dc-question">
+          <div class="dc-q-head">
+            <span class="dc-q-num">{{ forloop.counter }}</span>
+            <span class="dc-q-text">{{ item.q.text }}</span>
+          </div>
+          <div class="dc-choices">
+            {% for ch in item.choices %}
+              <div class="dc-choice
+                  {% if ch.id == item.correct_id %}is-correct{% elif ch.id == item.selected_id %}is-wrong{% endif %}">
+                <span class="dc-choice-letter">{{ ch.letter }}</span>
+                <span class="dc-choice-text">{{ ch.text }}</span>
+                {% if ch.id == item.correct_id %}
+                  <span class="dc-choice-mark">✓</span>
+                {% elif ch.id == item.selected_id %}
+                  <span class="dc-choice-mark">✗</span>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if completed %}
+        <!-- Reward verse after completion -->
+        <div class="dc-verse">
+          <div class="dc-verse-mark">✝</div>
+          <div class="dc-verse-body">
+            <div class="dc-verse-text">"{{ reward_verse.text }}"</div>
+            <div class="dc-verse-ref">{{ reward_verse.reference }}</div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:18px;">
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">{% trans "Back to dashboard" %}</a>
+        </div>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
+  <div class="dc-footnote">{% trans "Come back every day to keep your streak alive 🌅" %}</div>
+</div>
+
+<script>
+function dailyChallengeApp(init) {
+  const history = JSON.parse(document.getElementById('dc-history').textContent);
+  const verse   = JSON.parse(document.getElementById('dc-verse').textContent);
+  return {
+    history,
+    verse,
+    currentIndex: 0,
+    picks: Array(init.questions).fill(null),
+    answeredIndexes: [],
+
+    buzz(p) {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        try { navigator.vibrate(p); } catch (e) {}
+      }
+    },
+    allAnswered() {
+      return this.picks.every(p => p !== null);
+    },
+    next() {
+      this.buzz(10);
+      if (this.currentIndex < init.questions - 1) {
+        this.currentIndex += 1;
+      }
+    },
+    prev() {
+      this.buzz(8);
+      if (this.currentIndex > 0) this.currentIndex -= 1;
+    },
+    advance(idx) {
+      this.buzz(12);
+      if (!this.answeredIndexes.includes(idx)) this.answeredIndexes.push(idx);
+      // Auto-advance to next question after a short pause (smooth UX)
+      if (idx < init.questions - 1) {
+        setTimeout(() => { this.currentIndex = idx + 1; }, 280);
+      }
+    }
+  };
+}
+</script>
+{% endblock %}

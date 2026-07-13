@@ -60,9 +60,22 @@ class AttendanceSession(models.Model):
     def attendance_count(self):
         return self.records.count()
 
-    def generate_qr(self, base_url=''):
-        """Generate QR pointing to /attendance/check-in/<token>/"""
-        check_in_url = f"{base_url}/en/attendance/check-in/{self.token}/"
+    def generate_qr(self, base_url=None):
+        """
+        Generate QR pointing to the check-in page.
+        `base_url` overrides the default; if not given we look at the
+        DJANGO_QR_BASE_URL env var (so admins can set it to the public LAN/HTTPS
+        URL the phones can reach). Fallback is the relative path, which works
+        when the user opens the URL on the same host that served the QR.
+        """
+        import os as _os
+        from django.conf import settings as _settings
+        base = base_url
+        if base is None:
+            base = _os.environ.get('DJANGO_QR_BASE_URL', '').rstrip('/')
+        # The site is Arabic-first; the URL is localized.
+        lang_prefix = getattr(_settings, 'LANGUAGE_CODE', 'ar') or 'ar'
+        check_in_url = f"{base}/{lang_prefix}/attendance/check-in/{self.token}/"
         qr = qrcode.QRCode(version=1, box_size=10, border=2)
         qr.add_data(check_in_url)
         qr.make(fit=True)

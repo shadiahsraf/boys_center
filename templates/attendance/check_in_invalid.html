@@ -4,22 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% trans "Check-in unavailable" %}</title>
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=2">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" defer></script>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=26">
 </head>
 <body>
 <div class="checkin-page">
   <div class="checkin-card text-center">
-    <div style="width:72px;height:72px;border-radius:50%;background:var(--color-danger-100);color:var(--color-danger-700);display:grid;place-items:center;margin:0 auto 18px;">
-      <i data-feather="alert-octagon" style="width:36px;height:36px;"></i>
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--danger-100);color:var(--danger-700);display:grid;place-items:center;margin:0 auto 18px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     </div>
-    <h1 style="font-size:20px; font-weight:800; color:var(--color-slate-900);">{% trans "Cannot check in" %}</h1>
+    <h1 style="font-size:20px;font-weight:800;color:var(--text-primary);">{% trans "Cannot check in" %}</h1>
     <p class="cell-secondary mt-2">{{ error }}</p>
     {% if session %}
-      <div class="cell-secondary mt-3">{% trans "Session" %}: {{ session.title }}</div>
+      <div class="cell-secondary mt-3" style="font-size:13px;">{% trans "Session" %}: <strong>{{ session.title }}</strong></div>
     {% endif %}
   </div>
 </div>
-<script>document.addEventListener('DOMContentLoaded', () => feather.replace());</script>
 </body>
 </html>

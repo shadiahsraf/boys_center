@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7A1C1C"/>
+      <stop offset="100%" stop-color="#4a0c0c"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8cc5e"/>
+      <stop offset="100%" stop-color="#b8962e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(212,175,55,0.32)"/>
+      <stop offset="100%" stop-color="rgba(212,175,55,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Rounded square brand tile -->
+  <rect width="512" height="512" rx="112" ry="112" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="112" ry="112" fill="url(#glow)"/>
+
+  <!-- Inner gold ring -->
+  <circle cx="256" cy="256" r="156" fill="none"
+          stroke="url(#gold)" stroke-width="6" opacity="0.45"/>
+
+  <!-- Cross — vertical -->
+  <rect x="232" y="120" width="48" height="272" rx="6" fill="url(#gold)"/>
+  <!-- Cross — horizontal -->
+  <rect x="160" y="208" width="192" height="48" rx="6" fill="url(#gold)"/>
+
+  <!-- Subtle highlight on cross -->
+  <rect x="236" y="124" width="6" height="264" fill="#ffffff" opacity="0.18"/>
+  <rect x="164" y="212" width="184" height="6" fill="#ffffff" opacity="0.14"/>
+</svg>

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Rate" %} — {{ facility.name }}{% endblock %}
+
+{% block guest_body %}
+  {% include 'partials/public_nav.html' %}
+
+  <main class="public-main">
+    <div class="public-container" style="padding-top:32px;padding-bottom:64px;max-width:760px;">
+
+      <a href="{% url 'ratings:index' %}" class="rate-back" dir="rtl" lang="ar">
+        <span>→</span>
+        <span>رجوع لكل الخدمات</span>
+      </a>
+
+      <div class="rate-form-card">
+        <div class="rate-form-head">
+          <div class="rate-form-icon">{{ facility.icon|default:"⭐" }}</div>
+          <div>
+            <div class="rate-form-eyebrow" dir="rtl" lang="ar">تقييم الخدمة</div>
+            <h1 class="rate-form-title" dir="rtl" lang="ar">{{ facility.name }}</h1>
+            {% if facility.description %}
+              <div class="rate-form-desc" dir="rtl" lang="ar">{{ facility.description }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if already_submitted %}
+          <div class="rate-already" dir="rtl" lang="ar">
+            <div class="rate-already-icon">✅</div>
+            <div>
+              <div class="rate-already-title">شكراً لك! لقد قمت بتقييم هذه الخدمة مؤخراً</div>
+              <div class="rate-already-sub">يمكنك العودة بعد ساعة لإضافة تقييم جديد.</div>
+            </div>
+          </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'ratings:submit' facility.id %}"
+              class="rate-form" novalidate>
+          {% csrf_token %}
+
+          <!-- Star legend -->
+          <div class="rate-legend" dir="rtl" lang="ar">
+            <span class="rate-legend-item"><span>⭐</span><span>سيء جداً</span></span>
+            <span class="rate-legend-item"><span>⭐⭐</span><span>سيء</span></span>
+            <span class="rate-legend-item"><span>⭐⭐⭐</span><span>جيد</span></span>
+            <span class="rate-legend-item"><span>⭐⭐⭐⭐</span><span>جيد جداً</span></span>
+            <span class="rate-legend-item"><span>⭐⭐⭐⭐⭐</span><span>ممتاز</span></span>
+          </div>
+
+          {% for q in questions %}
+            <div class="rate-q" dir="rtl" lang="ar"
+                 x-data="{ value: 0, hover: 0 }">
+              <label class="rate-q-text">
+                <span class="rate-q-num">{{ forloop.counter }}</span>
+                {{ q.text }}
+              </label>
+
+              <input type="hidden" name="q_{{ q.id }}" :value="value" required>
+
+              <div class="rate-stars" @mouseleave="hover = 0">
+                {% for star in star_range %}
+                  <button type="button"
+                          class="rate-star-btn"
+                          :class="{ 'is-active': (hover || value) >= {{ star }} }"
+                          @click="value = {{ star }}; if (navigator.vibrate) try { navigator.vibrate(10); } catch(e) {}"
+                          @mouseenter="hover = {{ star }}"
+                          @focus="hover = {{ star }}"
+                          @blur="hover = 0"
+                          aria-label="{{ star }} / 5"
+                          title="{{ star }} / 5">★</button>
+                {% endfor %}
+                <span class="rate-stars-label" x-text="(hover || value) ? (hover || value) + ' / 5' : ''"></span>
+              </div>
+            </div>
+          {% endfor %}
+
+          <!-- Comment -->
+          <div class="rate-q" dir="rtl" lang="ar">
+            <label class="rate-q-text" for="rate-comment">
+              <span class="rate-q-num">💬</span>
+              تعليقك أو اقتراحاتك للتطوير
+            </label>
+            <textarea name="comment" id="rate-comment" rows="4"
+                      class="rate-textarea"
+                      placeholder="(اختياري) شاركنا أفكارك..."
+                      dir="rtl" lang="ar">{% if posted.comment %}{{ posted.comment }}{% endif %}</textarea>
+          </div>
+
+          <!-- Phone -->
+          <div class="rate-q" dir="rtl" lang="ar">
+            <label class="rate-q-text" for="rate-phone">
+              <span class="rate-q-num">📱</span>
+              رقم الموبايل (اختياري)
+            </label>
+            <input type="tel" name="phone" id="rate-phone"
+                   class="rate-input"
+                   placeholder="01xxxxxxxxx"
+                   dir="ltr"
+                   value="{% if posted.phone %}{{ posted.phone }}{% endif %}">
+          </div>
+
+          <!-- Visitor name (optional, hidden under expander) -->
+          <details class="rate-extra" dir="rtl" lang="ar">
+            <summary>أضف اسمك (اختياري)</summary>
+            <input type="text" name="visitor_name"
+                   class="rate-input"
+                   placeholder="الاسم"
+                   maxlength="120"
+                   value="{% if posted.visitor_name %}{{ posted.visitor_name }}{% endif %}">
+          </details>
+
+          <div class="rate-actions">
+            <button type="submit" class="btn btn-primary btn-lg" {% if already_submitted %}disabled{% endif %}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span dir="rtl" lang="ar">إرسال التقييم</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  {% include 'partials/public_footer.html' %}
+{% endblock %}

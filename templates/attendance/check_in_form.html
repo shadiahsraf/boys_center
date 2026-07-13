@@ -4,29 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% trans "Check in" %} · {{ session.title }}</title>
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=2">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" defer></script>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=26">
 </head>
 <body>
 <div class="checkin-page">
   <div class="checkin-card">
-    <div style="text-align:center; margin-bottom:24px;">
+    <div style="text-align:center;margin-bottom:24px;">
       <div class="login-brand-mark" style="width:54px;height:54px;font-size:26px;">✝</div>
-      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--color-slate-500); margin-top:14px;">{% trans "Boys Center · Check-in" %}</div>
-      <h1 style="font-size:18px; font-weight:800; color:var(--color-slate-900); margin-top:6px;">{{ session.title }}</h1>
-      <div style="display:flex; justify-content:center; gap:12px; margin-top:10px; font-size:12.5px; color:var(--color-slate-500);">
-        <span><i data-feather="calendar" style="width:13px;height:13px;display:inline-block;"></i> {{ session.date|date:"M d, Y" }}</span>
-        <span><i data-feather="clock" style="width:13px;height:13px;display:inline-block;"></i> {{ session.start_time|time:"H:i" }}</span>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);margin-top:14px;">{% trans "Boys Center · Check-in" %}</div>
+      <h1 style="font-size:18px;font-weight:800;color:var(--text-primary);margin-top:6px;">{{ session.title }}</h1>
+      <div style="display:flex;justify-content:center;gap:12px;margin-top:10px;font-size:12.5px;color:var(--text-secondary);flex-wrap:wrap;">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:3px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          {{ session.date|date:"M d, Y" }}
+        </span>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:3px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ session.start_time|time:"H:i" }}
+        </span>
       </div>
-      <div class="cell-secondary mt-1"><i data-feather="map-pin" style="width:13px;height:13px;display:inline-block;"></i> {{ session.location }}</div>
+      <div class="cell-secondary mt-1" style="font-size:12.5px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-inline-end:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ session.location }}
+      </div>
     </div>
 
     {% if messages %}
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-          <i data-feather="alert-circle" style="width:16px;height:16px;"></i>
-          <span>{{ message }}</span>
-        </div>
+        <div class="alert alert-{{ message.tags }}" style="margin-bottom:16px;">{{ message }}</div>
       {% endfor %}
     {% endif %}
 
@@ -34,26 +39,23 @@
       {% csrf_token %}
       <div class="form-group">
         <label class="form-label" for="member_code">{% trans "Your member code" %}</label>
-        <input type="text" id="member_code" name="member_code" class="tw-input" required
+        <input type="text" id="member_code" name="member_code" required
                placeholder="{% trans 'e.g. JOH1001' %}"
                value="{{ submitted_code|default:'' }}"
-               style="text-transform:uppercase; font-family:'SF Mono',monospace; letter-spacing:1px; font-size:16px; padding:12px;"
+               style="text-transform:uppercase;font-family:'SF Mono',monospace;letter-spacing:1px;font-size:16px;padding:12px;"
                autofocus autocomplete="off">
         <div class="form-help">{% trans "You'll find this code on your profile or member card." %}</div>
       </div>
-      <button type="submit" class="btn btn-primary btn-block btn-lg">
-        <i data-feather="check-circle" style="width:16px;height:16px;"></i>
+      <button type="submit" class="btn btn-primary btn-block" style="padding:12px;font-size:15px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         {% trans "Check in now" %}
       </button>
     </form>
 
-    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--color-slate-100); text-align:center;">
-      <div class="cell-secondary">{% trans "Session expires" %}: {{ session.expires_at|date:"M d, H:i" }}</div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border-secondary);text-align:center;">
+      <div class="cell-secondary" style="font-size:12px;">{% trans "Session expires" %}: {{ session.expires_at|date:"M d, H:i" }}</div>
     </div>
   </div>
 </div>
-<script>
-  document.addEventListener('DOMContentLoaded', () => feather.replace());
-</script>
 </body>
 </html>

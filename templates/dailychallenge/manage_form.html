@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% if mode == 'edit' %}{% trans "Edit challenge" %}{% else %}{% trans "New challenge" %}{% endif %}{% endblock %}
+{% block page_title %}{% if mode == 'edit' %}{% trans "Edit challenge" %}{% else %}{% trans "New challenge" %}{% endif %}{% endblock %}
+{% block page_subtitle %}
+  <div class="topbar-subtitle">
+    {% if mode == 'edit' %}
+      {% blocktrans with d=content.date %}Editing the challenge for {{ d }}{% endblocktrans %}
+    {% else %}
+      {% trans "Schedule a Bible challenge with 3 questions" %}
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="dcm-form-wrap">
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <!-- Header card -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title">{% trans "Challenge details" %}</h3>
+          <div class="card-subtitle">{% trans "One challenge per day. The date must be unique." %}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label" for="id_date">{% trans "Date" %} <span style="color:var(--danger-500);">*</span></label>
+            <input type="date" id="id_date" name="date" class="tw-input"
+                   value="{{ state.date }}" required>
+            {% if errors.date %}<div class="form-error">{{ errors.date }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="id_ref">{% trans "Bible reference" %} <span style="color:var(--danger-500);">*</span></label>
+            <input type="text" id="id_ref" name="bible_reference" class="tw-input"
+                   placeholder="John 15:1-8" value="{{ state.bible_reference }}" required>
+            <div class="form-help">{% trans "Reference only — the text is not displayed to youth." %}</div>
+            {% if errors.bible_reference %}<div class="form-error">{{ errors.bible_reference }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" name="is_published" {% if state.is_published %}checked{% endif %}>
+            <span style="font-weight:500;">{% trans "Published (visible to youth on this date)" %}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 question cards -->
+    {% for q in state.questions %}
+      <div class="card dcm-q-card mb-4">
+        <div class="card-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="dcm-q-num">{{ q.number }}</div>
+            <h3 class="card-title">{% blocktrans with n=q.number %}Question {{ n }}{% endblocktrans %}</h3>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">{% trans "Question text" %} <span style="color:var(--danger-500);">*</span></label>
+            <textarea name="q{{ q.index }}_text" rows="2" class="tw-input"
+                      placeholder="{% trans 'What does this passage teach us about ...?' %}">{{ q.text }}</textarea>
+            {% if q.text_error %}<div class="form-error">{{ q.text_error }}</div>{% endif %}
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">{% trans "Choices" %} <span style="color:var(--danger-500);">*</span></label>
+            <div class="form-help">{% trans "Tick the radio next to the correct answer." %}</div>
+            <div class="dcm-choices">
+              {% for ch in q.choices %}
+                <div class="dcm-choice-row {% if ch.is_chosen %}is-chosen{% endif %}">
+                  <label class="dcm-choice-radio" title="{% trans 'Mark as correct' %}">
+                    <input type="radio"
+                           name="q{{ q.index }}_correct"
+                           value="{{ ch.index }}"
+                           {% if ch.is_chosen %}checked{% endif %}>
+                    <span class="dcm-choice-letter">{{ ch.letter }}</span>
+                  </label>
+                  <input type="text"
+                         name="q{{ q.index }}_c{{ ch.index }}"
+                         class="tw-input dcm-choice-input"
+                         placeholder="{% trans 'Choice text' %}"
+                         value="{{ ch.text }}">
+                  {% if ch.error %}<span class="dcm-choice-err">{{ ch.error }}</span>{% endif %}
+                </div>
+              {% endfor %}
+            </div>
+            {% if q.correct_error %}<div class="form-error">{{ q.correct_error }}</div>{% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+    <div class="dcm-actions">
+      <a href="{% url 'dailychallenge:manage_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+      <button type="submit" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {% if mode == 'edit' %}{% trans "Save changes" %}{% else %}{% trans "Create challenge" %}{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

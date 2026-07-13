@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Notifications" %}{% endblock %}
+{% block page_title %}{% trans "Notifications" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Your activity feed" %}</div>{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header-meta">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--brand-500);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+      <span>{% trans "Notifications" %}</span>
+    </div>
+    <h1 class="page-title">{% trans "Notifications" %}</h1>
+    <p class="page-subtitle">
+      {% if total_unread %}
+        {% blocktrans count count=total_unread %}{{ count }} unread notification{% plural %}{{ count }} unread notifications{% endblocktrans %}
+      {% else %}
+        {% trans "You're all caught up!" %}
+      {% endif %}
+    </p>
+  </div>
+  {% if total_unread %}
+  <div class="page-actions">
+    <form action="{% url 'notifications:mark_all_read' %}" method="post" style="margin:0;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {% trans "Mark all read" %}
+      </button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Filter pills -->
+<div class="notif-filters">
+  <a href="{% url 'notifications:list' %}" class="notif-filter {% if not filter_kind %}active{% endif %}">{% trans "All" %}</a>
+  <a href="?kind=evaluation" class="notif-filter notif-filter-evaluation {% if filter_kind == 'evaluation' %}active{% endif %}">{% trans "Evaluations" %}</a>
+  <a href="?kind=session" class="notif-filter notif-filter-session {% if filter_kind == 'session' %}active{% endif %}">{% trans "Sessions" %}</a>
+  <a href="?kind=news" class="notif-filter notif-filter-news {% if filter_kind == 'news' %}active{% endif %}">{% trans "News" %}</a>
+  <a href="?kind=event" class="notif-filter notif-filter-event {% if filter_kind == 'event' %}active{% endif %}">{% trans "Events" %}</a>
+  <a href="?kind=attendance" class="notif-filter notif-filter-attendance {% if filter_kind == 'attendance' %}active{% endif %}">{% trans "Attendance" %}</a>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    {% for n in notifications %}
+      <a href="{% url 'notifications:open' n.pk %}" class="notif-row {% if not n.is_read %}notif-row-unread{% endif %}">
+        <div class="notif-item-icon notif-icon-{{ n.kind }}">
+          {% if n.kind == 'evaluation' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          {% elif n.kind == 'session' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          {% elif n.kind == 'news' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
+          {% elif n.kind == 'event' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          {% elif n.kind == 'attendance' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+          {% endif %}
+        </div>
+        <div class="notif-row-body">
+          <div class="notif-row-title">{{ n.title }}</div>
+          {% if n.message %}<div class="notif-row-msg">{{ n.message }}</div>{% endif %}
+          <div class="notif-row-meta">
+            <span>{{ n.get_kind_display }}</span>
+            <span class="notif-row-meta-dot"></span>
+            <span>{{ n.created_at|timesince }} {% trans "ago" %}</span>
+          </div>
+        </div>
+        {% if not n.is_read %}<span class="notif-item-dot" aria-hidden="true"></span>{% endif %}
+      </a>
+    {% empty %}
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <h3>{% trans "No notifications" %}</h3>
+        <p>{% trans "We'll let you know when something happens." %}</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% if is_paginated %}
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if filter_kind %}&kind={{ filter_kind }}{% endif %}">‹ {% trans "Prev" %}</a>
+    {% endif %}
+    <span class="active">{{ page_obj.number }} / {{ paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if filter_kind %}&kind={{ filter_kind }}{% endif %}">{% trans "Next" %} ›</a>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

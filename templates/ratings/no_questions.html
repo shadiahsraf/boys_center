@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Rating not ready" %}{% endblock %}
+
+{% block guest_body %}
+  {% include 'partials/public_nav.html' %}
+
+  <main class="public-main">
+    <div class="public-container" style="padding-top:64px;padding-bottom:96px;max-width:640px;">
+      <div class="rate-thanks">
+        <div class="rate-thanks-emoji">⏳</div>
+        <h1 class="rate-thanks-title" dir="rtl" lang="ar">{{ facility.name }}</h1>
+        <p class="rate-thanks-sub" dir="rtl" lang="ar">
+          هذه الخدمة ليس بها أسئلة تقييم بعد. الإدارة ستضيفها قريباً.
+        </p>
+        <div class="rate-thanks-actions">
+          <a href="{% url 'ratings:index' %}" class="btn btn-primary">
+            <span dir="rtl" lang="ar">رجوع</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  {% include 'partials/public_footer.html' %}
+{% endblock %}

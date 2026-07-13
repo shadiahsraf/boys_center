@@ -48,6 +48,12 @@ class User(AbstractUser):
     is_servant = models.BooleanField(_('Is servant (خادم)'), default=False,
                                      help_text=_('Volunteer servant role at the church'))
 
+    # Parent contact (lives on the player's own profile — one account per family)
+    parent_name = models.CharField(_('Parent name'), max_length=120, blank=True,
+                                   help_text=_("Name of the player's parent or guardian"))
+    parent_phone = models.CharField(_('Parent phone'), max_length=30, blank=True)
+    parent_email = models.EmailField(_('Parent email'), blank=True)
+
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')

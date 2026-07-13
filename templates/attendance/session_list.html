@@ -1,38 +1,47 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{% trans "Attendance Sessions" %}{% endblock %}
 {% block page_title %}{% trans "Attendance Sessions" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{{ paginator.count }} {% trans "total" %}</div>{% endblock %}
 
 {% block topbar_actions %}
-  <a href="{% url 'attendance:create' %}" class="btn btn-primary"><i data-feather="plus"></i>{% trans "New session" %}</a>
+  <a href="{% url 'attendance:create' %}" class="btn btn-primary btn-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    {% trans "New session" %}
+  </a>
 {% endblock %}
 
 {% block content %}
-<!-- Filters -->
 <div class="card mb-4">
   <div class="card-body" style="padding:14px 18px;">
-    <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-      <div style="flex:1; min-width:220px;">
-        <input type="text" name="q" value="{{ filter_q }}" class="tw-input" placeholder="{% trans 'Search by title or location...' %}">
+    <form method="get" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <div style="flex:1;min-width:220px;">
+        <input type="text" name="q" value="{{ filter_q }}" placeholder="{% trans 'Search by title or location…' %}">
       </div>
-      <select name="type" class="tw-input" style="max-width:200px;">
+      <select name="type" style="max-width:200px;">
         <option value="">{% trans "All types" %}</option>
         {% for v, l in session_types %}<option value="{{ v }}" {% if filter_type == v %}selected{% endif %}>{{ l }}</option>{% endfor %}
       </select>
-      <select name="status" class="tw-input" style="max-width:160px;">
+      <select name="status" style="max-width:160px;">
         <option value="">{% trans "All statuses" %}</option>
         <option value="active" {% if filter_status == 'active' %}selected{% endif %}>{% trans "Active" %}</option>
         <option value="closed" {% if filter_status == 'closed' %}selected{% endif %}>{% trans "Closed" %}</option>
       </select>
-      <button type="submit" class="btn btn-primary"><i data-feather="filter"></i>{% trans "Filter" %}</button>
+      <button type="submit" class="btn btn-primary btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        {% trans "Filter" %}
+      </button>
       {% if filter_q or filter_type or filter_status %}
-        <a href="{% url 'attendance:list' %}" class="btn btn-ghost"><i data-feather="x"></i>{% trans "Clear" %}</a>
+        <a href="{% url 'attendance:list' %}" class="btn btn-ghost btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          {% trans "Clear" %}
+        </a>
       {% endif %}
     </form>
   </div>
 </div>
 
-<!-- Sessions table -->
 <div class="card">
   <div class="card-body p-0">
     <div class="table-wrap">
@@ -45,7 +54,7 @@
             <th>{% trans "Coach" %}</th>
             <th>{% trans "Attendance" %}</th>
             <th>{% trans "Status" %}</th>
-            <th></th>
+            <th style="width:80px;"></th>
           </tr>
         </thead>
         <tbody>
@@ -53,7 +62,7 @@
             <tr>
               <td data-label="{% trans 'Session' %}">
                 <div class="cell-primary">{{ s.title }}</div>
-                <div class="cell-secondary"><i data-feather="map-pin" style="width:11px;height:11px;display:inline-block;"></i> {{ s.location }}</div>
+                <div class="cell-secondary">{{ s.location }}</div>
               </td>
               <td data-label="{% trans 'Type' %}">
                 <span class="badge badge-{% if s.session_type == 'training' %}brand{% elif s.session_type == 'prayer' %}warning{% elif s.session_type == 'match' %}danger{% else %}slate{% endif %}">
@@ -61,38 +70,43 @@
                 </span>
               </td>
               <td data-label="{% trans 'Date' %}">
-                <div>{{ s.date|date:"M d, Y" }}</div>
+                <div class="cell-primary">{{ s.date|date:"M d, Y" }}</div>
                 <div class="cell-secondary">{{ s.start_time|time:"H:i" }}</div>
               </td>
               <td data-label="{% trans 'Coach' %}">
                 {% if s.coach %}
                   <div class="table-cell-flex">
-                    <div class="avatar avatar-xs">{{ s.coach.initials }}</div>
-                    <span>{{ s.coach.get_full_name }}</span>
+                    <div class="avatar avatar-xs avatar-brand">{{ s.coach.initials }}</div>
+                    <span class="cell-primary">{{ s.coach.get_full_name }}</span>
                   </div>
-                {% else %}—{% endif %}
+                {% else %}<span class="cell-secondary">—</span>{% endif %}
               </td>
               <td data-label="{% trans 'Attendance' %}">
-                <strong style="color:var(--color-slate-900);">{{ s.record_count }}</strong>
+                <strong style="color:var(--text-primary);">{{ s.record_count }}</strong>
               </td>
               <td data-label="{% trans 'Status' %}">
                 {% if s.is_active %}
-                  <span class="badge status-active"><span class="badge-dot"></span>{% trans "Live" %}</span>
+                  <span class="badge badge-success"><span class="badge-dot"></span>{% trans "Live" %}</span>
                 {% else %}
-                  <span class="badge status-inactive">{% trans "Closed" %}</span>
+                  <span class="badge badge-slate">{% trans "Closed" %}</span>
                 {% endif %}
               </td>
-              <td data-label="">
-                <a href="{% url 'attendance:detail' s.pk %}" class="btn btn-secondary btn-xs">{% trans "View" %} <i data-feather="arrow-right" style="width:11px;height:11px;"></i></a>
+              <td>
+                <a href="{% url 'attendance:detail' s.pk %}" class="btn btn-secondary btn-xs">{% trans "View" %}</a>
               </td>
             </tr>
           {% empty %}
             <tr><td colspan="7">
               <div class="empty-state">
-                <div class="empty-state-icon"><i data-feather="check-square"></i></div>
+                <div class="empty-state-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </div>
                 <h3>{% trans "No sessions found" %}</h3>
                 <p>{% trans "Create your first session to start tracking attendance." %}</p>
-                <a href="{% url 'attendance:create' %}" class="btn btn-primary"><i data-feather="plus"></i>{% trans "Create session" %}</a>
+                <a href="{% url 'attendance:create' %}" class="btn btn-primary btn-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  {% trans "Create session" %}
+                </a>
               </div>
             </td></tr>
           {% endfor %}
@@ -102,10 +116,10 @@
   </div>
   {% if is_paginated %}
     <nav class="pagination">
-      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filter_q }}&type={{ filter_type }}&status={{ filter_status }}"><i data-feather="chevron-left" style="width:14px;height:14px;"></i></a>{% endif %}
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filter_q }}&type={{ filter_type }}&status={{ filter_status }}">←</a>{% endif %}
       <span class="active">{{ page_obj.number }}</span>
-      <span>/ {{ page_obj.paginator.num_pages }}</span>
-      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filter_q }}&type={{ filter_type }}&status={{ filter_status }}"><i data-feather="chevron-right" style="width:14px;height:14px;"></i></a>{% endif %}
+      <span style="color:var(--text-muted);">/ {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filter_q }}&type={{ filter_type }}&status={{ filter_status }}">→</a>{% endif %}
     </nav>
   {% endif %}
 </div>

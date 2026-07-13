@@ -1,27 +1,32 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{% trans "Audit Log" %}{% endblock %}
 {% block page_title %}{% trans "Audit Log" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{{ paginator.count }} {% trans "events recorded" %}</div>{% endblock %}
 
 {% block content %}
 <div class="card mb-4">
   <div class="card-body" style="padding:14px 18px;">
-    <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-      <div style="flex:1; min-width:240px;">
-        <input type="text" name="q" value="{{ filter_q }}" class="tw-input" placeholder="{% trans 'Search by user or action...' %}">
+    <form method="get" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <div style="flex:1;min-width:240px;">
+        <input type="text" name="q" value="{{ filter_q }}" placeholder="{% trans 'Search by user or action…' %}">
       </div>
-      <button type="submit" class="btn btn-primary"><i data-feather="search"></i>{% trans "Search" %}</button>
+      <button type="submit" class="btn btn-primary btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        {% trans "Search" %}
+      </button>
+      {% if filter_q %}
+        <a href="{% url 'users:activity_log' %}" class="btn btn-ghost btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          {% trans "Clear" %}
+        </a>
+      {% endif %}
     </form>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-header">
-    <div>
-      <h3 class="card-title">{% trans "Activity log" %}</h3>
-      <div class="card-subtitle">{{ paginator.count }} {% trans "events recorded" %}</div>
-    </div>
-  </div>
   <div class="card-body p-0">
     <div class="table-wrap">
       <table class="table table-responsive">
@@ -38,7 +43,7 @@
             <tr>
               <td data-label="{% trans 'User' %}">
                 <div class="table-cell-flex">
-                  <div class="avatar avatar-xs">{{ log.user.initials }}</div>
+                  <div class="avatar avatar-xs avatar-brand">{{ log.user.initials }}</div>
                   <div>
                     <div class="cell-primary">{{ log.user.get_full_name|default:log.user.username }}</div>
                     <div class="cell-secondary">{{ log.user.role_display }}</div>
@@ -46,7 +51,7 @@
                 </div>
               </td>
               <td data-label="{% trans 'Action' %}">
-                <span class="badge badge-{% if 'created' in log.action %}success{% elif 'login' in log.action %}brand{% elif 'checkin' in log.action %}brand{% else %}slate{% endif %}">{{ log.action|cut:"_"|title }}</span>
+                <span class="badge badge-{% if 'created' in log.action %}success{% elif 'login' in log.action or 'checkin' in log.action %}brand{% else %}slate{% endif %}">{{ log.action|cut:"_"|title }}</span>
               </td>
               <td data-label="{% trans 'IP' %}"><code style="font-size:11px;">{{ log.ip_address|default:"—" }}</code></td>
               <td data-label="{% trans 'When' %}"><span class="cell-secondary">{{ log.timestamp|date:"M d, H:i" }}</span></td>
@@ -54,7 +59,9 @@
           {% empty %}
             <tr><td colspan="4">
               <div class="empty-state">
-                <div class="empty-state-icon"><i data-feather="shield"></i></div>
+                <div class="empty-state-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
                 <h3>{% trans "No activity logged" %}</h3>
                 <p>{% trans "User actions will appear here as they occur." %}</p>
               </div>
@@ -66,10 +73,10 @@
   </div>
   {% if is_paginated %}
     <nav class="pagination">
-      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filter_q }}"><i data-feather="chevron-left" style="width:14px;height:14px;"></i></a>{% endif %}
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ filter_q }}">←</a>{% endif %}
       <span class="active">{{ page_obj.number }}</span>
-      <span>/ {{ page_obj.paginator.num_pages }}</span>
-      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filter_q }}"><i data-feather="chevron-right" style="width:14px;height:14px;"></i></a>{% endif %}
+      <span style="color:var(--text-muted);">/ {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ filter_q }}">→</a>{% endif %}
     </nav>
   {% endif %}
 </div>

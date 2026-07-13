@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Ratings Dashboard" %}{% endblock %}
+{% block page_title %}{% trans "Ratings Dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="page-section">
+
+  <div class="rate-mgmt-head">
+    <div class="rate-mgmt-tabs">
+      <a href="{% url 'ratings:manage_list' %}" class="rate-mgmt-tab">{% trans "Facilities" %}</a>
+      <a href="{% url 'ratings:dashboard' %}" class="rate-mgmt-tab active">{% trans "Dashboard" %}</a>
+      <a href="{% url 'ratings:export_excel' %}" class="rate-mgmt-tab">⬇ {% trans "Export Excel" %}</a>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="rate-kpi-row">
+    <div class="rate-kpi">
+      <div class="rate-kpi-icon">📊</div>
+      <div>
+        <div class="rate-kpi-num">{{ total_submissions }}</div>
+        <div class="rate-kpi-label">{% trans "Total submissions" %}</div>
+      </div>
+    </div>
+    <div class="rate-kpi">
+      <div class="rate-kpi-icon">🏛️</div>
+      <div>
+        <div class="rate-kpi-num">{{ total_facilities }}</div>
+        <div class="rate-kpi-label">{% trans "Facilities" %}</div>
+      </div>
+    </div>
+    <div class="rate-kpi">
+      <div class="rate-kpi-icon">⭐</div>
+      <div>
+        <div class="rate-kpi-num">{{ avg_all|default:"—" }} <small style="font-size:14px;color:var(--text-muted);">/ 5</small></div>
+        <div class="rate-kpi-label">{% trans "Overall average" %}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Per facility table -->
+  <div class="card" style="margin-top:18px;">
+    <div class="card-header">
+      <h3 class="card-title">{% trans "Per facility" %}</h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{% trans "Facility" %}</th>
+            <th style="text-align:center;">{% trans "Submissions" %}</th>
+            <th style="text-align:center;">{% trans "Average" %}</th>
+            <th style="text-align:end;">{% trans "Actions" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in facility_rows %}
+            <tr>
+              <td>
+                <span style="font-size:18px;">{{ r.facility.icon|default:"⭐" }}</span>
+                <strong>{{ r.facility.name }}</strong>
+                {% if not r.facility.is_active %}
+                  <span class="badge badge-secondary" style="margin-inline-start:6px;">{% trans "Closed" %}</span>
+                {% endif %}
+              </td>
+              <td style="text-align:center;">{{ r.submission_count }}</td>
+              <td style="text-align:center;">
+                {% if r.average %}
+                  <strong>{{ r.average }}</strong>
+                  <small style="color:var(--text-muted);">/ 5</small>
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td style="text-align:end;">
+                <a href="{% url 'ratings:facility_dashboard' r.facility.id %}" class="btn btn-secondary btn-sm">{% trans "View" %}</a>
+                <a href="{% url 'ratings:export_excel' %}?facility={{ r.facility.id }}" class="btn btn-ghost btn-sm">⬇ XLSX</a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">{% trans "No facilities yet." %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Latest submissions -->
+  <div class="card" style="margin-top:18px;">
+    <div class="card-header">
+      <h3 class="card-title">{% trans "Latest submissions" %}</h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{% trans "When" %}</th>
+            <th>{% trans "Facility" %}</th>
+            <th>{% trans "Average" %}</th>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Phone" %}</th>
+            <th>{% trans "Comment" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in latest_submissions %}
+            <tr>
+              <td><small>{{ s.submitted_at|date:"Y-m-d H:i" }}</small></td>
+              <td>{{ s.facility.icon }} {{ s.facility.name }}</td>
+              <td><strong>{{ s.average_stars|default:"—" }}</strong></td>
+              <td>{{ s.visitor_name|default:"—" }}</td>
+              <td dir="ltr">{{ s.phone|default:"—" }}</td>
+              <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{{ s.comment }}">
+                {{ s.comment|default:"—" }}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">{% trans "No submissions yet." %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

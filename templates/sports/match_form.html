@@ -1,59 +1,77 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}{% if object %}{% trans "Edit match" %}{% else %}{% trans "Schedule match" %}{% endif %}{% endblock %}
 {% block page_title %}{% if object %}{% trans "Edit match" %}{% else %}{% trans "Schedule match" %}{% endif %}{% endblock %}
 
 {% block content %}
-<div style="max-width:760px; margin:0 auto;">
-  <div class="page-header">
-    <h1 class="page-title">{% if object %}{% trans "Edit match" %}{% else %}{% trans "Schedule a match" %}{% endif %}</h1>
-  </div>
-
+<div style="max-width:760px;margin:0 auto;">
   <div class="card">
+    <div class="card-header"><h3 class="card-title">{% trans "Match details" %}</h3></div>
     <div class="card-body">
       <form method="post">
         {% csrf_token %}
-        <div class="grid-3">
+        <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">{% trans "Sport" %} *</label>{{ form.sport }}
+            <label class="form-label">{% trans "Sport" %} <span style="color:var(--danger-500);">*</span></label>
+            {{ form.sport }}
           </div>
           <div class="form-group">
-            <label class="form-label">{% trans "Home team" %} *</label>{{ form.home_team }}
-          </div>
-          <div class="form-group">
-            <label class="form-label">{% trans "Away team" %} *</label>{{ form.away_team }}
+            <label class="form-label">{% trans "Competition" %}</label>
+            {{ form.competition }}
+            <div class="form-help">{% trans "Optional — group this match under a league or cup." %}</div>
           </div>
         </div>
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">{% trans "Date & time" %} *</label>{{ form.scheduled_at }}
+            <label class="form-label">{% trans "Home team" %} <span style="color:var(--danger-500);">*</span></label>
+            {{ form.home_team }}
           </div>
           <div class="form-group">
-            <label class="form-label">{% trans "Location" %} *</label>{{ form.location }}
+            <label class="form-label">{% trans "Away team" %} <span style="color:var(--danger-500);">*</span></label>
+            {{ form.away_team }}
           </div>
         </div>
-        <div style="border-top:1px solid var(--color-slate-100); padding-top:16px; margin-top:8px;">
-          <h4 style="font-size:13px; font-weight:700; color:var(--color-slate-700); margin-bottom:12px;">{% trans "Score (only if completed)" %}</h4>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">{% trans "Date & time" %} <span style="color:var(--danger-500);">*</span></label>
+            {{ form.scheduled_at }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Location" %} <span style="color:var(--danger-500);">*</span></label>
+            {{ form.location }}
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-secondary);padding-top:16px;margin-top:8px;">
+          <h4 style="font-size:13px;font-weight:700;color:var(--text-secondary);margin-bottom:12px;">{% trans "Score (only if completed)" %}</h4>
           <div class="grid-3">
             <div class="form-group">
-              <label class="form-label">{% trans "Home score" %}</label>{{ form.home_score }}
+              <label class="form-label">{% trans "Home score" %}</label>
+              {{ form.home_score }}
             </div>
             <div class="form-group">
-              <label class="form-label">{% trans "Away score" %}</label>{{ form.away_score }}
+              <label class="form-label">{% trans "Away score" %}</label>
+              {{ form.away_score }}
             </div>
-            <div class="form-group" style="display:flex; align-items:center;">
-              <label style="display:flex; align-items:center; gap:8px; padding-top:24px;">
+            <div class="form-group" style="display:flex;align-items:center;">
+              <label style="display:flex;align-items:center;gap:8px;padding-top:24px;cursor:pointer;">
                 {{ form.is_completed }}
                 <span style="font-weight:500;">{% trans "Match completed" %}</span>
               </label>
             </div>
           </div>
         </div>
+
         <div class="form-group">
-          <label class="form-label">{% trans "Notes" %}</label>{{ form.notes }}
+          <label class="form-label">{% trans "Notes" %}</label>
+          {{ form.notes }}
         </div>
-        <div style="display:flex; gap:8px;">
-          <button type="submit" class="btn btn-primary"><i data-feather="check"></i>{% trans "Save match" %}</button>
+        <div style="display:flex;gap:8px;">
+          <button type="submit" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            {% trans "Save match" %}
+          </button>
           <a href="{% url 'sports:match_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
         </div>
       </form>

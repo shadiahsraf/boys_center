@@ -10,7 +10,8 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import (CreateView, DetailView, DeleteView, ListView,
                                   TemplateView, UpdateView)
 
-from .forms import LoginForm, UserCreateForm, UserUpdateForm
+from .forms import (LoginForm, ProfilePhotoForm, ProfileSelfUpdateForm,
+                    UserCreateForm, UserUpdateForm)
 from .mixins import RoleRequiredMixin
 from .models import User, Role, ActivityLog
 
@@ -116,22 +117,26 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         if u.is_parent:
             children = u.children.all()
             ctx['my_children'] = children
-            ctx['child_attendance'] = (AttendanceRecord.objects
-                                       .filter(user__in=children)
+            child_attendance_qs = AttendanceRecord.objects.filter(user__in=children)
+            child_evaluations_qs = Evaluation.objects.filter(player__in=children)
+            ctx['child_attendance'] = (child_attendance_qs
                                        .select_related('session', 'user')
                                        .order_by('-check_in_time')[:8])
-            ctx['child_evaluations'] = (Evaluation.objects
-                                        .filter(player__in=children)
+            ctx['child_evaluations'] = (child_evaluations_qs
                                         .select_related('player', 'coach')
                                         .order_by('-created_at')[:5])
+            # Real totals so hero stats are accurate (not capped at slice size)
+            ctx['child_attendance_total'] = child_attendance_qs.count()
+            ctx['child_evaluations_total'] = child_evaluations_qs.count()
 
         if u.is_youth:
-            ctx['my_attendance'] = (AttendanceRecord.objects
-                                    .filter(user=u)
+            attendance_qs = AttendanceRecord.objects.filter(user=u)
+            evals_qs = Evaluation.objects.filter(player=u)
+            ctx['my_attendance'] = (attendance_qs
                                     .select_related('session')
                                     .order_by('-check_in_time')[:8])
-            ctx['my_evaluations'] = Evaluation.objects.filter(player=u).order_by('-created_at')[:5]
-            agg = Evaluation.objects.filter(player=u).aggregate(
+            ctx['my_evaluations'] = evals_qs.order_by('-created_at')[:5]
+            agg = evals_qs.aggregate(
                 p=Avg('performance'), b=Avg('behavior'), c=Avg('commitment')
             )
             ctx['eval_summary'] = {
@@ -139,7 +144,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 'behavior': round(agg['b'], 1) if agg['b'] else None,
                 'commitment': round(agg['c'], 1) if agg['c'] else None,
             }
-            ctx['attendance_count'] = AttendanceRecord.objects.filter(user=u).count()
+            ctx['attendance_count'] = attendance_qs.count()
+            ctx['evaluations_total'] = evals_qs.count()
 
         return ctx
 
@@ -219,6 +225,53 @@ class UserUpdateView(RoleRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('users:detail', args=[self.object.pk])
+
+
+class ProfileSelfUpdateView(LoginRequiredMixin, UpdateView):
+    """Any authenticated user edits their own contact info + parent contact."""
+    model = User
+    form_class = ProfileSelfUpdateForm
+    template_name = 'users/profile_self_form.html'
+    success_url = reverse_lazy('dashboard')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _('Profile updated.'))
+        return response
+
+
+class ProfilePhotoUpdateView(LoginRequiredMixin, UpdateView):
+    """Any authenticated user can change their OWN profile photo."""
+    model = User
+    form_class = ProfilePhotoForm
+    template_name = 'users/profile_photo_form.html'
+    success_url = reverse_lazy('dashboard')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _('Profile photo updated.'))
+        return response
+
+
+class ProfilePhotoDeleteView(LoginRequiredMixin, TemplateView):
+    """Removes the user's photo (so initials show again)."""
+    def post(self, request, *args, **kwargs):
+        u = request.user
+        if u.photo:
+            u.photo.delete(save=False)
+            u.photo = None
+            u.save(update_fields=['photo'])
+            messages.success(request, _('Profile photo removed.'))
+        return redirect('dashboard')
+
+    def get(self, request, *args, **kwargs):
+        return redirect('dashboard')
 
 
 class ActivityLogView(RoleRequiredMixin, ListView):

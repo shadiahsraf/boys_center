@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete facility" %}{% endblock %}
+{% block page_title %}{% trans "Delete facility" %}{% endblock %}
+
+{% block content %}
+<div class="page-section">
+  <div class="card" style="max-width:560px;">
+    <div class="card-body">
+      <div style="font-size:48px;">⚠️</div>
+      <h2 style="margin-top:10px;">{% trans "Delete this facility?" %}</h2>
+      <p>{% blocktrans with name=facility.name %}This will permanently remove "<strong>{{ name }}</strong>" along with all of its questions and submitted ratings.{% endblocktrans %}</p>
+      <form method="post" style="display:flex;gap:10px;margin-top:16px;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">{% trans "Yes, delete" %}</button>
+        <a href="{% url 'ratings:manage_list' %}" class="btn btn-ghost">{% trans "Cancel" %}</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

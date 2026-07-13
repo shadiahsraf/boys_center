@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Competitions" %}{% endblock %}
+{% block page_title %}{% trans "Competitions" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Leagues, cups & friendlies" %}</div>{% endblock %}
+
+{% block topbar_actions %}
+  {% if is_admin_user or is_coach_manager_user %}
+    <a href="{% url 'sports:competition_create' %}" class="btn btn-primary btn-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      {% trans "New competition" %}
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
+  <a href="{% url 'sports:competition_list' %}" class="btn {% if not filter_sport %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{% trans "All sports" %}</a>
+  {% for v, l in sport_choices %}
+    <a href="?sport={{ v }}" class="btn {% if filter_sport == v %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">{{ l }}</a>
+  {% endfor %}
+</div>
+
+<div class="grid-cards">
+  {% for c in competitions %}
+    <a href="{% url 'sports:competition_update' c.pk %}" class="card" style="display:block;text-decoration:none;color:inherit;">
+      <div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+            <div class="avatar avatar-md avatar-warning" style="border-radius:14px;">{{ c.icon }}</div>
+            <div style="min-width:0;">
+              <div style="font-weight:700;color:var(--text-primary);font-size:15px;">{{ c.name }}</div>
+              <div class="cell-secondary">{{ c.get_sport_display }}{% if c.season %} · {{ c.season }}{% endif %}</div>
+            </div>
+          </div>
+          {% if c.is_active %}
+            <span class="badge badge-success"><span class="badge-dot"></span>{% trans "Active" %}</span>
+          {% else %}
+            <span class="badge badge-slate">{% trans "Inactive" %}</span>
+          {% endif %}
+        </div>
+        <div style="display:flex;gap:14px;font-size:12.5px;color:var(--text-tertiary);align-items:center;">
+          <span>
+            <strong style="color:var(--text-primary);font-weight:700;">{{ c.get_competition_type_display }}</strong>
+          </span>
+          <span class="profile-hero-sub-divider"></span>
+          <span>{{ c.matches_count }} {% trans "matches" %}</span>
+        </div>
+      </div>
+    </a>
+  {% empty %}
+    <div class="empty-state" style="grid-column:1/-1;">
+      <div class="empty-state-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      </div>
+      <h3>{% trans "No competitions yet" %}</h3>
+      <p>{% trans "Create a league or cup to group your matches and track standings separately." %}</p>
+      {% if is_admin_user or is_coach_manager_user %}
+        <a href="{% url 'sports:competition_create' %}" class="btn btn-primary btn-sm mt-3">{% trans "New competition" %}</a>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

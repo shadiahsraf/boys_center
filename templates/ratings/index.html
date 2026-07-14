@@ -7,34 +7,86 @@
   {% include 'partials/public_nav.html' %}
 
   <main class="public-main">
-    <div class="public-container" style="padding-top:48px;padding-bottom:64px;">
+    <div class="public-container rate-container">
       <div class="rate-header">
         <div class="rate-header-badge">⭐ {% trans "Your opinion matters" %}</div>
         <h1 class="rate-header-title" dir="rtl" lang="ar">اختار الخدمة اللي عاوز تقيمها</h1>
-        <p class="rate-header-sub">{% trans "Pick a service below to share your rating. No login needed — fully anonymous." %}</p>
+        <p class="rate-header-sub" dir="rtl" lang="ar">
+          شارك رأيك في خدمات المركز عشان تساعدنا نطوّرها. التقييم مجهول ومش محتاج تسجيل دخول.
+        </p>
       </div>
 
       {% if facilities %}
         <div class="rate-grid">
           {% for f in facilities %}
-            <a href="{% url 'ratings:facility' f.id %}" class="rate-card">
-              <div class="rate-card-icon">{{ f.icon|default:"⭐" }}</div>
-              <div class="rate-card-name" dir="rtl" lang="ar">{{ f.name }}</div>
-              {% if f.description %}
-                <div class="rate-card-desc" dir="rtl" lang="ar">{{ f.description }}</div>
-              {% endif %}
-              <div class="rate-card-meta">
-                <span class="rate-card-meta-q">📝 {{ f.q_count }} {% trans "questions" %}</span>
-                <span class="rate-card-meta-arrow">←</span>
+            <article class="rate-facility-card" style="--card-delay: {{ forloop.counter0 }}00ms;">
+              <div class="rate-facility-card-frame">
+                <div class="rate-facility-card-head">
+                  <div class="rate-facility-card-icon" aria-hidden="true">{{ f.icon|default:"⭐" }}</div>
+                  <div class="rate-facility-card-badge">
+                    <span class="rate-facility-card-badge-dot"></span>
+                    <span dir="rtl" lang="ar">متاحة الآن</span>
+                  </div>
+                </div>
+
+                <div class="rate-facility-card-body">
+                  <h3 class="rate-facility-card-name" dir="rtl" lang="ar">{{ f.name }}</h3>
+                  {% if f.description %}
+                    <p class="rate-facility-card-desc" dir="rtl" lang="ar">{{ f.description }}</p>
+                  {% endif %}
+                </div>
+
+                <div class="rate-facility-card-meta" dir="rtl" lang="ar">
+                  <span class="rate-facility-card-meta-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    {{ f.q_count }} أسئلة
+                  </span>
+                  <span class="rate-facility-card-meta-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    أقل من دقيقة
+                  </span>
+                </div>
+
+                <a href="{% url 'ratings:facility' f.id %}"
+                   class="rate-facility-card-btn"
+                   aria-label="ابدأ تقييم {{ f.name }}">
+                  <span dir="rtl" lang="ar">ابدأ التقييم</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
               </div>
-            </a>
+            </article>
           {% endfor %}
+        </div>
+
+        <!-- Trust footer strip -->
+        <div class="rate-trust-strip" dir="rtl" lang="ar">
+          <div class="rate-trust-item">
+            <span class="rate-trust-item-icon">🔒</span>
+            <div>
+              <div class="rate-trust-item-title">تقييم مجهول</div>
+              <div class="rate-trust-item-sub">اسمك ورقم موبايلك اختياريين</div>
+            </div>
+          </div>
+          <div class="rate-trust-item">
+            <span class="rate-trust-item-icon">⚡</span>
+            <div>
+              <div class="rate-trust-item-title">سريع وسهل</div>
+              <div class="rate-trust-item-sub">اضغط النجوم بس، بدون تسجيل</div>
+            </div>
+          </div>
+          <div class="rate-trust-item">
+            <span class="rate-trust-item-icon">💬</span>
+            <div>
+              <div class="rate-trust-item-title">رأيك يفرق</div>
+              <div class="rate-trust-item-sub">كل تعليق بيوصل للإدارة مباشرة</div>
+            </div>
+          </div>
         </div>
       {% else %}
         <div class="rate-empty">
           <div class="rate-empty-icon">📭</div>
           <div class="rate-empty-title" dir="rtl" lang="ar">لا توجد خدمات متاحة للتقييم حالياً</div>
-          <div class="rate-empty-sub">{% trans "Please check back later." %}</div>
+          <div class="rate-empty-sub" dir="rtl" lang="ar">اتفضل ارجع تاني بعد شوية.</div>
         </div>
       {% endif %}
     </div>

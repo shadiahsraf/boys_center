@@ -23,7 +23,7 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=43">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=46">
 
   {# ─── PWA — installable, offline-capable, mobile-friendly ─── #}
   <link rel="manifest" href="/manifest.webmanifest">
@@ -73,8 +73,16 @@
       <div class="main-area">
         <header class="topbar">
           <div class="topbar-left">
-            <button class="menu-btn" @click="sidebar = !sidebar" aria-label="{% trans 'Menu' %}">
-              <i data-feather="menu" style="width:18px;height:18px;"></i>
+            <button class="menu-btn burger-btn"
+                    :class="{ 'is-active': sidebar }"
+                    @click="sidebar = !sidebar"
+                    :aria-expanded="sidebar"
+                    aria-label="{% trans 'Menu' %}">
+              <span class="burger-box" aria-hidden="true">
+                <span class="burger-line burger-line-top"></span>
+                <span class="burger-line burger-line-mid"></span>
+                <span class="burger-line burger-line-bot"></span>
+              </span>
             </button>
             <div style="min-width:0;">
               <div class="topbar-title">{% block page_title %}{% trans "Dashboard" %}{% endblock %}</div>

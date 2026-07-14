@@ -3453,15 +3453,7 @@ textarea { min-height: 80px; resize: vertical; }
 }
 [data-theme="dark"] .chatbot-footer-mark { color: #D4AF37; }
 
-@media (max-width: 480px) {
-  .chatbot { bottom: 14px; inset-inline-end: 14px; }
-  .chatbot-bubble { width: 50px; height: 50px; }
-  .chatbot-panel {
-    width: calc(100vw - 28px);
-    max-height: calc(100vh - 100px);
-    bottom: 64px;
-  }
-}
+/* Chatbot mobile: see the dedicated block at end of stylesheet */
 
 /* When the user is in LTR mode (English), flip the chatbot to bottom-right */
 html[dir="ltr"] .chatbot { inset-inline-end: auto; right: 20px; }
@@ -3949,12 +3941,19 @@ html[dir="ltr"] .chatbot-panel { inset-inline-end: auto; right: 0; }
 }
 
 /* ─── RESPONSIVE ──────────────────────────────────────────────────────── */
-@media (max-width: 1024px) {
+/* Hamburger + off-canvas sidebar activate only at mobile widths (≤768px).
+   Above that, the sidebar is always visible and the hamburger is hidden. */
+@media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   [dir="rtl"] .sidebar { transform: translateX(100%); }
   .sidebar.open { transform: translateX(0); }
   .main-area { margin-inline-start: 0; }
   .menu-btn { display: inline-flex; }
+}
+/* Force hamburgers hidden above the mobile breakpoint (safety net if any
+   other rule tries to show them) */
+@media (min-width: 769px) {
+  .menu-btn, .public-nav-toggle { display: none !important; }
 }
 @media (max-width: 640px) {
   .topbar { padding: 0 16px; }
@@ -5423,11 +5422,7 @@ code {
   .modal-content { max-width: 100%; max-height: 90vh; overflow-y: auto; }
 }
 
-/* ---- Chatbot floating widget ---- */
-@media (max-width: 640px) {
-  .chatbot-fab { width: 50px; height: 50px; bottom: 14px; inset-inline-end: 14px; }
-  .chatbot-panel { inset-inline: 8px !important; bottom: 70px; width: auto !important; max-width: none !important; }
-}
+/* ---- Chatbot mobile fix (removed obsolete rules referencing .chatbot-fab) ---- */
 
 /* ---- Safe-area / notch insets for iPhone ---- */
 @supports (padding: max(0px)) {
@@ -5496,8 +5491,8 @@ body { -webkit-tap-highlight-color: rgba(90,15,15,0.08); }
   .install-btn { display: none !important; }  /* rely on browser's own install banner */
 }
 
-/* ---- Sidebar drawer: full-height scroll + proper overlay ---- */
-@media (max-width: 1024px) {
+/* ---- Sidebar drawer: full-height scroll + proper overlay (mobile only) ---- */
+@media (max-width: 768px) {
   .sidebar {
     position: fixed !important;
     inset-block-start: 0;
@@ -5623,19 +5618,7 @@ body { -webkit-tap-highlight-color: rgba(90,15,15,0.08); }
   .auth-card h1, .login-card h1 { font-size: 22px; }
 }
 
-/* ---- Chatbot floating widget ---- */
-@media (max-width: 640px) {
-  .chatbot-panel {
-    inset-inline-start: 8px !important;
-    inset-inline-end: 8px !important;
-    bottom: 70px !important;
-    width: auto !important;
-    max-width: none !important;
-    height: min(72vh, 520px) !important;
-    border-radius: 14px !important;
-  }
-  .chatbot-fab { width: 52px; height: 52px; }
-}
+/* Chatbot mobile styles moved to dedicated block at end of file */
 
 /* ---- Ratings public form: tighten star cluster + phone input ---- */
 @media (max-width: 480px) {
@@ -5684,4 +5667,278 @@ body { -webkit-tap-highlight-color: rgba(90,15,15,0.08); }
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CHATBOT — mobile responsive fix
+   Fixes: iOS viewport bugs (100vh), safe-area insets, tap targets,
+          chip overflow, panel positioning on small screens.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Small tablets and phones */
+@media (max-width: 768px) {
+  .chatbot {
+    bottom: max(14px, env(safe-area-inset-bottom));
+    inset-inline-end: 14px;
+  }
+  .chatbot-bubble {
+    width: 52px;
+    height: 52px;
+    /* Ensure hover-transform doesn't stick on touch devices */
+    transition: box-shadow 200ms ease;
+  }
+  .chatbot-bubble:hover { transform: none; }
+  .chatbot-bubble:active { transform: scale(0.94); }
+
+  .chatbot-panel {
+    /* Anchor to bubble but a bit smaller than desktop */
+    width: min(360px, calc(100vw - 24px));
+    max-height: min(560px, calc(100dvh - 100px));
+    bottom: 68px;
+  }
+
+  /* Header close button — bigger for thumbs */
+  .chatbot-header-close { width: 36px; height: 36px; }
+  .chatbot-header-close svg { width: 18px; height: 18px; }
+
+  /* Chip row scrolls horizontally if too many chips */
+  .chatbot-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 10px 12px;
+  }
+  .chatbot-chips::-webkit-scrollbar { display: none; }
+  .chatbot-chip {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 13px;
+    min-height: 36px;
+  }
+
+  /* Message bubbles a bit wider on mobile */
+  .chatbot-msg-bubble {
+    max-width: 85%;
+    font-size: 14px;
+  }
+}
+
+/* Phones — panel goes near-full-screen (edge to edge) */
+@media (max-width: 560px) {
+  .chatbot {
+    bottom: max(12px, env(safe-area-inset-bottom));
+    inset-inline-start: 12px;
+    inset-inline-end: 12px;
+    /* Bubble stays at end, panel spans width */
+  }
+  .chatbot-bubble {
+    /* Keep bubble at end of the container */
+    margin-inline-start: auto;
+    display: flex;
+    place-items: unset;
+    align-items: center;
+    justify-content: center;
+  }
+  .chatbot-panel {
+    /* Full width minus small side gutters, tall enough to feel like a real chat */
+    position: fixed;
+    inset-inline-start: 8px;
+    inset-inline-end: 8px;
+    width: auto;
+    max-width: none;
+    bottom: calc(72px + env(safe-area-inset-bottom));
+    /* Use dvh (dynamic viewport height) so it survives iOS URL-bar collapse */
+    height: min(78dvh, calc(100dvh - 96px));
+    max-height: none;
+    border-radius: 16px;
+  }
+  .chatbot-header { padding: 12px 14px; }
+  .chatbot-header-avatar { width: 34px; height: 34px; border-radius: 10px; }
+  .chatbot-header-title { font-size: 15px; }
+  .chatbot-header-sub { font-size: 12px; }
+
+  .chatbot-messages {
+    padding: 14px;
+    gap: 10px;
+    /* Grow to fill the panel — flex:1 already sets this */
+  }
+  .chatbot-msg-bubble {
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.55;
+    max-width: 88%;
+  }
+
+  .chatbot-footer {
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    font-size: 12px;
+  }
+}
+
+/* Very narrow phones (≤380px) — tiny extra tightening */
+@media (max-width: 380px) {
+  .chatbot-bubble { width: 48px; height: 48px; }
+  .chatbot-panel {
+    bottom: calc(64px + env(safe-area-inset-bottom));
+    height: min(80dvh, calc(100dvh - 88px));
+    border-radius: 14px;
+  }
+  .chatbot-chip { padding: 7px 12px; font-size: 12px; }
+  .chatbot-msg-bubble { font-size: 13.5px; }
+}
+
+/* When keyboard opens on mobile, viewport shrinks — dvh already handles it,
+   but ensure panel doesn't jump. Also disable body scroll when open (via
+   Alpine class on <html>). If your panel obscures a fixed footer, this
+   ensures the scroll happens inside .chatbot-messages, not the page. */
+@media (max-width: 560px) {
+  .chatbot-panel { overscroll-behavior: contain; touch-action: pan-y; }
+  .chatbot-messages { overscroll-behavior: contain; }
+}
+
+/* Prevent accidental double-tap zoom on iOS for interactive parts */
+.chatbot-bubble, .chatbot-chip, .chatbot-header-close {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+/* Lock page scroll while chatbot panel is open on phones */
+html.chatbot-open, html.chatbot-open body {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ANIMATED HAMBURGER (burger-btn) — universal for public nav + app shell
+   ═══════════════════════════════════════════════════════════════════════ */
+.burger-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  color: var(--text-primary);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overflow: hidden;
+  transition: background 200ms ease, border-color 200ms ease, transform 160ms ease;
+}
+.burger-btn:hover {
+  background: var(--surface-sunken);
+  border-color: var(--brand-500);
+}
+.burger-btn:active { transform: scale(0.92); }
+.burger-btn:focus-visible {
+  outline: 2px solid var(--accent-500);
+  outline-offset: 2px;
+}
+
+/* Ripple accent that expands from center on activation */
+.burger-btn::before {
+  content: "";
+  position: absolute;
+  inset: 50% 50% 50% 50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,0.28), transparent 70%);
+  opacity: 0;
+  transition: inset 380ms cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 380ms ease;
+  pointer-events: none;
+}
+.burger-btn.is-active::before {
+  inset: -20% -20% -20% -20%;
+  opacity: 1;
+}
+
+.burger-box {
+  position: relative;
+  width: 22px;
+  height: 16px;
+  display: block;
+  z-index: 1;
+}
+
+.burger-line {
+  position: absolute;
+  inset-inline-start: 0;
+  width: 22px;
+  height: 2.4px;
+  background: currentColor;
+  border-radius: 3px;
+  transform-origin: 50% 50%;
+  transition:
+    transform 380ms cubic-bezier(0.68, -0.35, 0.32, 1.4),
+    width 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 250ms ease,
+    top 300ms ease,
+    opacity 220ms ease;
+}
+.burger-line-top { top: 0; }
+.burger-line-mid { top: 50%; transform: translateY(-50%); }
+.burger-line-bot { top: 100%; transform: translateY(-100%); }
+
+/* Idle state — playful staggered widths (top full, mid a little short, bot longest slide) */
+.burger-line-top { width: 22px; }
+.burger-line-mid { width: 16px; inset-inline-end: 0; inset-inline-start: auto; }
+.burger-line-bot { width: 19px; }
+
+/* Subtle nudge animation on hover (top + bot lines meet toward center) */
+.burger-btn:hover .burger-line-top { transform: translateY(1px); }
+.burger-btn:hover .burger-line-mid { width: 22px; }
+.burger-btn:hover .burger-line-bot { transform: translateY(calc(-100% - 1px)); width: 22px; }
+
+/* Active state — morph into an X with a bounce */
+.burger-btn.is-active {
+  border-color: var(--brand-500);
+  background: linear-gradient(135deg, rgba(90,15,15,0.06), rgba(212,175,55,0.06));
+  color: var(--brand-500);
+}
+[data-theme="dark"] .burger-btn.is-active { color: var(--accent-500); }
+
+.burger-btn.is-active .burger-line-top {
+  top: 50%;
+  width: 22px;
+  transform: translateY(-50%) rotate(45deg);
+}
+.burger-btn.is-active .burger-line-mid {
+  width: 22px;
+  opacity: 0;
+  transform: translateY(-50%) scaleX(0);
+}
+.burger-btn.is-active .burger-line-bot {
+  top: 50%;
+  width: 22px;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+/* When the burger sits inside .menu-btn (app-shell topbar), respect its size */
+.menu-btn.burger-btn { width: 40px; height: 40px; border-radius: 10px; }
+.menu-btn.burger-btn .burger-box { width: 20px; height: 14px; }
+.menu-btn.burger-btn .burger-line { width: 20px; }
+.menu-btn.burger-btn .burger-line-mid { width: 14px; }
+.menu-btn.burger-btn .burger-line-bot { width: 17px; }
+.menu-btn.burger-btn.is-active .burger-line { width: 20px; }
+.menu-btn.burger-btn:hover .burger-line-mid { width: 20px; }
+.menu-btn.burger-btn:hover .burger-line-bot { width: 20px; }
+
+/* Public nav uses larger tap target on tiny screens */
+@media (max-width: 480px) {
+  .public-nav-toggle.burger-btn { width: 42px; height: 42px; }
+}
+
+/* Reduced-motion users get an instant swap instead of the bouncy morph */
+@media (prefers-reduced-motion: reduce) {
+  .burger-line { transition: transform 100ms linear, opacity 100ms linear !important; }
+  .burger-btn::before { transition: none !important; }
 }

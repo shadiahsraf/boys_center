@@ -2,6 +2,7 @@
 {# Floating Arabic FAQ assistant. Pure Alpine.js — no backend, no AI. #}
 <div class="chatbot"
      x-data="chatbotApp()"
+     x-effect="document.documentElement.classList.toggle('chatbot-open', open && window.matchMedia('(max-width:560px)').matches)"
      @keydown.escape.window="open = false"
      dir="rtl">
 

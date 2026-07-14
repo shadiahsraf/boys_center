@@ -174,3 +174,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Session settings
 SESSION_COOKIE_AGE = 86400 * 7
 SESSION_SAVE_EVERY_REQUEST = True
+
+# ─── PRODUCTION SECURITY ─────────────────────────────────────────────────
+# Only active when DEBUG is false. Requires HTTPS to actually work — nginx +
+# Let's Encrypt must be in place before the site is reachable over https://
+if not DEBUG:
+    # We're behind an nginx proxy that terminates TLS
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # Send session + CSRF cookies only over HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # Redirect any http:// request to https://
+    SECURE_SSL_REDIRECT = True
+    # Enable HSTS — 1 year, include subdomains, allow preload
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 365      # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    # Extra hardening
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = 'same-origin'
+    X_FRAME_OPTIONS = 'DENY'

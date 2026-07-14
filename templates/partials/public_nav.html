@@ -46,12 +46,16 @@
       <a href="{% url 'login' %}" class="btn btn-primary btn-sm" @click="open = false">{% trans "Sign in" %}</a>
     </div>
 
-    <button type="button" class="public-nav-toggle"
+    <button type="button" class="public-nav-toggle burger-btn"
+            :class="{ 'is-active': open }"
             @click.stop="open = !open"
             :aria-expanded="open"
             aria-label="{% trans 'Menu' %}">
-      <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      <svg x-show="open" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <span class="burger-box" aria-hidden="true">
+        <span class="burger-line burger-line-top"></span>
+        <span class="burger-line burger-line-mid"></span>
+        <span class="burger-line burger-line-bot"></span>
+      </span>
     </button>
   </div>
 </nav>

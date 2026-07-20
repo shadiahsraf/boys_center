@@ -54,6 +54,16 @@ class User(AbstractUser):
     parent_phone = models.CharField(_('Parent phone'), max_length=30, blank=True)
     parent_email = models.EmailField(_('Parent email'), blank=True)
 
+    # Odoo sync — populated automatically by `python manage.py sync_odoo_members`.
+    odoo_id = models.PositiveIntegerField(
+        _('Odoo record ID'), null=True, blank=True, unique=True,
+        help_text=_('Primary key of the matching res.partner (or custom model) in Odoo.'),
+    )
+    odoo_synced_at = models.DateTimeField(
+        _('Last Odoo sync'), null=True, blank=True,
+        help_text=_('When this record was last written from Odoo.'),
+    )
+
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')

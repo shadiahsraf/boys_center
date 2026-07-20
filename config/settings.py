@@ -175,6 +175,38 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SESSION_COOKIE_AGE = 86400 * 7
 SESSION_SAVE_EVERY_REQUEST = True
 
+# ─── ODOO SYNC ───────────────────────────────────────────────────────────
+# Continuous sync from Odoo to Django. All values env-driven so nothing
+# sensitive lives in source control. To disable sync entirely, leave
+# ODOO_URL unset — the sync command becomes a no-op with a helpful message.
+ODOO = {
+    'url':       os.environ.get('ODOO_URL', ''),           # e.g. https://myodoo.com
+    'db':        os.environ.get('ODOO_DB', ''),            # database name
+    'username':  os.environ.get('ODOO_USERNAME', ''),
+    'password':  os.environ.get('ODOO_PASSWORD', ''),      # or API key
+    'model':     os.environ.get('ODOO_MODEL', 'res.partner'),
+    # Odoo domain filter: only records matching this become Django users.
+    # Format is Python-eval'd — keep it simple. Examples:
+    #   [('is_member', '=', True)]
+    #   [('category_id', '=', 5)]
+    #   [('customer_rank', '>', 0)]
+    'filter':    os.environ.get('ODOO_FILTER', '[]'),
+    # Field mapping — Odoo field -> Django User field.
+    # Only fields present here are copied. Django-only fields (roles,
+    # is_servant, member_code) are NOT overwritten unless explicitly mapped.
+    'fields': {
+        'name':          'full_name',       # split into first/last automatically
+        'email':         'email',
+        'phone':         'phone',
+        'mobile':        'parent_phone',
+        'street':        'address',
+        # Add your custom Odoo fields here, e.g.:
+        # 'x_member_code': 'member_code',
+        # 'x_birthday':    'date_of_birth',
+        # 'x_parent_name': 'parent_name',
+    },
+}
+
 # ─── PRODUCTION SECURITY ─────────────────────────────────────────────────
 # Only active when DEBUG is false. Requires HTTPS to actually work — nginx +
 # Let's Encrypt must be in place before the site is reachable over https://

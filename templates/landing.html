@@ -79,6 +79,105 @@
   </div>
 </section>
 
+<!-- ══ GALLERY CAROUSEL — center highlights (auto-rotating, swipeable) ══ -->
+<section class="gallery-section" id="gallery">
+  <div class="public-container">
+    <div class="gallery-heading">
+      <div class="gallery-eyebrow" dir="rtl" lang="ar">✨ لمحات من المركز</div>
+      <h2 class="gallery-title" dir="rtl" lang="ar">
+        شوف <span class="gallery-title-glow">أجمل لحظاتنا</span>
+      </h2>
+      <p class="gallery-sub" dir="rtl" lang="ar">صور من المباريات، التدريبات، الرحلات، والأنشطة اليومية</p>
+    </div>
+
+    <div class="carousel"
+         x-data="galleryCarousel()"
+         @keydown.arrow-left.window="next()"
+         @keydown.arrow-right.window="prev()"
+         @touchstart="startTouch($event)"
+         @touchend="endTouch($event)">
+
+      <div class="carousel-track" :style="`transform: translateX(${-index * 100}%)`">
+        <template x-for="(s, i) in slides" :key="i">
+          <article class="carousel-slide"
+                   :style="`background-image: linear-gradient(135deg, ${s.tint1}, ${s.tint2})`">
+            <div class="carousel-slide-content">
+              <div class="carousel-slide-icon" x-text="s.icon"></div>
+              <h3 class="carousel-slide-title" dir="rtl" lang="ar" x-text="s.title"></h3>
+              <p class="carousel-slide-desc" dir="rtl" lang="ar" x-text="s.desc"></p>
+            </div>
+            <div class="carousel-slide-glow" aria-hidden="true"></div>
+          </article>
+        </template>
+      </div>
+
+      <button type="button" class="carousel-btn carousel-btn-prev"
+              @click="prev()" aria-label="Previous">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button type="button" class="carousel-btn carousel-btn-next"
+              @click="next()" aria-label="Next">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <div class="carousel-dots" role="tablist">
+        <template x-for="(s, i) in slides" :key="i">
+          <button type="button"
+                  class="carousel-dot"
+                  :class="{ 'is-active': index === i }"
+                  @click="goTo(i)"
+                  :aria-label="`Slide ${i+1}`"></button>
+        </template>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function galleryCarousel() {
+  return {
+    index: 0,
+    autoplayId: null,
+    touchStartX: 0,
+    slides: [
+      { icon: '⚽', title: 'كرة القدم', desc: 'تدريبات ومباريات لكل الفئات العمرية',
+        tint1: '#5A0F0F', tint2: '#7A1C1C' },
+      { icon: '🏊', title: 'حمام السباحة', desc: 'مياه نقية، أمان كامل، ومدربين محترفين',
+        tint1: '#1e3a8a', tint2: '#3b82f6' },
+      { icon: '🏀', title: 'كرة السلة', desc: 'روح الفريق وشغف الفوز',
+        tint1: '#7c2d12', tint2: '#c2410c' },
+      { icon: '🎭', title: 'الأنشطة الصيفية', desc: 'رحلات، ورش، ألعاب، ومغامرات',
+        tint1: '#065f46', tint2: '#10b981' },
+      { icon: '⛪', title: 'حياتنا الروحية', desc: 'صلاة، دراسة كتاب، وخدمة',
+        tint1: '#7A1C1C', tint2: '#D4AF37' },
+      { icon: '🏆', title: 'البطولات والإنجازات', desc: 'شباب يحققون أحلامهم كل يوم',
+        tint1: '#78350f', tint2: '#D4AF37' },
+    ],
+    init() {
+      this.startAutoplay();
+      this.$el.addEventListener('mouseenter', () => this.stopAutoplay());
+      this.$el.addEventListener('mouseleave', () => this.startAutoplay());
+    },
+    startAutoplay() {
+      this.stopAutoplay();
+      this.autoplayId = setInterval(() => this.next(), 5000);
+    },
+    stopAutoplay() {
+      if (this.autoplayId) { clearInterval(this.autoplayId); this.autoplayId = null; }
+    },
+    next() { this.index = (this.index + 1) % this.slides.length; },
+    prev() { this.index = (this.index - 1 + this.slides.length) % this.slides.length; },
+    goTo(i) { this.index = i; },
+    startTouch(e) { this.touchStartX = e.touches[0].clientX; this.stopAutoplay(); },
+    endTouch(e) {
+      const dx = e.changedTouches[0].clientX - this.touchStartX;
+      if (Math.abs(dx) > 50) { dx < 0 ? this.next() : this.prev(); }
+      this.startAutoplay();
+    },
+  };
+}
+</script>
+
 <!-- ══ RATINGS CTA — public anonymous rating ══ -->
 <section class="rate-cta-strip" id="rate">
   <div class="public-container">

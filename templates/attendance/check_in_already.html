@@ -1,0 +1,78 @@
+{% load i18n static %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if IS_RTL %}rtl{% else %}ltr{% endif %}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% trans "Already checked in" %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=48">
+</head>
+<body>
+<div class="checkin-page">
+  <div class="checkin-card text-center">
+    <div style="width:88px;height:88px;border-radius:50%;
+                background:linear-gradient(135deg, #FEF3C7, #FDE68A);
+                color:#92400E;display:grid;place-items:center;
+                margin:0 auto 20px;
+                box-shadow:0 8px 22px rgba(217,119,6,0.25);
+                animation: alreadyPulse 1.5s ease-in-out infinite;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    </div>
+
+    <h1 style="font-size:22px;font-weight:800;color:var(--text-primary);margin-bottom:8px;" dir="rtl" lang="ar">
+      تم التسجيل من هذا الموبايل بالفعل
+    </h1>
+
+    <p class="cell-secondary" style="font-size:15px;line-height:1.6;" dir="rtl" lang="ar">
+      لا يمكن تسجيل أكتر من شخص من نفس الجهاز في نفس الجلسة.<br>
+      كل حد لازم يسجل من موبايله الخاص.
+    </p>
+
+    {% if previous_name %}
+    <div style="margin-top:24px;padding:18px;background:var(--surface-sunken);
+                border:1px dashed var(--border-primary);border-radius:var(--radius-lg);">
+      <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;" dir="rtl" lang="ar">
+        اللي سجل من الموبايل ده
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;justify-content:center;">
+        <div class="avatar avatar-md avatar-brand">
+          {{ previous_name|make_list|first|default:"?"|upper }}
+        </div>
+        <div style="text-align:start;">
+          <div style="font-weight:700;color:var(--text-primary);">{{ previous_name }}</div>
+          {% if previous_member_code %}
+            <div class="cell-secondary"><code style="font-size:11px;">{{ previous_member_code }}</code></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:24px;padding:14px 16px;background:linear-gradient(135deg, rgba(90,15,15,0.06), rgba(212,175,55,0.06));
+                border-radius:var(--radius-lg);text-align:start;">
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:20px;line-height:1;">💡</span>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;" dir="rtl" lang="ar">
+          <strong>هتعمل إيه دلوقتي؟</strong><br>
+          لو انت الشخص اللي سجل، مش محتاج تعمل حاجة تانية — انت معدود حاضر بالفعل.<br>
+          لو حد تاني عايز يسجل، لازم يستخدم موبايله الخاص ويمسح الـ QR بنفسه.
+        </div>
+      </div>
+    </div>
+
+    <p class="cell-secondary mt-4" style="font-size:12px;color:var(--text-tertiary);" dir="rtl" lang="ar">
+      {{ session.title }} · {{ session.date|date:"Y-m-d" }} · {{ session.start_time|time:"H:i" }}
+    </p>
+  </div>
+</div>
+
+<style>
+  @keyframes alreadyPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 8px 22px rgba(217,119,6,0.25); }
+    50%      { transform: scale(1.05); box-shadow: 0 12px 30px rgba(217,119,6,0.4); }
+  }
+</style>
+</body>
+</html>

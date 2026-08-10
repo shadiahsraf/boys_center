@@ -118,11 +118,41 @@ class SessionToggleView(RoleRequiredMixin, View):
 
 # ── PUBLIC CHECK-IN FLOW ────────────────────────────────────────────────────
 
+SESSION_CHECKINS_KEY = 'attendance_checkins'
+
+
+def _device_already_checked_in(request, session):
+    """True if this browser session already checked someone into this attendance session.
+
+    Prevents one phone from being passed around and checking in multiple people
+    (i.e. covering for absent friends).
+    """
+    checkins = request.session.get(SESSION_CHECKINS_KEY, {}) or {}
+    return str(session.pk) in checkins
+
+
+def _record_device_checkin(request, session, user):
+    """Remember on this browser session that we already did a check-in here."""
+    checkins = request.session.get(SESSION_CHECKINS_KEY, {}) or {}
+    checkins[str(session.pk)] = {
+        'user_id': str(user.pk),
+        'member_code': user.member_code,
+        'name': user.get_full_name() or user.username,
+    }
+    request.session[SESSION_CHECKINS_KEY] = checkins
+    request.session.modified = True
+
+
 class CheckInLandingView(View):
     """
     The page players land on after scanning a QR code.
     They enter their member code to check in.
     No login required — anyone with the QR + member code can check in.
+
+    Anti-fraud: one browser session can only check in ONE person per attendance
+    session. If someone tries to scan again on the same phone, they get a
+    "you already checked in" block. This stops a single phone from being
+    passed around to check in absent friends.
     """
     def get(self, request, token):
         try:
@@ -137,6 +167,19 @@ class CheckInLandingView(View):
                 'error': _('This session is no longer accepting check-ins.'),
                 'session': session,
             }, status=410)
+
+        # Ensure this browser has a session key before we start tracking check-ins
+        if not request.session.session_key:
+            request.session.save()
+
+        # Already checked in from this device? Show a friendly block.
+        if _device_already_checked_in(request, session):
+            prev = request.session[SESSION_CHECKINS_KEY].get(str(session.pk), {})
+            return render(request, 'attendance/check_in_already.html', {
+                'session': session,
+                'previous_name': prev.get('name', ''),
+                'previous_member_code': prev.get('member_code', ''),
+            }, status=409)
 
         return render(request, 'attendance/check_in_form.html', {'session': session})
 
@@ -154,6 +197,18 @@ class CheckInLandingView(View):
                 'session': session,
             }, status=410)
 
+        if not request.session.session_key:
+            request.session.save()
+
+        # Block re-submission from same device (also stops "reload the form" abuse)
+        if _device_already_checked_in(request, session):
+            prev = request.session[SESSION_CHECKINS_KEY].get(str(session.pk), {})
+            return render(request, 'attendance/check_in_already.html', {
+                'session': session,
+                'previous_name': prev.get('name', ''),
+                'previous_member_code': prev.get('member_code', ''),
+            }, status=409)
+
         member_code = request.POST.get('member_code', '').strip().upper()
         if not member_code:
             messages.error(request, _('Please enter your member code.'))
@@ -168,8 +223,9 @@ class CheckInLandingView(View):
                 'submitted_code': member_code,
             })
 
-        # Prevent duplicate check-in
+        # Prevent duplicate check-in (same user already recorded)
         if AttendanceRecord.objects.filter(session=session, user=user).exists():
+            _record_device_checkin(request, session, user)
             return render(request, 'attendance/check_in_success.html', {
                 'session': session, 'user': user, 'duplicate': True,
             })
@@ -184,6 +240,7 @@ class CheckInLandingView(View):
 
         AttendanceRecord.objects.create(session=session, user=user, status=status)
         log_action(user, 'self_checkin', {'session': str(session.pk)})
+        _record_device_checkin(request, session, user)
         return render(request, 'attendance/check_in_success.html', {
             'session': session, 'user': user, 'status': status,
         })

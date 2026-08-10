@@ -6575,3 +6575,310 @@ a { transition: color 180ms ease; }
 
 /* Section title consistency */
 .section-title, h1, h2, h3 { letter-spacing: -0.01em; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DASHBOARD MOBILE RTL FIX v3 — Arabic-first mobile polish
+   Covers: welcome-banner, profile-hero, tabs, metric-grid,
+           quick-actions, dc-cta, verse-strip, and all dashboards.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ---- Welcome banner (multi-role dashboards) ---- */
+@media (max-width: 768px) {
+  .welcome-banner {
+    padding: 20px 18px;
+    margin-bottom: 18px;
+    border-radius: 18px;
+  }
+  .welcome-banner-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .welcome-banner h1 {
+    font-size: clamp(20px, 5.5vw, 26px) !important;
+    line-height: 1.25;
+  }
+  .welcome-banner p { font-size: 13.5px; max-width: 100%; }
+  .welcome-banner-meta {
+    font-size: 10.5px;
+    padding: 4px 10px;
+    letter-spacing: 0.8px;
+  }
+  .welcome-banner-actions {
+    width: 100%;
+    gap: 8px;
+  }
+  .welcome-banner-actions .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-width: 120px;
+  }
+}
+@media (max-width: 420px) {
+  .welcome-banner-actions .btn {
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+}
+
+/* ---- Profile hero (single-role youth dashboard) ---- */
+@media (max-width: 768px) {
+  .profile-hero { border-radius: 18px; margin-bottom: 16px; }
+  .profile-hero-inner {
+    padding: 18px 16px !important;
+    gap: 14px !important;
+    grid-template-columns: auto 1fr !important;
+  }
+  .profile-hero-name {
+    font-size: clamp(18px, 5vw, 24px) !important;
+    line-height: 1.25 !important;
+  }
+  .profile-hero-eyebrow {
+    font-size: 10.5px !important;
+    padding: 3px 8px !important;
+    letter-spacing: 0.7px !important;
+  }
+  .profile-hero-sub {
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+  }
+  .profile-hero-sub-divider { display: none; }
+  .profile-hero-stats {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+    gap: 8px;
+    width: 100%;
+  }
+  .profile-hero-stat {
+    flex: 1;
+    padding: 8px 6px !important;
+    min-width: 0 !important;
+    text-align: center;
+  }
+  .profile-hero-stat-value { font-size: 17px !important; }
+  .profile-hero-stat-label { font-size: 9.5px !important; letter-spacing: 0.5px !important; }
+  .profile-hero-avatar {
+    width: 56px !important;
+    height: 56px !important;
+    font-size: 22px !important;
+    border-radius: 16px !important;
+  }
+  .profile-hero-avatar-badge {
+    width: 22px !important; height: 22px !important; font-size: 12px !important;
+  }
+}
+
+/* ---- Dashboard tabs — friendlier on mobile Arabic ---- */
+@media (max-width: 768px) {
+  .dash-tabs {
+    gap: 3px;
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dash-tab {
+    padding: 10px 12px;
+    font-size: 12.5px;
+    min-height: 40px;
+    gap: 5px;
+  }
+  .dash-tab svg { width: 15px !important; height: 15px !important; }
+  .dash-tab-badge {
+    font-size: 10px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+  }
+}
+
+/* ---- Metric grid & quick actions ---- */
+@media (max-width: 768px) {
+  .metric-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 18px;
+  }
+  .metric-card {
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+  .metric-card-icon svg { width: 18px !important; height: 18px !important; }
+  .metric-card-label { font-size: 11.5px !important; }
+  .metric-card-value { font-size: 22px !important; }
+  .metric-card-value small { font-size: 12px !important; }
+  .metric-card-trend { font-size: 11px !important; }
+  .metric-progress { height: 4px !important; }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 18px;
+  }
+  .quick-action {
+    padding: 12px !important;
+    gap: 10px !important;
+    border-radius: 14px !important;
+  }
+  .quick-action-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .quick-action-icon svg { width: 16px !important; height: 16px !important; }
+  .quick-action-title { font-size: 12.5px !important; }
+  .quick-action-sub { font-size: 10.5px !important; }
+}
+@media (max-width: 380px) {
+  .metric-grid { grid-template-columns: 1fr !important; }
+  .quick-actions { grid-template-columns: 1fr !important; }
+}
+
+/* ---- Grid-stats (multi-role youth stats row) ---- */
+@media (max-width: 768px) {
+  .grid-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 18px;
+  }
+  .stat-card {
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+  .stat-label { font-size: 11px !important; }
+  .stat-value { font-size: 20px !important; }
+  .stat-icon { width: 36px !important; height: 36px !important; }
+  .stat-icon svg { width: 18px !important; height: 18px !important; }
+}
+@media (max-width: 380px) {
+  .grid-stats { grid-template-columns: 1fr !important; }
+}
+
+/* ---- Daily challenge CTA — arrow direction awareness ---- */
+@media (max-width: 640px) {
+  .dc-cta {
+    padding: 14px 16px;
+    gap: 12px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+  }
+  .dc-cta-icon {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 20px !important;
+  }
+  .dc-cta-title { font-size: 15px !important; }
+  .dc-cta-sub { font-size: 12px !important; line-height: 1.5 !important; }
+  .dc-cta-arrow { width: 26px !important; height: 26px !important; }
+  .dc-cta-arrow svg { width: 13px !important; height: 13px !important; }
+}
+/* Flip the chevron in RTL so it points toward the reading direction */
+[dir="rtl"] .dc-cta-arrow svg { transform: rotate(180deg); }
+
+/* ---- Verse strip ---- */
+@media (max-width: 640px) {
+  .verse-strip {
+    padding: 14px 16px !important;
+    gap: 12px !important;
+    border-radius: 14px !important;
+    margin-bottom: 16px;
+  }
+  .verse-strip-icon {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 18px !important;
+  }
+  .verse-strip-quote { font-size: 13.5px !important; line-height: 1.55 !important; }
+  .verse-strip-ref { font-size: 11px !important; }
+}
+
+/* ---- Cards & card headers on dashboards ---- */
+@media (max-width: 640px) {
+  .card {
+    border-radius: 14px !important;
+    margin-bottom: 12px;
+  }
+  .card-header {
+    padding: 14px 16px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  .card-header .btn { align-self: stretch; justify-content: center; }
+  .card-body { padding: 14px !important; }
+  .card-body.p-0 { padding: 0 !important; }
+  .card-title { font-size: 15px !important; }
+  .card-subtitle { font-size: 12px !important; }
+
+  /* Event tile inside cards on mobile */
+  .event-tile {
+    padding: 12px !important;
+    gap: 10px !important;
+  }
+  .event-date-block {
+    min-width: 48px !important;
+    padding: 6px 8px !important;
+  }
+  .event-date-block .day { font-size: 18px !important; }
+  .event-date-block .month { font-size: 10px !important; }
+  .event-tile-title { font-size: 13.5px !important; }
+  .event-tile-info { font-size: 11.5px !important; }
+
+  /* Empty states */
+  .empty-state { padding: 24px 16px !important; }
+  .empty-state-icon svg { width: 24px !important; height: 24px !important; }
+  .empty-state p { font-size: 13px !important; }
+}
+
+/* ---- Dashboard panels padding trim ---- */
+@media (max-width: 640px) {
+  .dash-panel { padding: 0 !important; }
+  .grid-dashboard { grid-template-columns: 1fr !important; gap: 12px !important; }
+}
+
+/* ---- Coach / Parent / Admin / Manager dashboards ---- */
+@media (max-width: 640px) {
+  /* Any 2fr/1fr split → single column */
+  .dash-2col, .dash-split { grid-template-columns: 1fr !important; }
+  /* Data lists — comfortable rows */
+  .data-list-row { padding: 10px 12px !important; font-size: 13px !important; }
+}
+
+/* ---- Page section spacing on mobile (tighter but not cramped) ---- */
+@media (max-width: 640px) {
+  .page-content { padding: 12px !important; }
+  .page-content > *:first-child { margin-top: 4px; }
+}
+
+/* ---- RTL-specific fixes ---- */
+[dir="rtl"] .metric-card-icon,
+[dir="rtl"] .quick-action-icon,
+[dir="rtl"] .dc-cta-icon,
+[dir="rtl"] .verse-strip-icon {
+  /* Icons don't need RTL flip — they're symmetric or brand-locked */
+}
+
+/* In RTL, forward chevrons (→) become back chevrons visually — flip them */
+[dir="rtl"] .quick-action svg[data-feather="chevron-right"],
+[dir="rtl"] .card-header .btn-ghost svg[data-feather="arrow-right"] {
+  transform: rotate(180deg);
+}
+
+/* Small text overflow safety on Arabic (long words don't have spaces sometimes) */
+[dir="rtl"] .metric-card-label,
+[dir="rtl"] .metric-card-trend,
+[dir="rtl"] .quick-action-title,
+[dir="rtl"] .quick-action-sub,
+[dir="rtl"] .stat-label,
+[dir="rtl"] .stat-value,
+[dir="rtl"] .card-title,
+[dir="rtl"] .card-subtitle {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Better line-height for Arabic body text on mobile */
+@media (max-width: 768px) {
+  [dir="rtl"] p, [dir="rtl"] .metric-card-trend { line-height: 1.6; }
+}

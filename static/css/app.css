@@ -7158,3 +7158,17 @@ a { transition: color 180ms ease; }
     max-width: 100vw !important;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CAROUSEL RTL ARROW FIX — right button points right, left points left
+   ═══════════════════════════════════════════════════════════════════════ */
+[dir="rtl"] .carousel-btn svg {
+  transform: rotate(180deg);
+}
+[dir="rtl"] .carousel-btn:hover svg {
+  transform: rotate(180deg);
+}
+[dir="rtl"] .carousel-btn:active svg {
+  transform: rotate(180deg);
+}

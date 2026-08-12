@@ -79,6 +79,10 @@
         <i data-feather="star"></i>
         <span class="nav-label">{% trans "Ratings" %}</span>
       </a>
+      <a href="{% url 'news:carousel_list' %}" class="nav-link {% if 'carousel' in request.resolver_match.url_name|default:'' %}active{% endif %}">
+        <i data-feather="image"></i>
+        <span class="nav-label">{% trans "Landing Carousel" %}</span>
+      </a>
       <a href="{% url 'reports:dashboard' %}" class="nav-link {% if 'reports' in request.resolver_match.namespace %}active{% endif %}">
         <i data-feather="bar-chart-2"></i>
         <span class="nav-label">{% trans "Reports" %}</span>

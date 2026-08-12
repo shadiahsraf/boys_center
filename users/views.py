@@ -27,13 +27,14 @@ class LandingView(TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        from news.models import NewsPost
+        from news.models import NewsPost, CarouselSlide
         from events.models import Event
         ctx['featured_news'] = NewsPost.objects.filter(is_published=True, is_featured=True).select_related('author')[:3]
         ctx['latest_news'] = NewsPost.objects.filter(is_published=True).select_related('author')[:6]
         ctx['upcoming_events'] = (Event.objects
                                   .filter(start_datetime__gte=timezone.now())
                                   .order_by('start_datetime')[:6])
+        ctx['carousel_slides'] = CarouselSlide.objects.filter(is_active=True)
         # Public stats
         ctx['stats'] = {
             'youth': User.objects.with_role('youth').count(),

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Landing Carousel" %}{% endblock %}
+{% block page_title %}{% trans "Landing Carousel" %}{% endblock %}
+{% block page_subtitle %}<div class="topbar-subtitle">{% trans "Slides shown on the public landing page" %}</div>{% endblock %}
+
+{% block content %}
+<div class="page-section">
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px;">
+    <div>
+      <h2 style="margin:0;">{% trans "Carousel slides" %}</h2>
+      <div class="cell-secondary" style="margin-top:4px;">
+        {% blocktrans count n=slides|length %}{{ n }} slide{% plural %}{{ n }} slides{% endblocktrans %}
+      </div>
+    </div>
+    <div style="flex:1;"></div>
+    <a href="{% url 'news:carousel_create' %}" class="btn btn-primary btn-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      {% trans "Add slide" %}
+    </a>
+  </div>
+
+  {% if slides %}
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+      {% for s in slides %}
+        <article class="card" style="overflow:hidden;">
+          <div style="height:150px;position:relative;overflow:hidden;
+                      background:linear-gradient(135deg, {{ s.tint_from }}, {{ s.tint_to }});
+                      display:grid;place-items:center;color:#fff;">
+            {% if s.image %}
+              <img src="{{ s.image.url }}" alt="{{ s.title_ar }}"
+                   style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.85;">
+              <div style="position:absolute;inset:0;background:linear-gradient(135deg, {{ s.tint_from }}88, {{ s.tint_to }}66);"></div>
+            {% endif %}
+            <div style="position:relative;font-size:52px;line-height:1;
+                        filter:drop-shadow(0 4px 12px rgba(0,0,0,0.35));">{{ s.icon }}</div>
+          </div>
+          <div class="card-body">
+            <div style="font-weight:700;font-size:15px;" dir="rtl" lang="ar">{{ s.title_ar }}</div>
+            {% if s.title_en %}
+              <div class="cell-secondary" style="font-size:11.5px;">{{ s.title_en }}</div>
+            {% endif %}
+            {% if s.description_ar %}
+              <div class="cell-secondary" dir="rtl" lang="ar" style="margin-top:6px;font-size:13px;">{{ s.description_ar }}</div>
+            {% endif %}
+            <div style="display:flex;gap:6px;align-items:center;margin-top:12px;font-size:11px;color:var(--text-muted);">
+              {% if s.is_active %}
+                <span class="badge badge-success"><span class="badge-dot"></span>{% trans "Live" %}</span>
+              {% else %}
+                <span class="badge badge-secondary">{% trans "Hidden" %}</span>
+              {% endif %}
+              <span>·</span>
+              <span>{% trans "Order" %}: {{ s.order }}</span>
+            </div>
+          </div>
+          <div class="card-footer" style="display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--border-primary);">
+            <a href="{% url 'news:carousel_update' s.pk %}" class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;">{% trans "Edit" %}</a>
+            <a href="{% url 'news:carousel_delete' s.pk %}" class="btn btn-ghost btn-sm text-danger">{% trans "Delete" %}</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="rate-empty">
+      <div class="rate-empty-icon">🖼️</div>
+      <div class="rate-empty-title" dir="rtl" lang="ar">لسه ما فيش شرايح</div>
+      <div class="rate-empty-sub" dir="rtl" lang="ar">
+        ابدأ ضيف صور من الأنشطة تظهر في الكاروسل بالصفحة الرئيسية.
+      </div>
+      <div style="margin-top:16px;">
+        <a href="{% url 'news:carousel_create' %}" class="btn btn-primary">{% trans "Add first slide" %}</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

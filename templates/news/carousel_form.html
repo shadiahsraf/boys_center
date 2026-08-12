@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% if object %}{% trans "Edit slide" %}{% else %}{% trans "New slide" %}{% endif %}{% endblock %}
+{% block page_title %}{% if object %}{% trans "Edit slide" %}{% else %}{% trans "New slide" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:840px;margin:0 auto;">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Arabic (required) -->
+    <div class="card mb-4">
+      <div class="card-header" style="background:linear-gradient(135deg, rgba(90,15,15,0.06), rgba(212,175,55,0.08));">
+        <h3 class="card-title" dir="rtl" lang="ar" style="margin:0;">النص بالعربية (أساسي)</h3>
+      </div>
+      <div class="card-body" dir="rtl">
+        <div class="form-group">
+          <label class="form-label" dir="rtl" lang="ar">العنوان <span style="color:var(--danger-500);">*</span></label>
+          {{ form.title_ar }}
+          {% if form.title_ar.errors %}<div class="form-error">{{ form.title_ar.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label" dir="rtl" lang="ar">الوصف</label>
+          {{ form.description_ar }}
+        </div>
+      </div>
+    </div>
+
+    <!-- English (optional) -->
+    <details class="card mb-4" style="padding:0;">
+      <summary style="list-style:none;cursor:pointer;padding:14px 18px;border-bottom:1px solid var(--border-primary);display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-weight:700;">
+            {% trans "English version" %}
+            <span style="font-size:11px;padding:2px 8px;background:var(--surface-sunken);border-radius:999px;color:var(--text-muted);font-weight:600;margin-inline-start:6px;">{% trans "Optional" %}</span>
+          </div>
+          <div class="cell-secondary" style="font-size:12px;">{% trans "For visitors browsing the site in English" %}</div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 220ms ease;"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">{% trans "Title" %}</label>
+          {{ form.title_en }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">{% trans "Description" %}</label>
+          {{ form.description_en }}
+        </div>
+      </div>
+    </details>
+
+    <!-- Visual settings -->
+    <div class="card mb-4">
+      <div class="card-header"><h3 class="card-title">{% trans "Visuals" %}</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">
+            {% trans "Icon (emoji)" %}
+            <span class="cell-secondary" style="font-size:11px;">— {% trans "e.g." %} ⚽ 🏊 🎭 ⛪ 🏆</span>
+          </label>
+          {{ form.icon }}
+          <div class="cell-secondary" style="font-size:12px;margin-top:4px;">
+            {% trans "Big central emoji shown on the slide. Pick something matching the topic." %}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">{% trans "Background image" %} <span class="cell-secondary">— {% trans "optional" %}</span></label>
+          {{ form.image }}
+          {% if object.image %}
+            <div style="margin-top:8px;">
+              <div class="cell-secondary" style="font-size:11px;margin-bottom:4px;">{% trans "Current image:" %}</div>
+              <img src="{{ object.image.url }}" alt="" style="max-width:200px;border-radius:8px;border:1px solid var(--border-primary);">
+            </div>
+          {% endif %}
+          <div class="cell-secondary" style="font-size:12px;margin-top:4px;">
+            {% trans "If empty, the slide will show just the gradient tint below." %}
+          </div>
+        </div>
+
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div class="form-group">
+            <label class="form-label">{% trans "Gradient start" %}</label>
+            {{ form.tint_from }}
+          </div>
+          <div class="form-group">
+            <label class="form-label">{% trans "Gradient end" %}</label>
+            {{ form.tint_to }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="card mb-4">
+      <div class="card-header"><h3 class="card-title">{% trans "Settings" %}</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">{% trans "Order (lower = shows first)" %}</label>
+          {{ form.order }}
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <label style="display:flex;gap:8px;align-items:center;cursor:pointer;">
+            {{ form.is_active }}
+            <span style="font-weight:500;">{% trans "Show on landing page" %}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <button type="submit" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {% trans "Save slide" %}
+      </button>
+      <a href="{% url 'news:carousel_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+</div>
+
+<style>
+  details[open] > summary svg { transform: rotate(180deg); }
+</style>
+{% endblock %}

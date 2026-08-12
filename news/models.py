@@ -13,20 +13,20 @@ class CarouselSlide(models.Model):
     description_ar = models.CharField(_('Description (Arabic)'), max_length=300, blank=True)
     description_en = models.CharField(_('Description (English, optional)'), max_length=300, blank=True)
     icon = models.CharField(
-        _('Icon (emoji)'), max_length=8, default='⭐',
-        help_text=_('Single emoji shown on the slide.'),
+        _('Icon (emoji, optional)'), max_length=8, blank=True, default='',
+        help_text=_('Optional emoji shown on top of the slide. Leave empty for a clean image.'),
     )
     image = models.ImageField(
         _('Image'), upload_to='carousel/', blank=True, null=True,
-        help_text=_('Optional background photo. If empty, the gradient tint is used.'),
+        help_text=_('The main content of the slide. Recommended: at least 1200x600 landscape.'),
     )
     tint_from = models.CharField(
-        _('Gradient start colour'), max_length=9, default='#5A0F0F',
-        help_text=_('Hex colour used as the top-left of the slide background.'),
+        _('Fallback colour start'), max_length=9, default='#5A0F0F', blank=True,
+        help_text=_('Only used if no image is uploaded. Hex colour, top-left.'),
     )
     tint_to = models.CharField(
-        _('Gradient end colour'), max_length=9, default='#7A1C1C',
-        help_text=_('Hex colour used as the bottom-right of the slide background.'),
+        _('Fallback colour end'), max_length=9, default='#7A1C1C', blank=True,
+        help_text=_('Only used if no image is uploaded. Hex colour, bottom-right.'),
     )
     order = models.PositiveIntegerField(_('Order'), default=0)
     is_active = models.BooleanField(_('Show on landing'), default=True)

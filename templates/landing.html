@@ -105,17 +105,28 @@
 
       <div class="carousel-track" :style="`transform: translateX(${-index * 100}%)`">
         {% for s in carousel_slides %}
-          <article class="carousel-slide"
-                   style="background-image: {% if s.image %}url('{{ s.image.url }}'), {% endif %}linear-gradient(135deg, {{ s.tint_from }}, {{ s.tint_to }}); background-size: cover; background-position: center;">
-            {% if s.image %}<div style="position:absolute;inset:0;background:linear-gradient(135deg, {{ s.tint_from }}cc, {{ s.tint_to }}99);pointer-events:none;"></div>{% endif %}
-            <div class="carousel-slide-content">
-              <div class="carousel-slide-icon">{{ s.icon }}</div>
-              <h3 class="carousel-slide-title" dir="rtl" lang="ar">{{ s.title_ar }}</h3>
-              {% if s.description_ar %}
-                <p class="carousel-slide-desc" dir="rtl" lang="ar">{{ s.description_ar }}</p>
-              {% endif %}
-            </div>
-            <div class="carousel-slide-glow" aria-hidden="true"></div>
+          <article class="carousel-slide{% if s.image %} has-image{% else %} no-image{% endif %}"
+                   {% if s.image %}
+                     style="background-image: url('{{ s.image.url }}'); background-size: cover; background-position: center;"
+                   {% else %}
+                     style="background-image: linear-gradient(135deg, {{ s.tint_from|default:'#5A0F0F' }}, {{ s.tint_to|default:'#7A1C1C' }});"
+                   {% endif %}>
+
+            {# Text-readability scrim ONLY when there's caption text to display AND an image #}
+            {% if s.image and s.title_ar or s.description_ar %}
+              <div class="carousel-slide-scrim" aria-hidden="true"></div>
+            {% endif %}
+
+            {# Content overlay — only rendered if there's actually something to show #}
+            {% if s.icon or s.title_ar or s.description_ar %}
+              <div class="carousel-slide-content">
+                {% if s.icon %}<div class="carousel-slide-icon">{{ s.icon }}</div>{% endif %}
+                {% if s.title_ar %}<h3 class="carousel-slide-title" dir="rtl" lang="ar">{{ s.title_ar }}</h3>{% endif %}
+                {% if s.description_ar %}
+                  <p class="carousel-slide-desc" dir="rtl" lang="ar">{{ s.description_ar }}</p>
+                {% endif %}
+              </div>
+            {% endif %}
           </article>
         {% endfor %}
       </div>

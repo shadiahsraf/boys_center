@@ -7172,3 +7172,85 @@ a { transition: color 180ms ease; }
 [dir="rtl"] .carousel-btn:active svg {
   transform: rotate(180deg);
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CAROUSEL v2 — image-first, emoji/text optional, natural photo display
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* When there IS an image, don't put any overlay/glow over it — the image
+   shows naturally in full color. Only add a subtle bottom scrim for text
+   readability, and only if the slide actually has text. */
+.carousel-slide.has-image::before { display: none; }
+.carousel-slide.has-image .carousel-slide-glow { display: none; }
+
+/* Text scrim — soft gradient at the bottom only where captions sit */
+.carousel-slide-scrim {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 55%;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.72) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Content sits above the scrim, aligned bottom-center for image slides */
+.carousel-slide.has-image .carousel-slide-content {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 24px 32px 36px;
+  text-align: center;
+  z-index: 2;
+  max-width: 100%;
+}
+@media (max-width: 640px) {
+  .carousel-slide.has-image .carousel-slide-content {
+    padding: 18px 20px 26px;
+  }
+}
+
+/* If there's NO image, keep the classic centered layout */
+.carousel-slide.no-image .carousel-slide-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 24px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.carousel-slide.no-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.14), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(212,175,55,0.16), transparent 55%);
+  pointer-events: none;
+}
+
+/* Icon — subtle drop-shadow so it stays legible over any image */
+.carousel-slide.has-image .carousel-slide-icon {
+  font-size: clamp(48px, 6vw, 72px);
+  animation: none;             /* no floating on real photos — feels awkward */
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,0.55));
+  margin-bottom: 10px;
+}
+
+/* Title + desc — tighter and always high-contrast against the scrim */
+.carousel-slide.has-image .carousel-slide-title {
+  color: #ffffff;
+  text-shadow: 0 3px 14px rgba(0,0,0,0.55);
+}
+.carousel-slide.has-image .carousel-slide-desc {
+  color: rgba(255,255,255,0.92);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  max-width: 640px;
+  margin: 8px auto 0;
+}
+
+/* When the slide has an image and NO content at all — pure image */
+.carousel-slide.has-image:not(:has(.carousel-slide-content)) {
+  background-color: #000;      /* graceful fallback while image loads */
+}
